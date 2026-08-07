@@ -1,0 +1,20 @@
+# Конфигурация для Amvera.
+# Имя файла и структура — как в рабочем проекте granat_site.
+#
+# Окружение node, потому что сайту нужен сервер: он принимает заявки
+# и отправляет их в Telegram, храня токен у себя.
+# Статический вариант (nginx) не подойдёт — при нём форма работать не будет.
+#
+# Секция build не нужна: Amvera сама ставит зависимости по package.json.
+# Она понадобилась бы только для сборки фронтенда, а у нас чистый HTML.
+
+meta:
+  environment: node
+  toolchain:
+    name: npm
+    version: 20
+
+run:
+  command: npm start
+  containerPort: 3000
+  persistenceMount: /data

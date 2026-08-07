@@ -1,0 +1,14 @@
+https://fonts.gstatic.com/s/cinzel/v26/8vIJ7ww63mVu7gt7-GT7LEc.woff2 cinzel-latin-ext-8vIJ7ww63mVu7gt7-GT7LEc.woff2
+https://fonts.gstatic.com/s/cinzel/v26/8vIJ7ww63mVu7gt79mT7.woff2 cinzel-latin-8vIJ7ww63mVu7gt79mT7.woff2
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3smX5slCNuHLi8bLeY9MK7whWMhyjYrGFEsdtdc62E6zd5rDD-hdM8Efs.woff2 cormorant-garamond-cyrillic-ext-italic-co3smX5slCNuHLi8bLeY9MK7whWMhyjYrGFEsdtdc62E6zd5rDD-hdM8Efs.woff2
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3smX5slCNuHLi8bLeY9MK7whWMhyjYrGFEsdtdc62E6zd5rDD-jNM8Efs.woff2 cormorant-garamond-cyrillic-italic-co3smX5slCNuHLi8bLeY9MK7whWMhyjYrGFEsdtdc62E6zd5rDD-jNM8Efs.woff2
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3smX5slCNuHLi8bLeY9MK7whWMhyjYrGFEsdtdc62E6zd5rDD-htM8Efs.woff2 cormorant-garamond-latin-ext-italic-co3smX5slCNuHLi8bLeY9MK7whWMhyjYrGFEsdtdc62E6zd5rDD-htM8Efs.woff2
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3smX5slCNuHLi8bLeY9MK7whWMhyjYrGFEsdtdc62E6zd5rDD-iNM8.woff2 cormorant-garamond-latin-italic-co3smX5slCNuHLi8bLeY9MK7whWMhyjYrGFEsdtdc62E6zd5rDD-iNM8.woff2
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpHtKgS4.woff2 cormorant-garamond-cyrillic-ext-co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpHtKgS4.woff2
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYrXtKgS4.woff2 cormorant-garamond-cyrillic-co3bmX5slCNuHLi8bLeY9MK7whWMhyjYrXtKgS4.woff2
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYp3tKgS4.woff2 cormorant-garamond-latin-ext-co3bmX5slCNuHLi8bLeY9MK7whWMhyjYp3tKgS4.woff2
+https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2 cormorant-garamond-latin-co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2
+https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggqxSuXd.woff2 manrope-cyrillic-ext-xn7gYHE41ni1AdIRggqxSuXd.woff2
+https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggOxSuXd.woff2 manrope-cyrillic-xn7gYHE41ni1AdIRggOxSuXd.woff2
+https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggmxSuXd.woff2 manrope-latin-ext-xn7gYHE41ni1AdIRggmxSuXd.woff2
+https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSg.woff2 manrope-latin-xn7gYHE41ni1AdIRggexSg.woff2

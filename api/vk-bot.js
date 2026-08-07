@@ -1,0 +1,217 @@
+/**
+ * Бот в сообществе ВКонтакте.
+ *
+ * Тот же ассистент, что и в чате на сайте: тот же системный промпт, те же
+ * вопросы, тот же бриф владельцу, когда человек назвал телефон. Отличается
+ * только дверь, в которую вошёл посетитель.
+ *
+ * ЗАЧЕМ ЭТО ВООБЩЕ. В ВК человек пишет прямо из ленты, не переходя на сайт.
+ * Если ему никто не отвечает полчаса, он уходит к следующему подрядчику —
+ * а сообщение так и висит непрочитанным до вечера. Бот отвечает за секунды
+ * и, главное, успевает собрать бриф, пока интерес не остыл.
+ *
+ * КАК УСТРОЕНО. Long Poll: приложение само держит открытым запрос к ВК
+ * и ждёт события. Вебхук (Callback API) не подошёл бы — он требует, чтобы
+ * ВК стучался к нам снаружи, а это лишний открытый адрес и лишняя настройка
+ * при каждом переезде.
+ *
+ * ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ (Amvera → Настройки → Переменные окружения):
+ *   VK_TOKEN    — ключ доступа сообщества (тот же, что и для заявок)
+ *   VK_GROUP_ID — номер сообщества, без минуса. Виден в адресе
+ *                 vk.com/club229358... или в Управление → Настройки.
+ *
+ * НАСТРОЙКА В САМОМ ВК (без неё бот не увидит ни одного сообщения):
+ *   1. Управление → Сообщения → включить «Сообщения сообщества».
+ *   2. Управление → Настройки → Работа с API → Long Poll API → включить,
+ *      версия API 5.199.
+ *   3. Там же вкладка «Типы событий» → отметить «Входящее сообщение».
+ *
+ * Если переменных нет — модуль просто молчит, и сайт работает как раньше.
+ */
+
+const { vkApi, sendVk } = require('./vk');
+const { askOnce, findContact, notifyOwner } = require('./brief');
+
+/* ── Память диалогов ──────────────────────────────────────────────
+   Держим последние сообщения по каждому собеседнику: без истории бот
+   на второй фразе забудет, что человеку нужна гостиница, и спросит
+   заново. Хранится в оперативной памяти — при перезапуске сайта
+   диалоги обнуляются, и это осознанный размен: постоянное хранилище
+   ради болтовни не окупается, а бриф с контактом всё равно уже ушёл. */
+const dialogs = new Map();
+const MAX_HISTORY = 20;
+const DIALOG_TTL_MS = 6 * 60 * 60 * 1000;   // 6 часов молчания — разговор закрыт
+
+/* Лимит на человека: 30 сообщений в час. Защищает счёт за модель
+   от шутника, который решит поговорить с ботом до утра. */
+const LIMIT_PER_HOUR = 30;
+
+function getDialog(peerId) {
+  const now = Date.now();
+  const rec = dialogs.get(peerId);
+
+  if (!rec || now - rec.updatedAt > DIALOG_TTL_MS) {
+    const fresh = { messages: [], count: 0, windowStart: now, updatedAt: now };
+    dialogs.set(peerId, fresh);
+    return fresh;
+  }
+
+  if (now - rec.windowStart > 60 * 60 * 1000) {
+    rec.count = 0;
+    rec.windowStart = now;
+  }
+
+  return rec;
+}
+
+/* Раз в час выбрасываем разговоры, в которые никто не вернулся. */
+setInterval(() => {
+  const now = Date.now();
+  for (const [peerId, rec] of dialogs) {
+    if (now - rec.updatedAt > DIALOG_TTL_MS) dialogs.delete(peerId);
+  }
+}, 60 * 60 * 1000).unref();
+
+/* ── Обработка одного входящего сообщения ─────────────────────── */
+async function handleMessage(message) {
+  const peerId = message.peer_id;
+  const text = String(message.text || '').trim();
+
+  if (!peerId || !text) return;
+
+  /* Отрицательный from_id — это сообщение от самого сообщества
+     (например, ответ администратора из чата ВК). Отвечать на него
+     значит разговаривать с самим собой. */
+  if (message.from_id < 0) return;
+
+  const dialog = getDialog(peerId);
+
+  if (dialog.count >= LIMIT_PER_HOUR) {
+    console.warn('[vk-bot] Превышен лимит сообщений, peer:', peerId);
+    return;
+  }
+  dialog.count += 1;
+
+  dialog.messages.push({ role: 'user', content: text.slice(0, 2000) });
+  dialog.messages = dialog.messages.slice(-MAX_HISTORY);
+  dialog.updatedAt = Date.now();
+
+  /* Контакт появился — бриф владельцу уходит сразу, не дожидаясь ответа
+     модели. Если модель откажет, заявка всё равно будет у нас. */
+  const contact = findContact(text);
+  if (contact) {
+    notifyOwner(dialog.messages, contact, 'vk|' + peerId)
+      .catch(err => console.error('[vk-bot] Бриф не ушёл:', err.message));
+  }
+
+  try {
+    const answer = await askOnce(dialog.messages);
+    if (!answer) throw new Error('модель вернула пустой ответ');
+
+    dialog.messages.push({ role: 'assistant', content: answer });
+    dialog.messages = dialog.messages.slice(-MAX_HISTORY);
+
+    await sendVk(peerId, answer);
+    console.log(`[vk-bot] Ответ отправлен, peer: ${peerId}`);
+  } catch (err) {
+    console.error('[vk-bot] Не удалось ответить:', err.message);
+    /* Человек не должен остаться без ответа из-за нашей поломки:
+       отдаём живые контакты, чтобы разговор не оборвался в тишину. */
+    await sendVk(peerId,
+      'Извините, у меня сейчас сбой. Напишите, пожалуйста, в Telegram ' +
+      't.me/GranatJarvis_bot или позвоните на +7 999 244 99 99 — ответим быстро.'
+    ).catch(() => {});
+  }
+}
+
+/* ── Long Poll ────────────────────────────────────────────────── */
+
+async function connect(groupId) {
+  const res = await vkApi('groups.getLongPollServer', { group_id: String(groupId) });
+  if (!res.ok) throw new Error(res.error);
+  return res.response;         // { key, server, ts }
+}
+
+/**
+ * Главный цикл. Живёт всё время работы сайта.
+ *
+ * Внутри всё обёрнуто в try: необработанная ошибка здесь уронила бы
+ * весь процесс, а вместе с ботом — и сайт. Сайт важнее бота, поэтому
+ * при любой поломке цикл просто ждёт и переподключается.
+ */
+async function loop(groupId) {
+  let conn = null;
+  let failures = 0;
+
+  while (true) {
+    try {
+      if (!conn) {
+        conn = await connect(groupId);
+        console.log('[vk-bot] Подключился к сообществу', groupId);
+        failures = 0;
+      }
+
+      const url = `${conn.server}?act=a_check&key=${conn.key}&ts=${conn.ts}&wait=25`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      /* failed:1 — устарел ts, ВК прислал новый.
+         failed:2 и 3 — протух ключ или пропала история: нужен новый сервер. */
+      if (data.failed) {
+        if (data.failed === 1 && data.ts) {
+          conn.ts = data.ts;
+        } else {
+          console.warn('[vk-bot] Переподключение, код:', data.failed);
+          conn = null;
+        }
+        continue;
+      }
+
+      conn.ts = data.ts;
+      failures = 0;
+
+      for (const update of data.updates || []) {
+        if (update.type !== 'message_new') continue;
+        /* Структура ответа зависит от версии API: в 5.103+ сообщение лежит
+           в object.message, в старых — прямо в object. Поддерживаем обе,
+           чтобы смена версии в настройках сообщества ничего не сломала. */
+        const message = update.object?.message || update.object;
+        await handleMessage(message).catch(err =>
+          console.error('[vk-bot] Ошибка обработки сообщения:', err.message));
+      }
+    } catch (err) {
+      failures += 1;
+      conn = null;
+
+      /* Пауза растёт с числом неудач, но не больше минуты: если ВК лежит,
+         долбить его каждую секунду бессмысленно, а сдаваться насовсем
+         нельзя — он вернётся, и бот должен продолжить работу сам. */
+      const pause = Math.min(60_000, 2_000 * failures);
+      console.error(`[vk-bot] Сбой (${failures}): ${err.message}. Повтор через ${pause / 1000} с`);
+      await new Promise(r => setTimeout(r, pause));
+    }
+  }
+}
+
+/**
+ * Запускает бота, если он настроен. Вызывается из server.js при старте.
+ * Ничего не ждёт и ничего не возвращает: сайт не должен зависеть
+ * от того, поднялся бот или нет.
+ */
+function startVkBot() {
+  const groupId = process.env.VK_GROUP_ID;
+
+  if (!process.env.VK_TOKEN || !groupId) {
+    console.log('[vk-bot] Не настроен (нет VK_TOKEN или VK_GROUP_ID) — пропускаем');
+    return;
+  }
+
+  if (!process.env.LLM_API_KEY) {
+    console.warn('[vk-bot] Нет LLM_API_KEY — бот не сможет отвечать, запуск отменён');
+    return;
+  }
+
+  loop(groupId).catch(err => console.error('[vk-bot] Цикл остановлен:', err.message));
+}
+
+module.exports = { startVkBot };
