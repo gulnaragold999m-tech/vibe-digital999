@@ -235,11 +235,16 @@ const hasMetrika = /mc\.yandex\.ru|ym\(/i.test(html);
 const hasGA = /googletagmanager|gtag\(|google-analytics/i.test(html);
 const hasYaVer = /yandex-verification/i.test(html);
 const hasGoVer = /google-site-verification/i.test(html);
-report.meta.counters = { metrika: hasMetrika, ga: hasGA, yandexVerification: hasYaVer, googleVerification: hasGoVer };
+// Права в Вебмастере подтверждают и тегом в менеджере тегов — тогда в разметке нет
+// ничего, а панель работает. Поэтому менеджер ищем отдельно и не пишем «прав нет»,
+// когда он на странице стоит. Подробности — docs/12-PRAVA-VEBMASTER.md.
+const hasTagManager = /googletagmanager\.com\/gtm\.js|["']GTM-[A-Z0-9]+["']|tag-?manager\.yandex/i.test(html);
+report.meta.counters = { metrika: hasMetrika, ga: hasGA, yandexVerification: hasYaVer, googleVerification: hasGoVer, tagManager: hasTagManager };
 if (!hasMetrika) add('critical', 'Не установлена Яндекс.Метрика', 'Без неё нельзя понять, что делают посетители. Вебвизор записывает экран каждого — видно, где человек застревает и почему не отправил заявку.');
 else add('good', 'Яндекс.Метрика установлена', null);
-if (!hasYaVer) add('important', 'Нет мета-тега подтверждения Яндекс.Вебмастера', 'Возможно, права подтверждены файлом — проверить вручную. Без Вебмастера нельзя управлять индексацией.');
-else add('good', 'Права в Яндекс.Вебмастере подтверждены мета-тегом', null);
+if (hasYaVer) add('good', 'Права в Яндекс.Вебмастере подтверждены мета-тегом', null);
+else if (hasTagManager) add('minor', 'Мета-тега Яндекс.Вебмастера нет, но на странице есть менеджер тегов', 'Права могли подтвердить тегом в менеджере, файлом или DNS-записью — в коде такого не видно. Проверить в Вебмастере руками.');
+else add('important', 'Нет мета-тега подтверждения Яндекс.Вебмастера', 'Права могли подтвердить файлом, DNS-записью или тегом в менеджере тегов — проверить вручную. Без Вебмастера нельзя управлять индексацией.');
 if (!hasGoVer && !hasGA) add('minor', 'Нет признаков Google Search Console', 'Права могли быть подтверждены другим способом — проверить.');
 
 // 14. robots.txt
