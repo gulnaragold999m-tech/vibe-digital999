@@ -1,0 +1,313 @@
+/* Стили страниц услуг.
+
+   Отдельный файл, а не копия стилей главной. Причины две.
+   Первая: главная весит 250 КБ, потому что весь CSS лежит в ней; тащить его
+   целиком ради страницы с текстом — платить скоростью за то, что не нужно.
+   Вторая: файл кэшируется на неделю (см. server.js), поэтому на второй
+   странице услуг он уже не скачивается.
+
+   Токены и типографика те же, что на главной, — страницы должны выглядеть
+   одним сайтом. Меняете палитру на главной — поправьте и здесь. */
+
+:root {
+  --ink:       #020813;
+  --deep:      #050E1E;
+  --cyan:      #00F0FF;
+  --cyan-deep: #0B7A8C;
+  --blue:      #2D9CFF;
+  --white:     #E8F0FF;
+  --mist:      #6B7A9F;
+
+  --f-display: 'Cinzel', Georgia, serif;
+  --f-body:    'Manrope', 'Helvetica Neue', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Свечение фона. Один градиент вместо канваса с частицами: на странице
+   с длинным текстом анимация только мешает читать и греет батарею. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(60vw 50vh at 15% -10%, rgba(0, 240, 255, 0.10), transparent 70%),
+    radial-gradient(50vw 45vh at 95% 10%, rgba(45, 156, 255, 0.08), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 1.2rem; }
+
+a { color: var(--cyan); }
+
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 4px; }
+
+/* ── Шапка ─────────────────────────────────────────────── */
+.top {
+  position: relative;
+  z-index: 2;
+  border-bottom: 1px solid rgba(45, 156, 255, 0.18);
+  background: rgba(2, 8, 19, 0.9);
+  backdrop-filter: blur(12px);
+}
+.top-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0.9rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.top-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--f-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  color: var(--white);
+  text-decoration: none;
+}
+.top-logo img { width: 30px; height: 30px; }
+.top-tel {
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: var(--cyan);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* ── Хлебные крошки ────────────────────────────────────── */
+.crumbs { font-size: 0.75rem; color: var(--mist); padding: 1.2rem 0 0; letter-spacing: 0.04em; }
+.crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.crumbs li::after { content: '›'; margin-left: 0.4rem; color: rgba(107, 122, 159, 0.6); }
+.crumbs li:last-child::after { content: ''; }
+.crumbs a { color: var(--mist); text-decoration: none; }
+.crumbs a:hover { color: var(--cyan); }
+
+/* ── Первый экран ──────────────────────────────────────── */
+.hero { padding: 2.2rem 0 3rem; }
+.eyebrow {
+  font-size: 0.62rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--blue);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+h1 {
+  font-family: var(--f-display);
+  font-size: clamp(1.7rem, 5.2vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+  margin-bottom: 1.2rem;
+}
+.lead { font-size: 1.02rem; color: var(--white); max-width: 46rem; }
+.lead + .lead { margin-top: 0.9rem; }
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin: 1.8rem 0 0;
+  list-style: none;
+}
+.facts li {
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--cyan);
+  background: rgba(0, 240, 255, 0.05);
+}
+
+/* ── Кнопки ────────────────────────────────────────────── */
+.actions { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2rem; }
+.btn {
+  display: inline-block;
+  font-family: var(--f-body);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.95rem 1.9rem;
+  border: 2px solid rgba(0, 240, 255, 0.45);
+  border-radius: 8px;
+  color: var(--cyan);
+  background: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.btn:hover {
+  background: var(--cyan);
+  color: var(--ink);
+  box-shadow: 0 0 22px rgba(0, 240, 255, 0.45);
+  transform: translateY(-2px);
+}
+.btn-ghost { border-color: rgba(45, 156, 255, 0.4); color: var(--blue); }
+.btn-ghost:hover { background: var(--blue); color: var(--white); box-shadow: 0 0 22px rgba(45, 156, 255, 0.45); }
+
+/* ── Секции ────────────────────────────────────────────── */
+section { padding: 2.6rem 0; }
+h2 {
+  font-family: var(--f-display);
+  font-size: clamp(1.3rem, 3.6vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 1.4rem;
+}
+h3 {
+  font-family: var(--f-body);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--cyan);
+  margin-bottom: 0.5rem;
+}
+p { max-width: 46rem; }
+p + p, p + ul, ul + p, p + .card, .card + .card { margin-top: 1.1rem; }
+
+.card {
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem;
+  background: rgba(5, 14, 30, 0.55);
+}
+.card p { color: var(--mist); }
+
+.list { list-style: none; }
+.list li { position: relative; padding-left: 1.5rem; margin-bottom: 0.7rem; max-width: 46rem; }
+.list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.7);
+}
+
+/* ── Таблицы: цена, сравнение ──────────────────────────── */
+.table-scroll { overflow-x: auto; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 30rem;
+  font-size: 0.9rem;
+}
+caption { text-align: left; color: var(--mist); font-size: 0.82rem; padding-bottom: 0.6rem; }
+th, td { text-align: left; padding: 0.8rem 0.9rem; border-bottom: 1px solid rgba(45, 156, 255, 0.16); vertical-align: top; }
+th { color: var(--cyan); font-weight: 600; letter-spacing: 0.04em; }
+td strong { color: var(--white); }
+
+/* ── Шаги работы ───────────────────────────────────────── */
+.steps { list-style: none; counter-reset: step; }
+.steps li { counter-increment: step; position: relative; padding-left: 3rem; margin-bottom: 1.4rem; max-width: 46rem; }
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2.1rem;
+  height: 2.1rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: 50%;
+  font-family: var(--f-display);
+  color: var(--cyan);
+  font-size: 0.85rem;
+}
+
+/* ── Вопросы и ответы ──────────────────────────────────── */
+details {
+  border-bottom: 1px solid rgba(45, 156, 255, 0.16);
+  padding: 1rem 0;
+}
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--white);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after { content: '+'; color: var(--cyan); font-size: 1.2rem; line-height: 1; }
+details[open] summary::after { content: '−'; }
+details p { color: var(--mist); margin-top: 0.7rem; }
+
+/* ── Форма ─────────────────────────────────────────────── */
+.form-box {
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 16px;
+  padding: 1.6rem 1.5rem;
+  background: rgba(5, 14, 30, 0.7);
+}
+.field { margin-bottom: 1.1rem; }
+label { display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mist); margin-bottom: 0.45rem; }
+input, textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(2, 8, 19, 0.8);
+  border: 1px solid rgba(45, 156, 255, 0.3);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: var(--f-body);
+  font-size: 1rem;
+}
+input:focus, textarea:focus { border-color: var(--cyan); outline: none; box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15); }
+textarea { min-height: 6rem; resize: vertical; }
+
+.consent { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.78rem; color: var(--mist); text-transform: none; letter-spacing: 0; line-height: 1.6; }
+.consent input { width: 1.1rem; height: 1.1rem; flex: none; margin-top: 0.2rem; }
+
+.form-note { font-size: 0.8rem; color: var(--mist); margin-top: 0.9rem; }
+.form-msg { margin-top: 1rem; font-size: 0.9rem; min-height: 1.2rem; }
+.form-msg.ok { color: var(--cyan); }
+.form-msg.err { color: #FF8A8A; }
+
+/* ── Подвал ────────────────────────────────────────────── */
+footer {
+  border-top: 1px solid rgba(45, 156, 255, 0.18);
+  margin-top: 2rem;
+  padding: 2rem 0 3rem;
+  font-size: 0.85rem;
+  color: var(--mist);
+}
+footer a { color: var(--cyan); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+.foot-links { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+
+/* ── Уважение к настройкам пользователя ────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .btn:hover { transform: none; }
+}
+
+@media (min-width: 700px) {
+  .wrap { padding: 0 2rem; }
+  .top-inner { padding: 1rem 2rem; }
+  section { padding: 3.2rem 0; }
+}
