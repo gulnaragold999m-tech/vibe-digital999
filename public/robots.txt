@@ -2,5 +2,13 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
+# Метки не меняют содержимое: /?utm_source=whatsapp — та же главная страница.
+# Без этой строки робот считает каждый вариант отдельной страницей, плодит дубли
+# и тратит на них обходы. Метки приходят с /wa, /tg, /vk (см. docs/11-STORIES-METKI.md),
+# из Директа (yclid) и с карточки в Картах.
+# То же самое настраивается в Вебмастере: Индексирование → Настройка GET-параметров.
+# При расхождении побеждает правило, которое запрещает индексировать URL с параметром.
+Clean-param: utm_source&utm_medium&utm_campaign&utm_content&utm_term&yclid&ymclid&gclid&_openstat&from
+
 Sitemap: https://vibe-digital999.ru/sitemap.xml
 Host: vibe-digital999.ru

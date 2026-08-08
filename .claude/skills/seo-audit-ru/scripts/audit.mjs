@@ -257,7 +257,11 @@ else {
   else add('good', 'robots.txt на месте', null);
   if (!/Sitemap:/i.test(rt)) add('important', 'В robots.txt нет строки Sitemap', 'Добавить: Sitemap: ' + origin + '/sitemap.xml');
   else add('good', 'В robots.txt указан Sitemap', null);
-  if (!/Host:/i.test(rt)) add('minor', 'В robots.txt нет директивы Host', 'Полезна для Яндекса при выборе главного зеркала.');
+  // Директиву Host Яндекс не учитывает с 2018 года: главное зеркало определяется
+  // 301-редиректом. Раньше здесь стояла проверка на неё — это был ложный пункт
+  // в отчёте клиенту. Вместо неё смотрим дубли по GET-параметрам.
+  if (/Clean-param:/i.test(rt)) add('good', 'В robots.txt настроен Clean-param', null);
+  else add('minor', 'В robots.txt нет Clean-param', 'Ссылки с метками (utm, yclid), фильтры и сортировки дают адреса, которые робот считает отдельными страницами. Дубли конкурируют друг с другом в выдаче и съедают обходы. Настроить: Вебмастер → Индексирование → Настройка GET-параметров либо строка Clean-param в robots.txt.');
 }
 
 // 15. sitemap.xml
