@@ -56,6 +56,164 @@
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════
+     БОТ НА ВАШЕМ ДЕЛЕ
+
+     Объяснять бота словами бесполезно: «принимает заявки и отвечает
+     на вопросы» звучит одинаково у всех и ничего не обещает лично вам.
+     Человек должен увидеть СВОЙ бизнес — тогда он достраивает остальное
+     сам и приходит уже с вопросом «а у меня так же сделаете?».
+
+     Все шесть примеров лежат в разметке, а не подставляются скриптом:
+     без JavaScript видно первый, и поисковик читает все шесть.
+════════════════════════════════════════════ -->
+<section class="page-section niche" aria-label="Как бот работает в разных нишах">
+  <div class="section-eyebrow">Примеры</div>
+  <h2 class="section-title">Посмотрите на своём деле</h2>
+  <p class="section-desc">Выберите нишу — покажем разговор, заявку, которая придёт вам,
+    и что это снимает с ваших рук.</p>
+
+  <div class="niche-tabs" role="tablist" aria-label="Ниши">
+    <button type="button" class="niche-tab active" role="tab" aria-selected="true" aria-controls="n-cafe" id="t-cafe">Кафе и доставка</button>
+    <button type="button" class="niche-tab" role="tab" aria-selected="false" aria-controls="n-hotel" id="t-hotel">Гостиница</button>
+    <button type="button" class="niche-tab" role="tab" aria-selected="false" aria-controls="n-tour" id="t-tour">Джиппинг-туры</button>
+    <button type="button" class="niche-tab" role="tab" aria-selected="false" aria-controls="n-school" id="t-school">Автошкола</button>
+    <button type="button" class="niche-tab" role="tab" aria-selected="false" aria-controls="n-beauty" id="t-beauty">Салон красоты</button>
+    <button type="button" class="niche-tab" role="tab" aria-selected="false" aria-controls="n-repair" id="t-repair">Ремонт и стройка</button>
+  </div>
+
+  <div class="niche-panel" id="n-cafe" role="tabpanel" aria-labelledby="t-cafe">
+    <div class="niche-chat">
+      <p class="msg msg-user">Здравствуйте! Доставка до Иноземцево есть?</p>
+      <p class="msg msg-bot">Да, возим по Лермонтову и Иноземцево. Минимальный заказ 800 ₽, доставка около 45 минут. Заказ на сегодня или на дату?</p>
+      <p class="msg msg-user">Банкет на 12 человек в субботу</p>
+      <p class="msg msg-bot">Записал: банкет, 12 человек, суббота. Оставьте телефон — администратор перезвонит, согласует меню и условия предоплаты.</p>
+    </div>
+    <div class="niche-lead">
+      <div class="niche-lead-head">Вам придёт</div>
+      <div class="niche-lead-num">Заявка № 148</div>
+      <ul class="niche-lead-list">
+        <li><span>Что</span>Банкет, 12 человек</li>
+        <li><span>Когда</span>Суббота</li>
+        <li><span>Куда</span>Иноземцево</li>
+        <li><span>Контакт</span>+7 999 ***-**-21</li>
+      </ul>
+      <p class="niche-gain">Ночные сообщения не висят до утра: бот отвечает сразу и удерживает человека до звонка администратора.</p>
+    </div>
+  </div>
+
+  <div class="niche-panel" id="n-hotel" role="tabpanel" aria-labelledby="t-hotel" hidden>
+    <div class="niche-chat">
+      <p class="msg msg-user">Свободно на 12–14 августа?</p>
+      <p class="msg msg-bot">На эти даты свободны два номера: двухместный 4 200 ₽ и семейный 6 500 ₽ в сутки. Завтрак включён, заезд с 14:00. Сколько будет гостей?</p>
+      <p class="msg msg-user">Двое взрослых и ребёнок 6 лет</p>
+      <p class="msg msg-bot">Подойдёт семейный. Оставьте телефон — закреплю даты и пришлю реквизиты для предоплаты 30 %.</p>
+    </div>
+    <div class="niche-lead">
+      <div class="niche-lead-head">Вам придёт</div>
+      <div class="niche-lead-num">Заявка № 093</div>
+      <ul class="niche-lead-list">
+        <li><span>Что</span>Семейный номер</li>
+        <li><span>Когда</span>12–14 августа</li>
+        <li><span>Гости</span>2 взрослых + ребёнок</li>
+        <li><span>Контакт</span>+7 928 ***-**-05</li>
+      </ul>
+      <p class="niche-gain">Бронь не уходит к соседям, пока вы заняты на ресепшене. Свободные даты бот берёт из вашей таблицы.</p>
+    </div>
+  </div>
+
+  <div class="niche-panel" id="n-tour" role="tabpanel" aria-labelledby="t-tour" hidden>
+    <div class="niche-chat">
+      <p class="msg msg-user">Сколько стоит поездка к Эльбрусу?</p>
+      <p class="msg msg-bot">Джиппинг к Эльбрусу — 4 500 ₽ с человека, выезд в 7:00, возвращение к 19:00. В цене трансфер, гид и остановки на съёмку. Сколько вас будет?</p>
+      <p class="msg msg-user">Четверо, но мы в Кисловодске</p>
+      <p class="msg msg-bot">Из Кисловодска забираем, плюс 500 ₽ с группы. Оставьте телефон — закреплю места на дату и пришлю, как внести предоплату.</p>
+    </div>
+    <div class="niche-lead">
+      <div class="niche-lead-head">Вам придёт</div>
+      <div class="niche-lead-num">Заявка № 271</div>
+      <ul class="niche-lead-list">
+        <li><span>Что</span>Тур к Эльбрусу</li>
+        <li><span>Сколько</span>4 человека</li>
+        <li><span>Откуда</span>Кисловодск</li>
+        <li><span>Контакт</span>+7 961 ***-**-77</li>
+      </ul>
+      <p class="niche-gain">В сводке видно, из каких городов чаще едут. По ней решают, где давать рекламу, а где она не окупается.</p>
+    </div>
+  </div>
+
+  <div class="niche-panel" id="n-school" role="tabpanel" aria-labelledby="t-school" hidden>
+    <div class="niche-chat">
+      <p class="msg msg-user">Когда стартует новая группа?</p>
+      <p class="msg msg-bot">Ближайшая — 18 августа, занятия вечером три раза в неделю. Категория B — 32 000 ₽, можно частями. На какой филиал вам удобнее?</p>
+      <p class="msg msg-user">На Лермонтова</p>
+      <p class="msg msg-bot">Записал в группу от 18 августа, филиал на Лермонтова. Оставьте телефон — куратор свяжется, расскажет про документы и первый взнос.</p>
+    </div>
+    <div class="niche-lead">
+      <div class="niche-lead-head">Вам придёт</div>
+      <div class="niche-lead-num">Заявка № 052</div>
+      <ul class="niche-lead-list">
+        <li><span>Что</span>Категория B</li>
+        <li><span>Группа</span>от 18 августа</li>
+        <li><span>Филиал</span>на Лермонтова</li>
+        <li><span>Контакт</span>+7 918 ***-**-40</li>
+      </ul>
+      <p class="niche-gain">Заявки сразу разложены по филиалам: видно, какой недобирает группу, — и куда направить рекламу до старта.</p>
+    </div>
+  </div>
+
+  <div class="niche-panel" id="n-beauty" role="tabpanel" aria-labelledby="t-beauty" hidden>
+    <div class="niche-chat">
+      <p class="msg msg-user">Есть окошко на маникюр в выходные?</p>
+      <p class="msg msg-bot">В субботу свободно 11:00 и 16:30, в воскресенье 13:00. Маникюр с покрытием — 2 200 ₽, полтора часа. Какое время берём?</p>
+      <p class="msg msg-user">Субботу, 16:30</p>
+      <p class="msg msg-bot">Записала: суббота, 16:30, мастер Ирина. Оставьте телефон — пришлю напоминание за день до визита.</p>
+    </div>
+    <div class="niche-lead">
+      <div class="niche-lead-head">Вам придёт</div>
+      <div class="niche-lead-num">Заявка № 317</div>
+      <ul class="niche-lead-list">
+        <li><span>Что</span>Маникюр с покрытием</li>
+        <li><span>Когда</span>Суббота, 16:30</li>
+        <li><span>Мастер</span>Ирина</li>
+        <li><span>Контакт</span>+7 962 ***-**-13</li>
+      </ul>
+      <p class="niche-gain">Запись идёт ночью и в выходные, когда администратора нет на месте. Напоминание за день сокращает неявки.</p>
+    </div>
+  </div>
+
+  <div class="niche-panel" id="n-repair" role="tabpanel" aria-labelledby="t-repair" hidden>
+    <div class="niche-chat">
+      <p class="msg msg-user">Сколько стоит поклеить обои, комната 40 метров?</p>
+      <p class="msg msg-bot">Поклейка — от 350 ₽ за квадрат, на 40 м² выходит от 14 000 ₽. Точная сумма зависит от состояния стен. Обои уже куплены?</p>
+      <p class="msg msg-user">Нет, нужна помощь с выбором</p>
+      <p class="msg msg-bot">Подберём вместе. Оставьте телефон — мастер приедет на замер, замер бесплатный. После него называем точную цену и условия предоплаты.</p>
+    </div>
+    <div class="niche-lead">
+      <div class="niche-lead-head">Вам придёт</div>
+      <div class="niche-lead-num">Заявка № 088</div>
+      <ul class="niche-lead-list">
+        <li><span>Что</span>Поклейка обоев, ~40 м²</li>
+        <li><span>Статус</span>Нужен замер</li>
+        <li><span>Материалы</span>Не куплены</li>
+        <li><span>Контакт</span>+7 988 ***-**-64</li>
+      </ul>
+      <p class="niche-gain">Бот отсекает «просто спросить» и доводит до замера: бригада выезжает к тем, кто готов считать смету.</p>
+    </div>
+  </div>
+
+  <div class="prose niche-note">
+    <p><strong>Это не шаблоны из набора.</strong> Бота обучаем под ваш вид деятельности:
+      он говорит вашими ценами, вашими условиями и вашими словами. Объём работы зависит
+      от того, сколько у вас филиалов и направлений — один салон и сеть из пяти городов
+      это разные задачи, и считаются они по-разному.</p>
+    <p><strong>Докуда бот доводит.</strong> До момента, когда остаётся обсудить условия
+      и предоплату: он выясняет задачу, называет цены и сроки, снимает типовые
+      возражения и берёт контакт. Договор подписываете вы — и приходите к разговору
+      уже зная, что человеку нужно.</p>
+  </div>
+</section>
+
 <section class="page-section" aria-label="Зачем нужен бот">
   <div class="section-eyebrow">Задача</div>
   <h2 class="section-title">Что бот забирает у вас</h2>
@@ -83,6 +241,27 @@
     <li><strong>Разбивка по группам — если нужна.</strong> Город, услуга, источник рекламы: бот помечает заявку и собирает сводку. По ней видно, какое направление тянуть дальше и где реклама окупается.</li>
     <li><strong>Передача кнопок и меню.</strong> Оформление бота, команда /start, кнопки быстрых ответов.</li>
     <li><strong>Инструкция и доступы.</strong> Бот регистрируется на вас, токен ваш. Мы не держим его у себя.</li>
+  </ul>
+</section>
+
+<section class="page-section" aria-label="Как устроен наш бот">
+  <div class="section-eyebrow">Под капотом</div>
+  <h2 class="section-title">Что умеет бот, которого мы уже сделали</h2>
+  <p class="section-desc">Это не список возможностей «в принципе». Так работает Джарвис —
+    наш бот для студии полиграфии, и то же самое переносится на ваше дело.</p>
+  <ul class="incl">
+    <li><strong>Думает, а не допрашивает.</strong> Задаёт ровно один вопрос за сообщение — самый важный сейчас. Не вываливает анкету из десяти пунктов и не спрашивает того, что уже понял из ответа.</li>
+    <li><strong>Сужает выбор сам.</strong> У бота есть база знаний по вашим услугам, поэтому он не спросит про картон, когда речь о печати фото. Глупый вопрос в первом же сообщении — самый быстрый способ потерять человека.</li>
+    <li><strong>Даёт варианты кнопками.</strong> Где есть выбор — там кнопки, а не «напишите свой ответ». С телефона это разница между «нажал» и «передумал писать».</li>
+    <li><strong>Считает цену по вашим тарифам.</strong> Называет вилку «от и до» и срок — строго из того, что вы задали. Тарифа нет — бот честно говорит, что сумму назовёт менеджер, и не выдумывает цифру, за которую вам потом отвечать.</li>
+    <li><strong>Честно говорит, чего вы не делаете.</strong> Сразу и с альтернативой, а не «уточню и вернусь». Клиент, которому честно отказали, возвращается. Клиент, которому пообещали и не сделали, — нет.</li>
+    <li><strong>Принимает фото и файлы.</strong> Готовый макет, образец, скан старой открытки — человек присылает прямо в чат, а вам это уходит сразу, не дожидаясь конца разговора.</li>
+    <li><strong>Различает физлицо и организацию.</strong> Юрлицу нужны закрывающие документы, и бот выясняет это до, а не после счёта.</li>
+    <li><strong>Телефон подтверждается самим мессенджером.</strong> Бот принимает только собственный контакт отправителя — не набранный руками номер. Подделать нельзя, и в заявке не окажется телефона соседа.</li>
+    <li><strong>Спрашивает, где вам писать.</strong> Telegram, WhatsApp или ВКонтакте — выбор фиксируется в заявке, чтобы вы не гадали, куда отвечать.</li>
+    <li><strong>Напоминает сам.</strong> Если человек не дописал заявку, через 20 минут бот мягко возвращает его к разговору. Без этого половина брошенных диалогов не возвращается никогда.</li>
+    <li><strong>Присылает готовое ТЗ, а не переписку.</strong> Вам приходит «горячая заявка»: что нужно, в каком объёме, ориентировочная цена, тип плательщика, канал связи и ссылка, чтобы открыть диалог с клиентом одним нажатием.</li>
+    <li><strong>Работает и в личном аккаунте.</strong> Через Telegram Business бот подключается к вашей личной переписке — клиенту не нужно искать отдельного бота.</li>
   </ul>
 </section>
 
@@ -188,3 +367,179 @@
     </a>
   </div>
 </section>
+
+<style>
+  /* ── Примеры по нишам ────────────────────────────────────
+     Панели переключаются кнопками, но лежат в разметке все сразу:
+     без JavaScript виден первый пример, а поисковик читает все шесть.
+     Скрипт только прячет лишние — он не создаёт содержимое. */
+  .niche-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    max-width: 900px;
+    margin: 0 auto 2.2rem;
+  }
+  .niche-tab {
+    font-family: var(--f-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--mist);
+    background: transparent;
+    border: 1.5px solid rgba(45,156,255,0.24);
+    border-radius: 999px;
+    padding: 0.65rem 1.2rem;
+    min-height: 44px;
+    cursor: pointer;
+    transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  }
+  .niche-tab:hover { color: var(--white); border-color: rgba(45,156,255,0.5); }
+  .niche-tab:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+  .niche-tab.active {
+    color: var(--ink);
+    background: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 22px rgba(0,240,255,0.35);
+  }
+
+  .niche-panel {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 1.6rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  /* display:grid перебивает встроенное правило браузера для hidden,
+     поэтому пишем его явно — иначе спрятанные панели видны. */
+  .niche-panel[hidden] { display: none !important; }
+
+  .niche-chat {
+    padding: 1.4rem;
+    border-radius: 14px;
+    border: 1.5px solid rgba(45,156,255,0.2);
+    background: linear-gradient(180deg, rgba(5,14,30,0.9), rgba(2,8,19,0.9));
+  }
+  .msg {
+    max-width: 86%;
+    margin-bottom: 0.7rem;
+    padding: 0.7rem 0.95rem;
+    border-radius: 14px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+  }
+  .msg:last-child { margin-bottom: 0; }
+  /* Клиент справа, бот слева — как в любом мессенджере. Ломать эту
+     привычку ради оригинальности значит заставить читателя разбираться,
+     кто здесь кто, вместо того чтобы читать разговор. */
+  .msg-user {
+    margin-left: auto;
+    color: var(--white);
+    background: rgba(45,156,255,0.16);
+    border: 1px solid rgba(45,156,255,0.3);
+    border-bottom-right-radius: 4px;
+  }
+  .msg-bot {
+    color: var(--mist);
+    background: rgba(0,240,255,0.05);
+    border: 1px solid rgba(0,240,255,0.18);
+    border-bottom-left-radius: 4px;
+  }
+
+  .niche-lead {
+    padding: 1.4rem;
+    border-radius: 14px;
+    border: 1.5px solid rgba(0,240,255,0.28);
+    border-left: 2px solid var(--cyan);
+    background: rgba(5,14,30,0.85);
+  }
+  .niche-lead-head {
+    font-size: 0.58rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .niche-lead-num {
+    font-family: var(--f-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--white);
+    margin: 0.3rem 0 1rem;
+  }
+  .niche-lead-list { list-style: none; margin: 0 0 1rem; }
+  .niche-lead-list li {
+    display: flex;
+    gap: 0.7rem;
+    padding: 0.45rem 0;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--white);
+    border-bottom: 1px solid rgba(45,156,255,0.1);
+  }
+  .niche-lead-list li:last-child { border-bottom: 0; }
+  .niche-lead-list span {
+    flex: 0 0 86px;
+    color: var(--mist);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+  .niche-gain {
+    margin: 0;
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(45,156,255,0.16);
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: var(--mist);
+  }
+
+  .niche-note { margin-top: 2.4rem; }
+
+  @media (max-width: 860px) {
+    .niche-panel { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .niche-tab { font-size: 0.68rem; padding: 0.6rem 0.9rem; }
+    .niche-chat, .niche-lead { padding: 1.1rem; }
+    .msg { max-width: 94%; font-size: 0.79rem; }
+  }
+</style>
+
+<script>
+/* Переключение примеров. Скрипт ничего не рисует — он только показывает
+   одну из панелей, которые уже лежат в разметке. Если он не выполнится,
+   на странице останется первый пример, и раздел не превратится в пустоту. */
+(() => {
+  const tabs = [...document.querySelectorAll('.niche-tab')];
+  if (!tabs.length) return;
+
+  const show = (tab) => {
+    tabs.forEach(t => {
+      const on = t === tab;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', String(on));
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+  };
+
+  tabs.forEach(tab => tab.addEventListener('click', () => show(tab)));
+
+  /* Стрелками между кнопками — так требует раскладка вкладок: иначе
+     человек с клавиатуры проходит по шести кнопкам табом вместо двух
+     нажатий стрелкой. */
+  tabs.forEach((tab, i) => {
+    tab.addEventListener('keydown', e => {
+      const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!step) return;
+      e.preventDefault();
+      const next = tabs[(i + step + tabs.length) % tabs.length];
+      next.focus();
+      show(next);
+    });
+  });
+})();
+</script>
