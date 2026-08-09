@@ -1,0 +1,116 @@
+<header class="page-head">
+  <div class="section-eyebrow">Кейс · Автоматизация</div>
+  <h1 class="page-title">Telegram-бот для приёма заявок с сайта</h1>
+  <p class="page-lead">Связка «форма на сайте → бот → владелец в Telegram», которая
+    стоит на наших проектах и на этом сайте. Задача одна:
+    <strong>заявка должна дойти за секунды и не потеряться, даже если что-то откажет</strong>.</p>
+
+  <div class="page-facts">
+    <div class="page-fact">
+      <span class="page-fact-label">Что делали</span>
+      <span class="page-fact-value">Приём и доставку заявок</span>
+    </div>
+    <div class="page-fact">
+      <span class="page-fact-label">Каналы</span>
+      <span class="page-fact-value">Telegram, ВКонтакте, диск</span>
+    </div>
+    <div class="page-fact">
+      <span class="page-fact-label">Время доставки</span>
+      <span class="page-fact-value">Секунды</span>
+    </div>
+  </div>
+
+  <div class="page-actions">
+    <a href="#order-section" class="btn-action">Хочу так же</a>
+    <a href="/uslugi/telegram-bot/" class="btn-action btn-action-secondary">Об услуге и цене</a>
+  </div>
+</header>
+
+<section class="page-section" aria-label="Задача">
+  <div class="section-eyebrow">Задача</div>
+  <h2 class="section-title">Почему это вообще понадобилось</h2>
+  <div class="prose">
+    <p>Обычная форма на сайте отправляет заявку на почту. С почтой две беды:
+      письмо приходит в ящик, который смотрят раз в день, и половина таких
+      писем оседает в спаме — молча, без уведомления.</p>
+    <p>Человек, оставивший заявку, этого не знает. Он ждёт ответа сегодня,
+      не получает и к вечеру пишет конкуренту. Формально система работала:
+      письмо ушло. Фактически клиент потерян.</p>
+  </div>
+</section>
+
+<section class="page-section" aria-label="Как устроено">
+  <div class="section-eyebrow">Решение</div>
+  <h2 class="section-title">Как устроено</h2>
+  <ul class="incl">
+    <li><strong>Заявка идёт через свой сервер, а не напрямую в Telegram.</strong> Токен бота остаётся на сервере и в браузер не попадает: иначе его забрал бы любой, кто открыл исходный код страницы.</li>
+    <li><strong>Сначала запись на диск, потом отправка.</strong> Порядок важен: заявка сохраняется до того, как её попытаются доставить. Если мессенджер откажет, контакт всё равно у нас.</li>
+    <li><strong>Два независимых канала.</strong> Telegram и ВКонтакте уходят одновременно и ничего не знают друг о друге. Отказ одного не задерживает и не отменяет второй.</li>
+    <li><strong>Метка источника в каждом сообщении.</strong> Бот общий для нескольких проектов, и без метки заявки двух разных бизнесов смешались бы в одном чате.</li>
+    <li><strong>Защита от спама.</strong> Не больше пяти заявок с одного адреса за десять минут — этого хватает против простых ботов и не мешает живому человеку.</li>
+    <li><strong>Честный ответ человеку.</strong> Если заявка сохранена, но мессенджеры недоступны, посетитель видит «принято» — он всё сделал правильно, и ему ответят. Ошибку показываем, только если не сохранилось вообще ничего.</li>
+  </ul>
+</section>
+
+<section class="page-section" aria-label="Что это дало">
+  <div class="section-eyebrow">Проверка боем</div>
+  <h2 class="section-title">Зачем нужен был запасной путь</h2>
+  <div class="prose">
+    <p>Третьего августа 2026 года Telegram перестал принимать сообщения. На тот
+      момент он был единственным каналом, и каждая заявка исчезала бесследно:
+      человек видел ошибку и уходил, а мы не узнавали даже о том, что он приходил.</p>
+    <p>После этого схему переделали: сначала диск, потом рассылка в два канала,
+      и заявка считается принятой, если её взял хотя бы один. <strong>Потеря
+      доставки стала неудобством, а не потерей клиента.</strong></p>
+    <p>Это единственная причина, по которой в кейсе есть раздел про аварию.
+      Схема, которую не проверяли отказом, — это схема, про которую вы просто
+      ещё не знаете, как она ломается.</p>
+  </div>
+</section>
+
+<section class="page-section" aria-label="Частые вопросы">
+  <div class="section-eyebrow">Вопросы</div>
+  <h2 class="section-title">Частые вопросы по кейсу</h2>
+  <div class="faq-list">
+    <details class="faq-item">
+      <summary>Сколько стоит такая связка?</summary>
+      <p>Приём заявок с доставкой в Telegram входит в разработку сайта и отдельно не считается. Отдельный бот со сценарием разговора, ответами на вопросы и меню — от 40 000 ₽, подробности на странице <a href="/uslugi/telegram-bot/">Telegram-ботов</a>.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Заявки можно складывать в CRM или таблицу?</summary>
+      <p>Да, это то же самое плюс ещё один канал доставки. Куда именно — в Google Таблицу, в Битрикс24, в amoCRM — решаем по тому, где вы уже работаете. Смотрите <a href="/uslugi/avtomatizaciya/">автоматизацию</a>.</p>
+    </details>
+    <details class="faq-item">
+      <summary>А если у меня уже есть сайт на Tilda?</summary>
+      <p>Форму конструктора можно связать с ботом через вебхук — работает, но зависит от того, что разрешает конструктор. Сначала посмотрим сайт: иногда проще и дешевле переделать одну страницу, чем обходить ограничения.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Где хранятся заявки и это законно?</summary>
+      <p>На сервере в России, в файле с ограниченным доступом. Выгрузка закрыта ключом: внутри имена и телефоны живых людей, а открытый адрес с такими данными — это утечка персональных данных по 152-ФЗ, сделанная своими руками. Подробно про требования — в <a href="/blog/152-fz-dlya-sajta/">разборе 152-ФЗ</a>.</p>
+    </details>
+  </div>
+</section>
+
+{{ORDER_FORM}}
+
+<section class="page-section" aria-label="Смотрите также">
+  <h2 class="section-title">Смотрите также</h2>
+  <div class="related">
+    <a class="related-card" href="/portfolio/sayt-dlya-tipografii-granat/">
+      <span class="related-name">Кейс: сайт «Гранат»</span>
+      <span class="related-desc">Сайт студии полиграфии с приёмом заявок</span>
+    </a>
+    <a class="related-card" href="/uslugi/telegram-bot/">
+      <span class="related-name">Telegram-боты</span>
+      <span class="related-desc">Что входит в услугу, цена и срок</span>
+    </a>
+    <a class="related-card" href="/blog/skolko-stoit-telegram-bot/">
+      <span class="related-name">Сколько стоит бот</span>
+      <span class="related-desc">Из чего складывается цена и за что берут больше</span>
+    </a>
+    <a class="related-card" href="/portfolio/">
+      <span class="related-name">Все работы</span>
+      <span class="related-desc">Портфолио целиком</span>
+    </a>
+  </div>
+</section>

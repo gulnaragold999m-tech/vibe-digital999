@@ -1,0 +1,459 @@
+<!-- ═══════════════════════════════════════════════════════════
+     ФАЙЛ СОБРАН АВТОМАТИЧЕСКИ. Правки здесь пропадут.
+     Текст страницы:  src/pages/post-cena-bota.html
+     Шапка и подвал:  src/partials/
+     Адрес и мета:    src/pages.js
+     Пересобрать:     npm run build
+     ═══════════════════════════════════════════════════════════ -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Сколько стоит Telegram-бот и из чего складывается цена</title>
+  <!-- Метка сборки. Нужна, чтобы за секунду понять, какой файл сейчас
+       на сервере, и не гадать, залился новый или остался старый. -->
+  <meta name="build" content="2026-08-09-v8-multipage" />
+  <meta name="description" content="Разбор цены на разработку Telegram-бота: за что берут 5 тысяч, за что 40 и почему разница не в жадности. Что влияет на срок и на чём нельзя экономить." />
+  <meta name="robots" content="index, follow" />
+  <!-- Канонический адрес. В многостраничнике это не формальность: одна и та
+       же страница открывается и с /uslugi/, и с /uslugi (сервер добавляет
+       слэш), и со ссылкой ?utm_source=... из рекламы. Без canonical поиск
+       считает их разными страницами и делит вес между ними. -->
+  <link rel="canonical" href="https://vibe-digital999.ru/blog/skolko-stoit-telegram-bot/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:url" content="https://vibe-digital999.ru/blog/skolko-stoit-telegram-bot/" />
+  <meta property="og:title" content="Сколько стоит Telegram-бот и из чего складывается цена" />
+  <meta property="og:description" content="Разбор цены на разработку Telegram-бота: за что берут 5 тысяч, за что 40 и почему разница не в жадности. Что влияет на срок и на чём нельзя экономить." />
+  <meta property="og:image" content="https://vibe-digital999.ru/assets/logo-g.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Шрифты свои, не гугловские: наружу не уходит ни один запрос.
+       Обновлять: см. assets/fonts/download-list.txt -->
+  <link rel="preload" href="/assets/fonts/manrope-cyrillic-xn7gYHE41ni1AdIRggOxSuXd.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/manrope-latin-xn7gYHE41ni1AdIRggexSg.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <!-- Значок вкладки. Раньше здесь стояли favicon.ico и apple-touch-icon.png,
+       которых в проекте нет: каждая страница просила два несуществующих
+       файла и получала 404. Теперь вектор плюс запасная картинка для
+       браузеров постарше. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/logo-mark.png" sizes="256x256" />
+  <link rel="apple-touch-icon" href="/logo-mark.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0a0a" />
+
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://vibe-digital999.ru/blog/skolko-stoit-telegram-bot/#webpage",
+  "url": "https://vibe-digital999.ru/blog/skolko-stoit-telegram-bot/",
+  "name": "Сколько стоит Telegram-бот и из чего складывается цена",
+  "description": "Разбор цены на разработку Telegram-бота: за что берут 5 тысяч, за что 40 и почему разница не в жадности. Что влияет на срок и на чём нельзя экономить.",
+  "inLanguage": "ru-RU",
+  "isPartOf": {
+    "@id": "https://vibe-digital999.ru/#website"
+  },
+  "about": {
+    "@id": "https://vibe-digital999.ru/#organization"
+  },
+  "author": {
+    "@id": "https://vibe-digital999.ru/o-nas/#founder"
+  },
+  "publisher": {
+    "@id": "https://vibe-digital999.ru/#organization"
+  },
+  "datePublished": "2026-08-09",
+  "dateModified": "2026-08-09"
+}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Главная",
+      "item": "https://vibe-digital999.ru/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Блог",
+      "item": "https://vibe-digital999.ru/blog/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Сколько стоит Telegram-бот",
+      "item": "https://vibe-digital999.ru/blog/skolko-stoit-telegram-bot/"
+    }
+  ]
+}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Сколько стоит содержать бота в месяц?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Сценарный бот на своём коде — только хостинг, и если у вас уже есть сайт, бот живёт там же без отдельной платы. У бота с нейросетью добавляются платные обращения к модели: для небольшого бизнеса это обычно сотни рублей в месяц, но точную цифру нужно считать под задачу."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Сколько делается бот?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Простой — от 7 дней, с интеграциями — от трёх недель. Больше всего времени уходит не на код, а на согласование сценария: что бот спрашивает и что отвечает."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Может ли бот сам писать клиентам первым?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Нет. Telegram разрешает боту отвечать только тому, кто сам начал с ним диалог. Рассылки по номерам телефонов или никам запрещены — это ограничение платформы, обойти его нельзя."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Можно начать с дешёвого и потом улучшить?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Можно, если дешёвый вариант написан на своём коде. Бота из конструктора «улучшить» обычно нельзя — его переписывают заново, и деньги за первую версию пропадают."
+      }
+    }
+  ]
+}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "@id": "https://vibe-digital999.ru/blog/skolko-stoit-telegram-bot/#article",
+  "headline": "Сколько стоит Telegram-бот и из чего складывается цена",
+  "description": "Разбор цены на разработку Telegram-бота: за что берут 5 тысяч, за что 40 и почему разница не в жадности. Что влияет на срок и на чём нельзя экономить.",
+  "url": "https://vibe-digital999.ru/blog/skolko-stoit-telegram-bot/",
+  "inLanguage": "ru-RU",
+  "mainEntityOfPage": {
+    "@id": "https://vibe-digital999.ru/blog/skolko-stoit-telegram-bot/#webpage"
+  },
+  "author": {
+    "@id": "https://vibe-digital999.ru/o-nas/#founder"
+  },
+  "publisher": {
+    "@id": "https://vibe-digital999.ru/#organization"
+  },
+  "datePublished": "2026-08-09",
+  "dateModified": "2026-08-09"
+}</script>
+</head>
+<body>
+<!-- Шапка. Ссылки ведут на настоящие страницы, а не на якоря: якорь
+     работает только внутри одной страницы, и на многостраничнике «Услуги»
+     с любой внутренней страницы вели бы в никуда. -->
+<div class="topbar">
+  <nav role="navigation" aria-label="Основное меню">
+    <a href="/" class="nav-logo">Vibe Digital 999</a>
+
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/uslugi/">Услуги</a></li>
+      <li><a href="/portfolio/">Портфолио</a></li>
+      <li><a href="/o-nas/">О студии</a></li>
+      <li><a href="/kontakty/">Контакты</a></li>
+      <li><a href="/blog/" class="is-section">Блог</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a href="tel:+79992449999" class="nav-phone" data-goal="click_tel">+7 999 244 99 99</a>
+      <a href="#order-section" class="nav-cta">Заказать</a>
+      <button type="button" class="nav-burger" aria-expanded="false"
+              aria-controls="nav-links" aria-label="Меню">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<main class="page-main">
+
+<nav class="crumbs" aria-label="Вы находитесь здесь">
+  <ol>
+    <li><a href="/">Главная</a></li>
+    <li><a href="/blog/">Блог</a></li>
+    <li><span aria-current="page">Сколько стоит Telegram-бот</span></li>
+  </ol>
+</nav>
+<header class="page-head">
+  <div class="section-eyebrow">Блог · Цены</div>
+  <h1 class="page-title">Сколько стоит Telegram-бот и из чего складывается цена</h1>
+  <p class="page-lead">На бирже фрилансеров бот стоит 5 000 ₽, в студии — 40 000 ₽,
+    у агентства — 150 000 ₽. <strong>Это не одна и та же работа с разной наценкой</strong>.
+    Разбираем, что именно вы покупаете за каждую из этих сумм.</p>
+</header>
+
+<section class="page-section" aria-label="Что влияет на цену">
+  <div class="section-eyebrow">Из чего складывается</div>
+  <h2 class="section-title">Четыре вещи, которые двигают цену</h2>
+  <div class="prose">
+    <h3>1. Сценарий разговора</h3>
+    <p>Самая недооценённая часть. Бот, который задаёт три вопроса подряд, пишется
+      за вечер. Бот, который <strong>понимает, что человек ответил не по плану</strong>,
+      и не роняет разговор, — это уже продуманная схема: что делать при пустом ответе,
+      при ответе не на тот вопрос, при возврате на шаг назад.</p>
+    <p>Дешёвые боты ломаются именно здесь: работают, пока с ними разговаривают
+      правильно.</p>
+
+    <h3>2. Куда уходит заявка</h3>
+    <p>«Присылать сообщение в Telegram» и «класть заявку в CRM, дублировать
+      в мессенджер и сохранять на сервер» — разница в несколько раз по трудоёмкости.
+      И разница между «заявка иногда теряется» и «не теряется никогда».</p>
+
+    <h3>3. Кому принадлежит бот</h3>
+    <p>Бот, собранный в конструкторе ботов, живёт на подписке: перестали платить —
+      бот замолчал. Бот на своём коде работает на вашем сервере и стоит ровно столько,
+      сколько стоит хостинг. На короткой дистанции конструктор дешевле, на длинной —
+      нет.</p>
+
+    <h3>4. Нейросеть внутри или нет</h3>
+    <p>Сценарный бот отвечает по заранее написанному пути. ИИ-агент понимает вопрос
+      словами и отвечает по вашей базе знаний — это дороже в разработке и требует
+      платы за обращения к модели. <a href="/blog/ii-agent-ili-chat-bot/">Разница
+      подробно</a>.</p>
+  </div>
+</section>
+
+<section class="page-section" aria-label="За что берут разные суммы">
+  <div class="section-eyebrow">Ориентиры</div>
+  <h2 class="section-title">Что стоит за каждой суммой</h2>
+  <ul class="incl">
+    <li><strong>5 000 – 15 000 ₽.</strong> Бот из конструктора или простой скрипт: пара вопросов, ответ в личные сообщения. Работает, пока всё идёт по плану. Подходит, чтобы проверить идею.</li>
+    <li><strong>30 000 – 50 000 ₽.</strong> Свой код, продуманный сценарий, дублирование заявок, сохранение на сервер, меню и кнопки. Бот переживает сбой мессенджера и остаётся вашим. Наша <a href="/uslugi/telegram-bot/">цена начинается здесь</a>.</li>
+    <li><strong>От 100 000 ₽.</strong> Интеграция с CRM и складом, оплата внутри бота, личный кабинет, роли и права, нагрузка в тысячи пользователей. Это уже не бот, а сервис с интерфейсом в мессенджере.</li>
+  </ul>
+</section>
+
+<section class="page-section" aria-label="На чём нельзя экономить">
+  <div class="section-eyebrow">Важно</div>
+  <h2 class="section-title">На чём экономить нельзя</h2>
+  <div class="prose">
+    <p><strong>На хранении заявок.</strong> Если бот только пересылает сообщение
+      и нигде его не сохраняет, любой сбой мессенджера — это потерянный клиент,
+      о котором вы даже не узнаете. У нас это стоило одного дня заявок в августе
+      2026 года — <a href="/portfolio/telegram-bot-dlya-zayavok/">как чинили</a>.</p>
+    <p><strong>На своём токене.</strong> Бот должен быть зарегистрирован на вас,
+      а токен — лежать у вас. Иначе при смене подрядчика бот остаётся у него.</p>
+    <p><strong>На документах.</strong> Бот собирает имя и телефон — значит, работают
+      те же правила, что и для формы на сайте: согласие, политика, уведомление
+      в Роскомнадзор. <a href="/blog/152-fz-dlya-sajta/">Что именно нужно</a>.</p>
+  </div>
+</section>
+
+<section class="page-section" aria-label="Частые вопросы">
+  <div class="section-eyebrow">Вопросы</div>
+  <h2 class="section-title">Частые вопросы</h2>
+  <div class="faq-list">
+    <details class="faq-item">
+      <summary>Сколько стоит содержать бота в месяц?</summary>
+      <p>Сценарный бот на своём коде — только хостинг, и если у вас уже есть сайт, бот живёт там же без отдельной платы. У бота с нейросетью добавляются платные обращения к модели: для небольшого бизнеса это обычно сотни рублей в месяц, но точную цифру нужно считать под задачу.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Сколько делается бот?</summary>
+      <p>Простой — от 7 дней, с интеграциями — от трёх недель. Больше всего времени уходит не на код, а на согласование сценария: что бот спрашивает и что отвечает.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Может ли бот сам писать клиентам первым?</summary>
+      <p>Нет. Telegram разрешает боту отвечать только тому, кто сам начал с ним диалог. Рассылки по номерам телефонов или никам запрещены — это ограничение платформы, обойти его нельзя.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Можно начать с дешёвого и потом улучшить?</summary>
+      <p>Можно, если дешёвый вариант написан на своём коде. Бота из конструктора «улучшить» обычно нельзя — его переписывают заново, и деньги за первую версию пропадают.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ЗАЯВКА
+
+     Одна форма на страницу и один способ её отправить. Всплывающего окна
+     здесь нет намеренно: на внутренней странице форма и так в одном экране
+     от текста, а второе место, где можно оставить контакт, — это второе
+     место, где что-то может сломаться.
+
+     Услуга подставлена заранее, из адреса страницы: человек пришёл читать
+     про боты — в заявке будет написано «Telegram-бот», и переспрашивать
+     не придётся.
+════════════════════════════════════════════ -->
+<section id="order-section" class="page-section" aria-label="Форма заявки">
+  <div class="order-box">
+    <div class="order-eyebrow">Начните работать</div>
+    <h2 class="order-title">Оставить заявку</h2>
+    <p class="order-sub">Расскажите о задаче. Ответим в течение часа в рабочее время и назовём цену со сроком.</p>
+
+    <form class="order-form" data-lead-form novalidate>
+      <div class="form-group">
+        <label for="f-name">Ваше имя</label>
+        <input type="text" id="f-name" name="name" placeholder="Как вас зовут?" autocomplete="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="f-contact">Телефон или Telegram</label>
+        <input type="text" id="f-contact" name="contact" placeholder="@yourname или +7..." autocomplete="tel" required />
+      </div>
+
+      <div class="form-group">
+        <label for="f-comment">Опишите задачу</label>
+        <textarea id="f-comment" name="comment" rows="4" placeholder="Что нужно сделать и к какому сроку"></textarea>
+      </div>
+
+      <input type="hidden" id="f-service" name="service" value="Telegram-бот" />
+
+      <!-- Две галочки, а не одна. Согласие на обработку данных и ознакомление
+           с политикой — разные действия, и закон разводит их намеренно: одна
+           общая галочка «согласен со всем» не считается конкретным и
+           информированным согласием. Обе пустые: отметить их должен человек,
+           это его действие, а не состояние по умолчанию. -->
+      <label class="consent">
+        <input type="checkbox" id="f-consent" data-consent required />
+        <span>Даю <a href="/privacy.html#consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> — имени и контакта, чтобы со мной связались по этой заявке</span>
+      </label>
+
+      <label class="consent">
+        <input type="checkbox" id="f-policy" data-policy required />
+        <span>Ознакомлен с <a href="/privacy.html" target="_blank" rel="noopener">политикой конфиденциальности</a></span>
+      </label>
+
+      <p class="form-error" role="alert" hidden></p>
+
+      <button type="submit" class="btn-submit">
+        <span class="btn-text">Отправить заявку</span>
+        <span class="btn-loader"></span>
+      </button>
+    </form>
+
+    <!-- Сообщение об успехе стоит СНАРУЖИ формы, а не внутри неё. После
+         отправки форма прячется целиком — вместе со всем, что лежит внутри.
+         Спрятанное сообщение об успехе человек не увидит, решит, что заявка
+         не ушла, и отправит её второй раз или уйдёт. -->
+    <div class="form-success">
+      <span class="success-icon">✦</span>
+      <div class="success-text">Заявка принята!</div>
+      <div class="success-sub">Ответим в течение часа в рабочее время.</div>
+    </div>
+  </div>
+</section>
+
+
+<section class="page-section" aria-label="Читайте также">
+  <h2 class="section-title">Читайте также</h2>
+  <div class="related">
+    <a class="related-card" href="/uslugi/telegram-bot/">
+      <span class="related-name">Разработка Telegram-ботов</span>
+      <span class="related-desc">Что входит в услугу, цена и срок</span>
+    </a>
+    <a class="related-card" href="/blog/ii-agent-ili-chat-bot/">
+      <span class="related-name">ИИ-агент или чат-бот</span>
+      <span class="related-desc">Когда нейросеть нужна, а когда это лишние деньги</span>
+    </a>
+    <a class="related-card" href="/portfolio/telegram-bot-dlya-zayavok/">
+      <span class="related-name">Кейс: бот для заявок</span>
+      <span class="related-desc">Как устроена доставка, которая не теряет заявки</span>
+    </a>
+    <a class="related-card" href="/blog/">
+      <span class="related-name">Все статьи</span>
+      <span class="related-desc">Разборы без воды</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-brand">Vibe Digital 999</div>
+      <p class="footer-tagline">Чистый код, автоматизация и ИИ-агенты. Пишем так, чтобы переписывать не пришлось.</p>
+    </div>
+
+    <!-- Список услуг в подвале — не украшение. Это единственные ссылки,
+         которые есть на КАЖДОЙ странице сайта: и человек, и робот попадают
+         в любой раздел за один переход, откуда бы ни начали. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Услуги</h3>
+      <a class="footer-link" href="/uslugi/razrabotka-sajta/">Разработка сайтов</a>
+      <a class="footer-link" href="/uslugi/telegram-bot/">Telegram-боты</a>
+      <a class="footer-link" href="/uslugi/ai-agent/">ИИ-агенты</a>
+      <a class="footer-link" href="/uslugi/avtomatizaciya/">Автоматизация</a>
+      <a class="footer-link" href="/vibecoding/">Вайбкодинг</a>
+      <a class="footer-link" href="/uslugi/prilozheniya/">Приложения</a>
+      <a class="footer-link" href="/uslugi/seo-audit-152fz/">SEO-аудит</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Разделы</h3>
+      <a class="footer-link" href="/uslugi/">Все услуги</a>
+      <a class="footer-link" href="/portfolio/">Портфолио</a>
+      <a class="footer-link" href="/blog/">Блог</a>
+      <a class="footer-link" href="/o-nas/">О студии</a>
+      <a class="footer-link" href="/pyatigorsk/">Пятигорск</a>
+      <a class="footer-link" href="/essentuki/">Ессентуки</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Связаться</h3>
+      <a class="footer-link" href="tel:+79992449999" data-goal="click_tel">+7 999 244 99 99</a>
+      <a class="footer-link" href="mailto:gulnaravibecoder999@yandex.ru" data-goal="click_email">gulnaravibecoder999@yandex.ru</a>
+      <a class="footer-link" href="https://wa.me/79992449999" target="_blank" rel="noopener" data-goal="click_wa">WhatsApp</a>
+      <a class="footer-link" href="https://t.me/GranatJarvis_bot" target="_blank" rel="noopener" data-goal="click_tg">Telegram</a>
+      <a class="footer-link" href="https://vk.ru/club240607590" target="_blank" rel="noopener" data-goal="click_vk">ВКонтакте</a>
+      <a class="footer-link" href="/kontakty/">Все контакты</a>
+      <a class="footer-link" href="/#pay">Оплатить по СБП</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Реквизиты</h3>
+      <p class="footer-req">ИП Мелконян Гульнара Рифкатовна</p>
+      <p class="footer-req">ИНН 490600091128</p>
+      <p class="footer-req">ОГРНИП 326490000005218</p>
+      <p class="footer-req">Ставропольский край, г. Лермонтов, ул. Нагорная, д. 2/1</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Vibe Digital 999</span>
+    <a class="footer-link" href="/privacy.html">Политика конфиденциальности</a>
+    <a class="footer-link" href="/privacy.html#consent">Согласие на обработку персональных данных</a>
+    <a class="footer-link" href="/privacy.html#cookies">Использование cookie</a>
+  </div>
+</footer>
+
+<!-- Плашка о куках. На одностраничнике она жила только на главной, и этого
+     хватало: другого входа на сайт не было. Теперь человек приходит из поиска
+     прямо на страницу услуги и главную может не открыть вовсе — значит,
+     уведомление должно быть и здесь. Выбор хранится в localStorage и общий
+     для всех страниц: ответил один раз — больше не спросим. -->
+<div class="cookie-bar" id="cookie-bar" role="dialog" aria-live="polite"
+     aria-label="Согласие на обработку данных" hidden>
+  <p class="cookie-text">
+    Яндекс.Метрика считает посещения сайта обезличенно. Запись экрана и карта кликов
+    включаются только с вашего согласия. Подробнее — в
+    <a href="/privacy.html#cookies">разделе о cookie</a>.
+  </p>
+  <div class="cookie-actions">
+    <button type="button" class="cookie-btn cookie-yes" id="cookie-yes">Принять</button>
+    <button type="button" class="cookie-btn cookie-no" id="cookie-no">Только необходимые</button>
+  </div>
+</div>
+
+<script src="/assets/js/site.js" defer></script>
+<!-- Пиксель для посетителей без JavaScript: считает заход обезличенно,
+     без cookie и без записи экрана. Заодно это то, что ищут роботы Яндекса
+     при проверке «установлен ли счётчик» — скрипт они не выполняют,
+     а картинку видят. -->
+<noscript><div><img src="https://mc.yandex.ru/watch/110416869" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+</body>
+</html>

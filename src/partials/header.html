@@ -1,0 +1,29 @@
+<!-- Шапка. Ссылки ведут на настоящие страницы, а не на якоря: якорь
+     работает только внутри одной страницы, и на многостраничнике «Услуги»
+     с любой внутренней страницы вели бы в никуда. -->
+<div class="topbar">
+  <nav role="navigation" aria-label="Основное меню">
+    <a href="/" class="nav-logo">Vibe Digital 999</a>
+
+    <ul class="nav-links" id="nav-links">
+{{NAV_LINKS}}
+    </ul>
+
+    <div class="nav-actions">
+      <a href="tel:+79992449999" class="nav-phone" data-goal="click_tel">+7 999 244 99 99</a>
+      <a href="{{CTA_HREF}}" class="nav-cta">Заказать</a>
+      <button type="button" class="nav-burger" aria-expanded="false"
+              aria-controls="nav-links" aria-label="Меню">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<main class="page-main">
+
+<nav class="crumbs" aria-label="Вы находитесь здесь">
+  <ol>
+{{CRUMBS}}
+  </ol>
+</nav>

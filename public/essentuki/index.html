@@ -1,0 +1,460 @@
+<!-- ═══════════════════════════════════════════════════════════
+     ФАЙЛ СОБРАН АВТОМАТИЧЕСКИ. Правки здесь пропадут.
+     Текст страницы:  src/pages/essentuki.html
+     Шапка и подвал:  src/partials/
+     Адрес и мета:    src/pages.js
+     Пересобрать:     npm run build
+     ═══════════════════════════════════════════════════════════ -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Разработка сайтов и ботов в Ессентуках</title>
+  <!-- Метка сборки. Нужна, чтобы за секунду понять, какой файл сейчас
+       на сервере, и не гадать, залился новый или остался старый. -->
+  <meta name="build" content="2026-08-09-v8-multipage" />
+  <meta name="description" content="Сайты и Telegram-боты для бизнеса Ессентуков: запись клиентов, приём заявок, автоматизация. Работаем удалённо, встреча в офисе в Лермонтове по договорённости." />
+  <meta name="robots" content="index, follow" />
+  <!-- Канонический адрес. В многостраничнике это не формальность: одна и та
+       же страница открывается и с /uslugi/, и с /uslugi (сервер добавляет
+       слэш), и со ссылкой ?utm_source=... из рекламы. Без canonical поиск
+       считает их разными страницами и делит вес между ними. -->
+  <link rel="canonical" href="https://vibe-digital999.ru/essentuki/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:url" content="https://vibe-digital999.ru/essentuki/" />
+  <meta property="og:title" content="Разработка сайтов и ботов в Ессентуках" />
+  <meta property="og:description" content="Сайты и Telegram-боты для бизнеса Ессентуков: запись клиентов, приём заявок, автоматизация. Работаем удалённо, встреча в офисе в Лермонтове по договорённости." />
+  <meta property="og:image" content="https://vibe-digital999.ru/assets/logo-g.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Шрифты свои, не гугловские: наружу не уходит ни один запрос.
+       Обновлять: см. assets/fonts/download-list.txt -->
+  <link rel="preload" href="/assets/fonts/manrope-cyrillic-xn7gYHE41ni1AdIRggOxSuXd.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/manrope-latin-xn7gYHE41ni1AdIRggexSg.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <!-- Значок вкладки. Раньше здесь стояли favicon.ico и apple-touch-icon.png,
+       которых в проекте нет: каждая страница просила два несуществующих
+       файла и получала 404. Теперь вектор плюс запасная картинка для
+       браузеров постарше. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/logo-mark.png" sizes="256x256" />
+  <link rel="apple-touch-icon" href="/logo-mark.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0a0a" />
+
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://vibe-digital999.ru/essentuki/#webpage",
+  "url": "https://vibe-digital999.ru/essentuki/",
+  "name": "Разработка сайтов и ботов в Ессентуках",
+  "description": "Сайты и Telegram-боты для бизнеса Ессентуков: запись клиентов, приём заявок, автоматизация. Работаем удалённо, встреча в офисе в Лермонтове по договорённости.",
+  "inLanguage": "ru-RU",
+  "isPartOf": {
+    "@id": "https://vibe-digital999.ru/#website"
+  },
+  "about": {
+    "@id": "https://vibe-digital999.ru/#organization"
+  },
+  "author": {
+    "@id": "https://vibe-digital999.ru/o-nas/#founder"
+  },
+  "publisher": {
+    "@id": "https://vibe-digital999.ru/#organization"
+  },
+  "datePublished": "2026-08-09",
+  "dateModified": "2026-08-09"
+}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Главная",
+      "item": "https://vibe-digital999.ru/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Ессентуки",
+      "item": "https://vibe-digital999.ru/essentuki/"
+    }
+  ]
+}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Сколько стоит сайт для небольшой гостиницы?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "От 35 000 ₽ за одностраничный сайт с описанием, ценами, фотографиями и формой. Если нужны отдельные страницы под номера и услуги — от 90 000 ₽. Точную цену считаем после разговора, дальше она зафиксирована в смете."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Можно бота, который записывает клиентов?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Да. Бот спрашивает услугу, дату и контакт, а вам присылает готовую запись. Если нужна связь с вашей системой учёта или календарём — это ещё один шаг, обсуждаем на смете. Подробно на странице Telegram-ботов."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Кто будет обновлять сайт потом?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Мы — обычно в тот же день, по сообщению. Если хотите менять содержимое сами, на этапе сметы закладываем админку; это дороже, поэтому решаем до начала, а не после."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Мы далеко, как контролировать работу?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "По ссылке на рабочую версию: она открыта с первого дня и обновляется по ходу. Смотреть можно с телефона в любой момент, писать замечания — тогда же. Это удобнее очных показов, где решение принимают за один вечер."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Нужны ли документы по 152-ФЗ, если на сайте просто форма?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Да. Форма, которая собирает имя и телефон, делает вас оператором персональных данных: нужны политика, отдельное согласие и уведомление в Роскомнадзор. Мы оформляем это сразу при разработке. Разбор — в статье про 152-ФЗ для сайта."
+      }
+    }
+  ]
+}</script>
+</head>
+<body>
+<!-- Шапка. Ссылки ведут на настоящие страницы, а не на якоря: якорь
+     работает только внутри одной страницы, и на многостраничнике «Услуги»
+     с любой внутренней страницы вели бы в никуда. -->
+<div class="topbar">
+  <nav role="navigation" aria-label="Основное меню">
+    <a href="/" class="nav-logo">Vibe Digital 999</a>
+
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/uslugi/">Услуги</a></li>
+      <li><a href="/portfolio/">Портфолио</a></li>
+      <li><a href="/o-nas/">О студии</a></li>
+      <li><a href="/kontakty/">Контакты</a></li>
+      <li><a href="/blog/">Блог</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a href="tel:+79992449999" class="nav-phone" data-goal="click_tel">+7 999 244 99 99</a>
+      <a href="#order-section" class="nav-cta">Заказать</a>
+      <button type="button" class="nav-burger" aria-expanded="false"
+              aria-controls="nav-links" aria-label="Меню">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<main class="page-main">
+
+<nav class="crumbs" aria-label="Вы находитесь здесь">
+  <ol>
+    <li><a href="/">Главная</a></li>
+    <li><span aria-current="page">Ессентуки</span></li>
+  </ol>
+</nav>
+<header class="page-head">
+  <div class="section-eyebrow">Ессентуки</div>
+  <h1 class="page-title">Сайты и Telegram-боты для бизнеса в Ессентуках</h1>
+  <p class="page-lead">Работаем с заказчиками из Ессентуков <strong>удалённо: созвон,
+    промежуточные версии по ссылке, передача исходников в конце</strong>. Чаще всего
+    здесь нужен не просто сайт, а запись клиентов и приём заявок без телефонных
+    очередей — гостиницам, санаториям, частным кабинетам и малому бизнесу услуг.</p>
+
+  <div class="page-facts">
+    <div class="page-fact">
+      <span class="page-fact-label">Сайт</span>
+      <span class="page-fact-value">От 35 000 ₽</span>
+    </div>
+    <div class="page-fact">
+      <span class="page-fact-label">Бот для записи</span>
+      <span class="page-fact-value">От 40 000 ₽</span>
+    </div>
+    <div class="page-fact">
+      <span class="page-fact-label">Формат</span>
+      <span class="page-fact-value">Удалённо, созвоны</span>
+    </div>
+  </div>
+
+  <div class="page-actions">
+    <a href="#order-section" class="btn-action">Получить расчёт проекта в Ессентуках</a>
+    <a href="https://wa.me/79992449999" class="btn-action btn-action-secondary" target="_blank" rel="noopener" data-goal="click_wa">Написать в WhatsApp</a>
+  </div>
+</header>
+
+<section class="page-section" aria-label="Как проходит работа">
+  <div class="section-eyebrow">Как это выглядит</div>
+  <h2 class="section-title">Работа удалённо — без потери качества</h2>
+  <div class="prose">
+    <p><strong>Созвон на 20 минут.</strong> Разбираем задачу: что должно происходить
+      в бизнесе после запуска, а не какие блоки нарисовать. Если задача решается
+      проще и дешевле, чем вы думали, скажем об этом сразу.</p>
+    <p><strong>Смета письменно.</strong> Состав работ, цена, срок. Дальше цена
+      не растёт, если не растёт задача.</p>
+    <p><strong>Промежуточные версии по ссылке.</strong> Вы открываете рабочую версию
+      с телефона в любой момент и говорите, что поправить, — а не ждёте показа
+      в конце, когда переделывать поздно.</p>
+    <p>Встретиться очно тоже можно — офис в Лермонтове, по предварительной
+      договорённости. Но специально приезжать смысла нет: весь процесс всё равно
+      идёт онлайн, и на результат формат встречи не влияет.</p>
+  </div>
+</section>
+
+<section class="page-section" aria-label="Что чаще заказывают">
+  <div class="section-eyebrow">Спрос</div>
+  <h2 class="section-title">Что чаще нужно бизнесу Ессентуков</h2>
+  <ul class="incl">
+    <li><strong>Запись клиентов без звонков.</strong> Санаторно-курортный город живёт на потоке гостей, и человек чаще пишет, чем звонит. Бот принимает запись круглосуточно, включая часы, когда администратор не на месте. <a href="/uslugi/telegram-bot/">Как устроен бот</a>.</li>
+    <li><strong>Сайт для гостиницы, кабинета или студии услуг.</strong> Цены, условия, что входит и как добраться — то, что спрашивают в переписке по десять раз в день. Страница отвечает за вас. <a href="/uslugi/razrabotka-sajta/">Об услуге</a>.</li>
+    <li><strong>Заявки в одном месте.</strong> Сообщения приходят в WhatsApp, ВКонтакте и на почту одновременно, и часть теряется. Сводим в один список. <a href="/uslugi/avtomatizaciya/">Про автоматизацию</a>.</li>
+    <li><strong>Сопровождение после запуска.</strong> Поменять цены, добавить услугу, обновить фотографии — обычно в тот же день. Отдельного абонемента не навязываем: платите за то, что понадобилось.</li>
+  </ul>
+</section>
+
+<section class="page-section" aria-label="Примеры работ">
+  <div class="section-eyebrow">Что уже сделано</div>
+  <h2 class="section-title">Примеры работ</h2>
+  <div class="prose">
+    <p>Скажем прямо: <strong>кейсов из Ессентуков у нас пока нет</strong> — студия
+      работает с августа 2026 года. Писать «наши клиенты из Ессентуков» ради этой
+      страницы мы не будем.</p>
+    <p>Что можно проверить прямо сейчас: работающий сайт студии полиграфии
+      в Лермонтове и связка приёма заявок, которая стоит и на этом сайте.
+      Оба кейса открыты целиком — со стеком, решениями и живыми ссылками.</p>
+  </div>
+  <div class="related">
+    <a class="related-card" href="/portfolio/telegram-bot-dlya-zayavok/">
+      <span class="related-name">Бот для приёма заявок</span>
+      <span class="related-desc">Заявка доходит за секунды и не теряется при сбое</span>
+    </a>
+    <a class="related-card" href="/portfolio/sayt-dlya-tipografii-granat/">
+      <span class="related-name">Сайт студии «Гранат»</span>
+      <span class="related-desc">Работы, услуги и приём заявок на чистом коде</span>
+    </a>
+  </div>
+</section>
+
+<section class="page-section" aria-label="Частые вопросы">
+  <div class="section-eyebrow">Вопросы</div>
+  <h2 class="section-title">Частые вопросы</h2>
+  <div class="faq-list">
+    <details class="faq-item">
+      <summary>Сколько стоит сайт для небольшой гостиницы?</summary>
+      <p>От 35 000 ₽ за одностраничный сайт с описанием, ценами, фотографиями и формой. Если нужны отдельные страницы под номера и услуги — от 90 000 ₽. Точную цену считаем после разговора, дальше она зафиксирована в смете.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Можно бота, который записывает клиентов?</summary>
+      <p>Да. Бот спрашивает услугу, дату и контакт, а вам присылает готовую запись. Если нужна связь с вашей системой учёта или календарём — это ещё один шаг, обсуждаем на смете. Подробно на странице <a href="/uslugi/telegram-bot/">Telegram-ботов</a>.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Кто будет обновлять сайт потом?</summary>
+      <p>Мы — обычно в тот же день, по сообщению. Если хотите менять содержимое сами, на этапе сметы закладываем админку; это дороже, поэтому решаем до начала, а не после.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Мы далеко, как контролировать работу?</summary>
+      <p>По ссылке на рабочую версию: она открыта с первого дня и обновляется по ходу. Смотреть можно с телефона в любой момент, писать замечания — тогда же. Это удобнее очных показов, где решение принимают за один вечер.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Нужны ли документы по 152-ФЗ, если на сайте просто форма?</summary>
+      <p>Да. Форма, которая собирает имя и телефон, делает вас оператором персональных данных: нужны политика, отдельное согласие и уведомление в Роскомнадзор. Мы оформляем это сразу при разработке. Разбор — в статье <a href="/blog/152-fz-dlya-sajta/">про 152-ФЗ для сайта</a>.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ЗАЯВКА
+
+     Одна форма на страницу и один способ её отправить. Всплывающего окна
+     здесь нет намеренно: на внутренней странице форма и так в одном экране
+     от текста, а второе место, где можно оставить контакт, — это второе
+     место, где что-то может сломаться.
+
+     Услуга подставлена заранее, из адреса страницы: человек пришёл читать
+     про боты — в заявке будет написано «Telegram-бот», и переспрашивать
+     не придётся.
+════════════════════════════════════════════ -->
+<section id="order-section" class="page-section" aria-label="Форма заявки">
+  <div class="order-box">
+    <div class="order-eyebrow">Начните работать</div>
+    <h2 class="order-title">Оставить заявку</h2>
+    <p class="order-sub">Расскажите о задаче. Ответим в течение часа в рабочее время и назовём цену со сроком.</p>
+
+    <form class="order-form" data-lead-form novalidate>
+      <div class="form-group">
+        <label for="f-name">Ваше имя</label>
+        <input type="text" id="f-name" name="name" placeholder="Как вас зовут?" autocomplete="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="f-contact">Телефон или Telegram</label>
+        <input type="text" id="f-contact" name="contact" placeholder="@yourname или +7..." autocomplete="tel" required />
+      </div>
+
+      <div class="form-group">
+        <label for="f-comment">Опишите задачу</label>
+        <textarea id="f-comment" name="comment" rows="4" placeholder="Что нужно сделать и к какому сроку"></textarea>
+      </div>
+
+      <input type="hidden" id="f-service" name="service" value="Сайт/Лендинг" />
+
+      <!-- Две галочки, а не одна. Согласие на обработку данных и ознакомление
+           с политикой — разные действия, и закон разводит их намеренно: одна
+           общая галочка «согласен со всем» не считается конкретным и
+           информированным согласием. Обе пустые: отметить их должен человек,
+           это его действие, а не состояние по умолчанию. -->
+      <label class="consent">
+        <input type="checkbox" id="f-consent" data-consent required />
+        <span>Даю <a href="/privacy.html#consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> — имени и контакта, чтобы со мной связались по этой заявке</span>
+      </label>
+
+      <label class="consent">
+        <input type="checkbox" id="f-policy" data-policy required />
+        <span>Ознакомлен с <a href="/privacy.html" target="_blank" rel="noopener">политикой конфиденциальности</a></span>
+      </label>
+
+      <p class="form-error" role="alert" hidden></p>
+
+      <button type="submit" class="btn-submit">
+        <span class="btn-text">Отправить заявку</span>
+        <span class="btn-loader"></span>
+      </button>
+    </form>
+
+    <!-- Сообщение об успехе стоит СНАРУЖИ формы, а не внутри неё. После
+         отправки форма прячется целиком — вместе со всем, что лежит внутри.
+         Спрятанное сообщение об успехе человек не увидит, решит, что заявка
+         не ушла, и отправит её второй раз или уйдёт. -->
+    <div class="form-success">
+      <span class="success-icon">✦</span>
+      <div class="success-text">Заявка принята!</div>
+      <div class="success-sub">Ответим в течение часа в рабочее время.</div>
+    </div>
+  </div>
+</section>
+
+
+<section class="page-section" aria-label="Смотрите также">
+  <h2 class="section-title">Смотрите также</h2>
+  <div class="related">
+    <a class="related-card" href="/pyatigorsk/">
+      <span class="related-name">Пятигорск</span>
+      <span class="related-desc">Там можно встретиться в офисе — 20 минут пути</span>
+    </a>
+    <a class="related-card" href="/uslugi/telegram-bot/">
+      <span class="related-name">Telegram-боты</span>
+      <span class="related-desc">Приём заявок и запись клиентов</span>
+    </a>
+    <a class="related-card" href="/uslugi/">
+      <span class="related-name">Все услуги</span>
+      <span class="related-desc">Цены и сроки по каждому направлению</span>
+    </a>
+    <a class="related-card" href="/kontakty/">
+      <span class="related-name">Контакты</span>
+      <span class="related-desc">Телефон, мессенджеры, почта</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-brand">Vibe Digital 999</div>
+      <p class="footer-tagline">Чистый код, автоматизация и ИИ-агенты. Пишем так, чтобы переписывать не пришлось.</p>
+    </div>
+
+    <!-- Список услуг в подвале — не украшение. Это единственные ссылки,
+         которые есть на КАЖДОЙ странице сайта: и человек, и робот попадают
+         в любой раздел за один переход, откуда бы ни начали. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Услуги</h3>
+      <a class="footer-link" href="/uslugi/razrabotka-sajta/">Разработка сайтов</a>
+      <a class="footer-link" href="/uslugi/telegram-bot/">Telegram-боты</a>
+      <a class="footer-link" href="/uslugi/ai-agent/">ИИ-агенты</a>
+      <a class="footer-link" href="/uslugi/avtomatizaciya/">Автоматизация</a>
+      <a class="footer-link" href="/vibecoding/">Вайбкодинг</a>
+      <a class="footer-link" href="/uslugi/prilozheniya/">Приложения</a>
+      <a class="footer-link" href="/uslugi/seo-audit-152fz/">SEO-аудит</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Разделы</h3>
+      <a class="footer-link" href="/uslugi/">Все услуги</a>
+      <a class="footer-link" href="/portfolio/">Портфолио</a>
+      <a class="footer-link" href="/blog/">Блог</a>
+      <a class="footer-link" href="/o-nas/">О студии</a>
+      <a class="footer-link" href="/pyatigorsk/">Пятигорск</a>
+      <a class="footer-link" href="/essentuki/">Ессентуки</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Связаться</h3>
+      <a class="footer-link" href="tel:+79992449999" data-goal="click_tel">+7 999 244 99 99</a>
+      <a class="footer-link" href="mailto:gulnaravibecoder999@yandex.ru" data-goal="click_email">gulnaravibecoder999@yandex.ru</a>
+      <a class="footer-link" href="https://wa.me/79992449999" target="_blank" rel="noopener" data-goal="click_wa">WhatsApp</a>
+      <a class="footer-link" href="https://t.me/GranatJarvis_bot" target="_blank" rel="noopener" data-goal="click_tg">Telegram</a>
+      <a class="footer-link" href="https://vk.ru/club240607590" target="_blank" rel="noopener" data-goal="click_vk">ВКонтакте</a>
+      <a class="footer-link" href="/kontakty/">Все контакты</a>
+      <a class="footer-link" href="/#pay">Оплатить по СБП</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Реквизиты</h3>
+      <p class="footer-req">ИП Мелконян Гульнара Рифкатовна</p>
+      <p class="footer-req">ИНН 490600091128</p>
+      <p class="footer-req">ОГРНИП 326490000005218</p>
+      <p class="footer-req">Ставропольский край, г. Лермонтов, ул. Нагорная, д. 2/1</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Vibe Digital 999</span>
+    <a class="footer-link" href="/privacy.html">Политика конфиденциальности</a>
+    <a class="footer-link" href="/privacy.html#consent">Согласие на обработку персональных данных</a>
+    <a class="footer-link" href="/privacy.html#cookies">Использование cookie</a>
+  </div>
+</footer>
+
+<!-- Плашка о куках. На одностраничнике она жила только на главной, и этого
+     хватало: другого входа на сайт не было. Теперь человек приходит из поиска
+     прямо на страницу услуги и главную может не открыть вовсе — значит,
+     уведомление должно быть и здесь. Выбор хранится в localStorage и общий
+     для всех страниц: ответил один раз — больше не спросим. -->
+<div class="cookie-bar" id="cookie-bar" role="dialog" aria-live="polite"
+     aria-label="Согласие на обработку данных" hidden>
+  <p class="cookie-text">
+    Яндекс.Метрика считает посещения сайта обезличенно. Запись экрана и карта кликов
+    включаются только с вашего согласия. Подробнее — в
+    <a href="/privacy.html#cookies">разделе о cookie</a>.
+  </p>
+  <div class="cookie-actions">
+    <button type="button" class="cookie-btn cookie-yes" id="cookie-yes">Принять</button>
+    <button type="button" class="cookie-btn cookie-no" id="cookie-no">Только необходимые</button>
+  </div>
+</div>
+
+<script src="/assets/js/site.js" defer></script>
+<!-- Пиксель для посетителей без JavaScript: считает заход обезличенно,
+     без cookie и без записи экрана. Заодно это то, что ищут роботы Яндекса
+     при проверке «установлен ли счётчик» — скрипт они не выполняют,
+     а картинку видят. -->
+<noscript><div><img src="https://mc.yandex.ru/watch/110416869" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!-- ═══════════════════════════════════════════
+     ЗАЯВКА
+
+     Одна форма на страницу и один способ её отправить. Всплывающего окна
+     здесь нет намеренно: на внутренней странице форма и так в одном экране
+     от текста, а второе место, где можно оставить контакт, — это второе
+     место, где что-то может сломаться.
+
+     Услуга подставлена заранее, из адреса страницы: человек пришёл читать
+     про боты — в заявке будет написано «Telegram-бот», и переспрашивать
+     не придётся.
+════════════════════════════════════════════ -->
+<section id="order-section" class="page-section" aria-label="Форма заявки">
+  <div class="order-box">
+    <div class="order-eyebrow">Начните работать</div>
+    <h2 class="order-title">Оставить заявку</h2>
+    <p class="order-sub">Расскажите о задаче. Ответим в течение часа в рабочее время и назовём цену со сроком.</p>
+
+    <form class="order-form" data-lead-form novalidate>
+      <div class="form-group">
+        <label for="f-name">Ваше имя</label>
+        <input type="text" id="f-name" name="name" placeholder="Как вас зовут?" autocomplete="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="f-contact">Телефон или Telegram</label>
+        <input type="text" id="f-contact" name="contact" placeholder="@yourname или +7..." autocomplete="tel" required />
+      </div>
+
+      <div class="form-group">
+        <label for="f-comment">Опишите задачу</label>
+        <textarea id="f-comment" name="comment" rows="4" placeholder="Что нужно сделать и к какому сроку"></textarea>
+      </div>
+
+      <input type="hidden" id="f-service" name="service" value="{{SERVICE}}" />
+
+      <!-- Две галочки, а не одна. Согласие на обработку данных и ознакомление
+           с политикой — разные действия, и закон разводит их намеренно: одна
+           общая галочка «согласен со всем» не считается конкретным и
+           информированным согласием. Обе пустые: отметить их должен человек,
+           это его действие, а не состояние по умолчанию. -->
+      <label class="consent">
+        <input type="checkbox" id="f-consent" data-consent required />
+        <span>Даю <a href="/privacy.html#consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> — имени и контакта, чтобы со мной связались по этой заявке</span>
+      </label>
+
+      <label class="consent">
+        <input type="checkbox" id="f-policy" data-policy required />
+        <span>Ознакомлен с <a href="/privacy.html" target="_blank" rel="noopener">политикой конфиденциальности</a></span>
+      </label>
+
+      <p class="form-error" role="alert" hidden></p>
+
+      <button type="submit" class="btn-submit">
+        <span class="btn-text">Отправить заявку</span>
+        <span class="btn-loader"></span>
+      </button>
+    </form>
+
+    <!-- Сообщение об успехе стоит СНАРУЖИ формы, а не внутри неё. После
+         отправки форма прячется целиком — вместе со всем, что лежит внутри.
+         Спрятанное сообщение об успехе человек не увидит, решит, что заявка
+         не ушла, и отправит её второй раз или уйдёт. -->
+    <div class="form-success">
+      <span class="success-icon">✦</span>
+      <div class="success-text">Заявка принята!</div>
+      <div class="success-sub">Ответим в течение часа в рабочее время.</div>
+    </div>
+  </div>
+</section>

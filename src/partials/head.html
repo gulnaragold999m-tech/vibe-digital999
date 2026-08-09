@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{TITLE}}</title>
+  <!-- Метка сборки. Нужна, чтобы за секунду понять, какой файл сейчас
+       на сервере, и не гадать, залился новый или остался старый. -->
+  <meta name="build" content="{{BUILD}}" />
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <meta name="robots" content="{{ROBOTS}}" />
+  <!-- Канонический адрес. В многостраничнике это не формальность: одна и та
+       же страница открывается и с /uslugi/, и с /uslugi (сервер добавляет
+       слэш), и со ссылкой ?utm_source=... из рекламы. Без canonical поиск
+       считает их разными страницами и делит вес между ними. -->
+  <link rel="canonical" href="{{CANONICAL}}" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:url" content="{{CANONICAL}}" />
+  <meta property="og:title" content="{{TITLE}}" />
+  <meta property="og:description" content="{{DESCRIPTION}}" />
+  <meta property="og:image" content="https://vibe-digital999.ru/assets/logo-g.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Шрифты свои, не гугловские: наружу не уходит ни один запрос.
+       Обновлять: см. assets/fonts/download-list.txt -->
+  <link rel="preload" href="/assets/fonts/manrope-cyrillic-xn7gYHE41ni1AdIRggOxSuXd.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/manrope-latin-xn7gYHE41ni1AdIRggexSg.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <!-- Значок вкладки. Раньше здесь стояли favicon.ico и apple-touch-icon.png,
+       которых в проекте нет: каждая страница просила два несуществующих
+       файла и получала 404. Теперь вектор плюс запасная картинка для
+       браузеров постарше. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/logo-mark.png" sizes="256x256" />
+  <link rel="apple-touch-icon" href="/logo-mark.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0a0a" />
+
+{{HEAD_EXTRA}}
+</head>
+<body>
