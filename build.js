@@ -352,6 +352,70 @@ function buildLlms() {
   ].join('\n');
 }
 
+/* ── Проверка мета-тегов ─────────────────────────────────────────
+   Ловим до публикации то, что иначе всплывёт в Вебмастере через месяц:
+   обрезанный в выдаче заголовок, два одинаковых описания на разных
+   страницах, страницу-сироту без родителя и битые падежи вроде
+   «в Краснодарский край».
+
+   Сборку при этом не роняем. Файлы уже написаны, сайт работает, а вот
+   молчать о найденном нельзя — иначе проверка бесполезна. Поэтому
+   выводим списком и просим поправить. */
+function validate() {
+  const problems = [];
+  const seenTitle = new Map();
+  const seenDesc = new Map();
+  const urls = new Set(PAGES.map((p) => p.url));
+
+  for (const page of PAGES) {
+    if (!page.file) continue;                 // главная и политика собраны вручную
+    const at = page.url;
+
+    if (!page.title) problems.push(`${at} — нет заголовка`);
+    else if (page.title.length > 65) {
+      problems.push(`${at} — заголовок ${page.title.length} символов, в выдаче обрежется (максимум 65)`);
+    }
+
+    if (!page.description) problems.push(`${at} — нет описания`);
+    else if (page.description.length > 160) {
+      problems.push(`${at} — описание ${page.description.length} символов, обрежется (максимум 160)`);
+    } else if (page.description.length < 110 && !page.noindex) {
+      problems.push(`${at} — описание короткое, ${page.description.length} символов (лучше 120–160)`);
+    }
+
+    if (page.parent && !urls.has(page.parent)) {
+      problems.push(`${at} — родитель ${page.parent} не найден, крошки соберутся неверно`);
+    }
+
+    /* Типовые ошибки падежа. Шаблон без падежей даёт «в Краснодарский край»
+       вместо «в Краснодарском крае» — читается как машинный текст. */
+    const badCase = /\bв (Краснодарский край|Красноярский край|Кисловодск|Пятигорск|Лермонтов|Железноводск|Новороссийск|Красноярск|Краснодар)\b/;
+    for (const [what, text] of [['заголовке', page.title], ['описании', page.description]]) {
+      const m = text && text.match(badCase);
+      if (m) problems.push(`${at} — в ${what} падеж: «${m[0]}»`);
+    }
+
+    /* Дубли. Два одинаковых заголовка означают, что поиск выберет одну
+       страницу из двух, а вторую посчитает лишней. */
+    for (const [map, value, what] of [
+      [seenTitle, page.title, 'заголовок'],
+      [seenDesc, page.description, 'описание'],
+    ]) {
+      if (!value) continue;
+      if (map.has(value)) problems.push(`${at} — ${what} совпадает с ${map.get(value)}`);
+      else map.set(value, at);
+    }
+  }
+
+  if (!problems.length) {
+    console.log('Проверка мета-тегов: чисто.');
+    return;
+  }
+  console.log(`\n⚠ Проверка мета-тегов — замечаний: ${problems.length}`);
+  problems.forEach((p) => console.log('   •', p));
+  console.log('   Правится в src/pages.js.\n');
+}
+
 /* ── Запуск ──────────────────────────────────────────────────── */
 function main() {
   let built = 0;
@@ -379,6 +443,7 @@ function main() {
   fs.writeFileSync(path.join(OUT, 'llms.txt'), buildLlms(), 'utf8');
 
   console.log(`\nСобрано страниц: ${built}. Карта сайта и llms.txt обновлены.`);
+  validate();
 }
 
 main();
