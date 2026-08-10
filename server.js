@@ -1,5 +1,20 @@
 require('dotenv').config();
 
+/* IPv4 первым — иначе Telegram на Amvera висит до таймаута.
+ *
+ * DNS отдаёт для api.telegram.org и IPv4, и IPv6. IPv6 на Amvera не
+ * работает: если Node выберет его, соединение не оборвётся с ошибкой,
+ * а будет висеть, и выглядит это как «Telegram не отвечает». В соседнем
+ * проекте это стоило двух падений бота за один день, второе — насмерть.
+ *
+ * Строка ставится ПЕРВОЙ, до любых сетевых вызовов: порядок адресов
+ * выбирается при первом обращении, и потом менять его поздно.
+ *
+ * Важна точность: ipv4first ставит IPv4 первым, а не выкидывает IPv6.
+ * Обычному клиенту этого хватает — он берёт первый адрес. Если зависания
+ * останутся, IPv6 придётся отфильтровать явно, подменив dns.lookup. */
+require('node:dns').setDefaultResultOrder('ipv4first');
+
 const path = require('path');
 const express = require('express');
 const compression = require('compression');
@@ -7,6 +22,7 @@ const { handleLead, handleLeadsExport } = require('./api/lead');
 const { handleBrief } = require('./api/brief');
 const { handleGeo } = require('./api/geo');
 const { startVkBot } = require('./api/vk-bot');
+const { startTgBot } = require('./api/tg-bot');
 
 const app = express();
 
@@ -205,8 +221,15 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Сайт запущен: http://localhost:${PORT}`);
 
-  /* Бот в ВК живёт в этом же процессе: отдельное приложение на Amvera —
+  /* Боты живут в этом же процессе: отдельное приложение на Amvera —
      это второй счёт и второй деплой ради одного долгого запроса.
-     Если он не настроен или упадёт, сайт продолжит работать. */
+
+     Каждый запускается независимо и ничего не пробрасывает наверх.
+     Это не перестраховка: в соседнем проекте ошибка запуска Telegram
+     дошла до верха и остановила процесс, унеся с собой бот ВКонтакте —
+     ровно тот канал, который и заведён на случай смерти Telegram.
+     Здесь в том же процессе живёт ещё и сайт, так что цена такой
+     ошибки — весь сайт. */
   startVkBot();
+  startTgBot();
 });
