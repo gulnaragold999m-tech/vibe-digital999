@@ -76,50 +76,63 @@ const unwrap = (ip) => String(ip || '').trim().replace(/^::ffff:/, '');  // IPv4
  * значения не имеет: внутренние адреса всё равно отсеиваются, а внешний
  * в цепочке ровно один — тот, с которого пришёл человек.
  */
-function clientIp(req) {
-  const candidates = [];
+function ipCandidates(req) {
+  const list = [];
 
   /* X-Forwarded-For — цепочка «клиент, прокси1, прокси2». Разбираем целиком:
      первым может оказаться внутренний адрес, и тогда нужен следующий. */
   String(req.headers['x-forwarded-for'] || '')
     .split(',')
-    .forEach((part) => candidates.push(unwrap(part)));
+    .forEach((part, i) => list.push({ from: `x-forwarded-for[${i}]`, ip: unwrap(part) }));
 
   /* X-Real-IP ставит nginx, на котором построено большинство ingress'ов.
      CF-Connecting-IP — на случай, если перед сайтом окажется Cloudflare. */
-  candidates.push(unwrap(req.headers['x-real-ip']));
-  candidates.push(unwrap(req.headers['cf-connecting-ip']));
+  list.push({ from: 'x-real-ip', ip: unwrap(req.headers['x-real-ip']) });
+  list.push({ from: 'cf-connecting-ip', ip: unwrap(req.headers['cf-connecting-ip']) });
 
   /* req.ip — последним. С app.set('trust proxy', true) он уже разбирает
      X-Forwarded-For сам, но если заголовков нет вовсе, здесь окажется
      адрес прокси, то есть внутренний. */
-  candidates.push(unwrap(req.ip));
+  list.push({ from: 'req.ip', ip: unwrap(req.ip) });
 
-  return candidates.find((ip) => ip && !isPrivate(ip)) || '';
+  return list;
 }
 
-/* Один раз пишем в журнал, какие заголовки с адресом вообще пришли.
+function clientIp(req) {
+  const found = ipCandidates(req).find((c) => c.ip && !isPrivate(c.ip));
+  return found ? found.ip : '';
+}
+
+/* Почему адрес не подошёл — в журнал, один раз.
  *
- * Без этого «локальный адрес» неотличим от «сервис недоступен»: и то,
- * и другое выглядит как отсутствие подсказки, и чинить приходится вслепую.
- * Пишем только ИМЕНА заголовков и число записей в цепочке — сами адреса
- * это персональные данные, им в журнале не место. */
+ * Первая версия этой записи печатала только имена заголовков. Оказалось
+ * мало: заголовки на Amvera есть, а адрес всё равно отвергается — и без
+ * значения не понять, какой диапазон он задевает.
+ *
+ * Печатаем адреса ОБЕЗЛИЧЕННО: от IPv4 остаётся первое число, от IPv6 —
+ * первая группа. По «10.*.*.*» сразу видно внутренний адрес, по «95.*.*.*» —
+ * что адрес нормальный и ошибка в проверке. Опознать по такому огрызку
+ * человека нельзя, а починить — можно.
+ */
+const mask = (ip) => (ip.includes(':')
+  ? `${ip.split(':')[0]}:…`
+  : `${ip.split('.')[0]}.*.*.*`);
+
 let diagnosed = false;
-function diagnoseOnce(req) {
+function diagnoseOnce(req, candidates) {
   if (diagnosed) return;
   diagnosed = true;
 
-  const seen = ['x-forwarded-for', 'x-real-ip', 'cf-connecting-ip', 'forwarded']
-    .filter((h) => req.headers[h]);
-  const chain = String(req.headers['x-forwarded-for'] || '').split(',').filter(Boolean).length;
+  const lines = candidates
+    .filter((c) => c.ip)
+    .map((c) => `      ${c.from}: ${mask(c.ip)} — ${isPrivate(c.ip) ? 'внутренний, отброшен' : 'внешний'}`);
 
   console.warn(
     '[geo] Не удалось определить внешний адрес посетителя.\n' +
-    `      Заголовки с адресом: ${seen.length ? seen.join(', ') : 'ни одного'}\n` +
-    `      Записей в X-Forwarded-For: ${chain}\n` +
-    '      Если заголовков нет вовсе — прокси их не проставляет, и определение\n' +
-    '      по IP на этом хостинге работать не будет. Подсказка региона просто\n' +
-    '      не появится, остальной сайт это не затрагивает.'
+    (lines.length ? lines.join('\n') : '      ни одного адреса ни в одном заголовке') +
+    '\n      Если все записи внутренние — прокси Amvera не передаёт адрес\n' +
+    '      посетителя, и определение по IP на этом хостинге не заработает.\n' +
+    '      Подсказка региона просто не появится, остальной сайт цел.'
   );
 }
 
@@ -170,7 +183,7 @@ async function handleGeo(req, res) {
 
   const ip = clientIp(req);
   if (!ip) {
-    diagnoseOnce(req);
+    diagnoseOnce(req, ipCandidates(req));
     return res.json({ ok: false, reason: 'local' });
   }
 
