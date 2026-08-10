@@ -62,12 +62,65 @@ function cacheSet(ip, value) {
   cache.set(ip, { at: Date.now(), value });
 }
 
-/* Адрес посетителя. За обратным прокси Amvera req.ip — это адрес прокси,
-   настоящий лежит первым в X-Forwarded-For. */
+const unwrap = (ip) => String(ip || '').trim().replace(/^::ffff:/, '');  // IPv4 в IPv6-обёртке
+
+/* Адрес посетителя за обратным прокси.
+ *
+ * Первая версия брала X-Forwarded-For и из него первую запись — так учат
+ * все руководства. На Amvera это дало «локальный адрес» каждому живому
+ * человеку: то ли заголовок называется иначе, то ли первым в цепочке
+ * стоит внутренний адрес самого прокси.
+ *
+ * Поэтому здесь не один заголовок, а перебор. Берём все известные места,
+ * где может лежать адрес, и возвращаем ПЕРВЫЙ НЕ ВНУТРЕННИЙ. Порядок
+ * значения не имеет: внутренние адреса всё равно отсеиваются, а внешний
+ * в цепочке ровно один — тот, с которого пришёл человек.
+ */
 function clientIp(req) {
-  const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
-  const ip = fwd || req.ip || '';
-  return ip.replace(/^::ffff:/, '');    // IPv4 внутри IPv6-обёртки
+  const candidates = [];
+
+  /* X-Forwarded-For — цепочка «клиент, прокси1, прокси2». Разбираем целиком:
+     первым может оказаться внутренний адрес, и тогда нужен следующий. */
+  String(req.headers['x-forwarded-for'] || '')
+    .split(',')
+    .forEach((part) => candidates.push(unwrap(part)));
+
+  /* X-Real-IP ставит nginx, на котором построено большинство ingress'ов.
+     CF-Connecting-IP — на случай, если перед сайтом окажется Cloudflare. */
+  candidates.push(unwrap(req.headers['x-real-ip']));
+  candidates.push(unwrap(req.headers['cf-connecting-ip']));
+
+  /* req.ip — последним. С app.set('trust proxy', true) он уже разбирает
+     X-Forwarded-For сам, но если заголовков нет вовсе, здесь окажется
+     адрес прокси, то есть внутренний. */
+  candidates.push(unwrap(req.ip));
+
+  return candidates.find((ip) => ip && !isPrivate(ip)) || '';
+}
+
+/* Один раз пишем в журнал, какие заголовки с адресом вообще пришли.
+ *
+ * Без этого «локальный адрес» неотличим от «сервис недоступен»: и то,
+ * и другое выглядит как отсутствие подсказки, и чинить приходится вслепую.
+ * Пишем только ИМЕНА заголовков и число записей в цепочке — сами адреса
+ * это персональные данные, им в журнале не место. */
+let diagnosed = false;
+function diagnoseOnce(req) {
+  if (diagnosed) return;
+  diagnosed = true;
+
+  const seen = ['x-forwarded-for', 'x-real-ip', 'cf-connecting-ip', 'forwarded']
+    .filter((h) => req.headers[h]);
+  const chain = String(req.headers['x-forwarded-for'] || '').split(',').filter(Boolean).length;
+
+  console.warn(
+    '[geo] Не удалось определить внешний адрес посетителя.\n' +
+    `      Заголовки с адресом: ${seen.length ? seen.join(', ') : 'ни одного'}\n` +
+    `      Записей в X-Forwarded-For: ${chain}\n` +
+    '      Если заголовков нет вовсе — прокси их не проставляет, и определение\n' +
+    '      по IP на этом хостинге работать не будет. Подсказка региона просто\n' +
+    '      не появится, остальной сайт это не затрагивает.'
+  );
 }
 
 /* Локальные и служебные адреса спрашивать бесполезно: на них геосервис
@@ -116,7 +169,10 @@ async function handleGeo(req, res) {
   if (!token) return res.json({ ok: false, reason: 'off' });
 
   const ip = clientIp(req);
-  if (isPrivate(ip)) return res.json({ ok: false, reason: 'local' });
+  if (!ip) {
+    diagnoseOnce(req);
+    return res.json({ ok: false, reason: 'local' });
+  }
 
   const cached = cacheGet(ip);
   if (cached) return res.json(cached);
