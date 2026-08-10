@@ -161,6 +161,11 @@ async function handleLead(req, res) {
   const citySource = clean(req.body?.city_source, 10) === 'ip' ? 'ip' : 'user';
   const cityGuessed = Boolean(city) && citySource === 'ip';
 
+  /* Размер бизнеса. Приходит только если человек нажал кнопку пакета
+     на /pakety/ — то есть сам себя отнёс к микро-, малому или среднему.
+     Пустое поле означает «не знаем», и это честнее догадки. */
+  const segment = clean(req.body?.segment, 80);
+
   if (!name || !contact) {
     return res.status(400).json({ ok: false, error: 'Заполните имя и контакт' });
   }
@@ -193,6 +198,7 @@ async function handleLead(req, res) {
     comment: comment || null,
     city: city || null,
     city_source: city ? citySource : null,
+    segment: segment || null,
     /* Страница и рекламные метки. По ним потом видно, какая страница
        и какая реклама приводят клиентов, а какая жжёт бюджет. */
     page: page || null,
@@ -216,6 +222,7 @@ async function handleLead(req, res) {
     [`👤 Имя: ${name}`, `👤 Имя: ${escapeHtml(name)}`],
     [`📱 Контакт: ${contact}`, `📱 Контакт: ${escapeHtml(contact)}`],
     [`💼 Услуга: ${service}`, `💼 Услуга: ${escapeHtml(service)}`],
+    segment ? [`🏷 Размер бизнеса: ${segment}`, `🏷 Размер бизнеса: ${escapeHtml(segment)}`] : null,
     city ? [
       `📍 Город: ${city}${cityGuessed ? ' (определён по IP, не подтверждён)' : ''}`,
       `📍 Город: ${escapeHtml(city)}${cityGuessed ? ' <i>(определён по IP, не подтверждён)</i>' : ''}`,

@@ -209,6 +209,7 @@
     var commentEl = formEl.querySelector('[name="comment"]');
     var cityEl = formEl.querySelector('[name="city"]');
     var serviceEl = formEl.querySelector('[name="service"]');
+    var segmentEl = formEl.querySelector('[name="segment"]');
     var consentEl = formEl.querySelector('[data-consent]');
     var policyEl = formEl.querySelector('[data-policy]');
 
@@ -257,6 +258,10 @@
                Без этой пометки догадка сервиса выглядела бы в заявке так
                же уверенно, как ответ клиента. */
             city_source: cityEl && cityEl.dataset.auto ? 'ip' : 'user',
+            /* Размер бизнеса — пустой, если человек не приходил с кнопки
+               пакета. Пустое поле честнее домысла: лучше не знать сегмент,
+               чем записать не тот. */
+            segment: segmentEl ? segmentEl.value : '',
             /* Адрес страницы вместе с метками из рекламы: по нему потом
                видно, какая страница и какое объявление привели человека. */
             page: location.pathname + location.search
@@ -290,6 +295,12 @@
       if (!form) return;
       var serviceEl = form.querySelector('[name="service"]');
       if (serviceEl) serviceEl.value = btn.dataset.service;
+
+      /* Кнопки пакетов дополнительно несут размер бизнеса. У кнопок
+         обычных услуг его нет — тогда поле остаётся пустым, а не
+         перезаписывается пустотой поверх ранее выбранного пакета. */
+      var segEl = form.querySelector('[name="segment"]');
+      if (segEl && btn.dataset.segment) segEl.value = btn.dataset.segment;
       reachGoal('click_order');
       var box = document.getElementById('order-section');
       if (box) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
