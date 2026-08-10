@@ -2212,7 +2212,15 @@
       align-items: center;
     }
 
+    /* Номер в шапке. Раньше строчка текста: ссылка работала, но выглядела
+       подписью, и по ней не нажимали. Теперь рамка, трубка и высота 44 —
+       видно, что кнопка, и в неё попадают пальцем. */
     .nav-phone {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 44px;
+      padding: 0.5rem 1rem;
       font-family: var(--f-body);
       font-size: 0.82rem;
       font-weight: 600;
@@ -2220,18 +2228,33 @@
       color: #00F0FF;
       text-decoration: none;
       white-space: nowrap;
-      margin-right: 1.4rem;
-      transition: color 0.3s ease, text-shadow 0.3s ease;
+      margin-right: 0.8rem;
+      border: 1.5px solid rgba(0,240,255,0.35);
+      border-radius: 999px;
+      transition: color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
+    .nav-phone-ico { width: 17px; height: 17px; fill: currentColor; flex-shrink: 0; }
+    .nav-phone:active { transform: scale(0.97); }
     .nav-phone:hover,
     .nav-phone:focus-visible {
       color: #A8FBFF;
-      text-shadow: 0 0 14px rgba(0,240,255,0.6);
+      border-color: #00F0FF;
+      box-shadow: 0 0 18px rgba(0,240,255,0.35);
     }
+    .nav-phone:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 
     @media (max-width: 860px) {
-      /* На телефоне номер прячем: там уже есть плавающая кнопка звонка */
-      .nav-phone { display: none; }
+      /* Раньше номер прятали совсем. Теперь сворачиваем в круглую кнопку
+         с трубкой: целиком он в узкую шапку не влезает, а звонок нужен
+         именно с телефона. */
+      .nav-phone {
+        width: 44px;
+        padding: 0;
+        justify-content: center;
+        margin-right: 0.5rem;
+      }
+      .nav-phone-num { display: none; }
+      .nav-phone-ico { width: 19px; height: 19px; }
     }
 
     .contact-btn-wa:hover { border-color: #25D366; box-shadow: 0 0 24px rgba(37,211,102,0.45); }
@@ -2587,7 +2610,17 @@
     <li><a href="/kontakty/">Контакты</a></li>
   </ul>
   <div class="nav-actions">
-    <a href="tel:+79992449999" class="nav-phone" data-goal="click_tel">+7 999 244 99 99</a>
+    <!-- Номер в шапке — кнопка, а не строчка текста. Он и раньше был
+         ссылкой tel:, но выглядел обычным текстом, и по нему не нажимали:
+         человек не догадывался, что можно. А на телефоне — там, где как раз
+         и звонят, — номер вообще прятался правилом display:none.
+         Теперь на широком экране кнопка с номером, на узком — круглая
+         кнопка с трубкой: номер целиком туда не влезает, а звонок нужен. -->
+    <a href="tel:+79992449999" class="nav-phone" data-goal="click_tel"
+       aria-label="Позвонить: +7 999 244 99 99">
+      <svg class="nav-phone-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      <span class="nav-phone-num">+7 999 244 99 99</span>
+    </a>
     <a href="#order-section" class="nav-cta">Заказать</a>
     <!-- Кнопка меню для телефона. Раньше на узком экране список ссылок просто
          прятался: разделы были на этой же странице, до них доезжали прокруткой.

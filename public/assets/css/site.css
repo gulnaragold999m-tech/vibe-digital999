@@ -1029,7 +1029,16 @@ footer {
   align-items: center;
 }
 
+/* Номер в шапке. Раньше это была строчка текста цвета циан — ссылка
+   работала, но выглядела как подпись, и по ней не нажимали. Теперь рамка,
+   трубка и высота 44 пикселя: видно, что это кнопка, и в неё попадают
+   пальцем. 44 — нижняя граница, при которой попадают с телефона. */
 .nav-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 1rem;
   font-family: var(--f-body);
   font-size: 0.82rem;
   font-weight: 600;
@@ -1037,18 +1046,35 @@ footer {
   color: #00F0FF;
   text-decoration: none;
   white-space: nowrap;
-  margin-right: 1.4rem;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
+  margin-right: 0.8rem;
+  border: 1.5px solid rgba(0,240,255,0.35);
+  border-radius: 999px;
+  transition: color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
+.nav-phone-ico { width: 17px; height: 17px; fill: currentColor; flex-shrink: 0; }
+.nav-phone:active { transform: scale(0.97); }
 .nav-phone:hover,
 .nav-phone:focus-visible {
   color: #A8FBFF;
-  text-shadow: 0 0 14px rgba(0,240,255,0.6);
+  border-color: #00F0FF;
+  box-shadow: 0 0 18px rgba(0,240,255,0.35);
 }
+.nav-phone:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 
 @media (max-width: 860px) {
-  /* На телефоне номер прячем: там уже есть плавающая кнопка звонка */
-  .nav-phone { display: none; }
+  /* Раньше здесь номер прятали совсем — «есть же плавающая кнопка звонка».
+     Но плавающая кнопка живёт только на главной, а на страницах услуг
+     её нет: человек дочитал про цену, захотел позвонить — и звонить неоткуда.
+     Теперь номер остаётся, только сворачивается в круглую кнопку с трубкой:
+     целиком он в узкую шапку не влезает, а звонок нужен именно с телефона. */
+  .nav-phone {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+    margin-right: 0.5rem;
+  }
+  .nav-phone-num { display: none; }
+  .nav-phone-ico { width: 19px; height: 19px; }
 }
 /* Ошибки форм. Красный только у пометки, не у всей формы:
    задача — показать, где споткнулись, а не напугать. */
