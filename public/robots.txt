@@ -1,4 +1,45 @@
+# robots.txt для vibe-digital999.ru
+# Закрыт только /api/ — это служебные адреса приёма заявок и чата,
+# показывать их в поиске нечего и незачем.
+
 User-agent: *
+Allow: /
+Disallow: /api/
+
+# ── Яндекс ────────────────────────────────────────────────────────
+# Clean-param говорит Яндексу, что страница с рекламной меткой в адресе
+# и та же страница без метки — одна страница, а не две. Без этого робот
+# тратит обход на десятки копий главной с разными utm и yclid, а вес
+# делится между ними. Метка region здесь по той же причине: это наш
+# собственный параметр выбора региона, содержимое страницы он не меняет.
+User-agent: Yandex
+Allow: /
+Disallow: /api/
+Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&yclid&_openstat&region
+
+# ── Обходчики ИИ-поиска ───────────────────────────────────────────
+# Эти роботы собирают материал для ответов ChatGPT, Perplexity, Claude
+# и поисковых обзоров Google. Формально их пускает и общее правило выше,
+# но часть из них читает только свою секцию, а часть по умолчанию ведёт
+# себя осторожно, если имени в файле нет.
+#
+# Сознательное решение: пускаем. Взамен на то, что сайт цитируют в ответах,
+# тексты со страниц могут попасть в обучающие наборы. Для студии, которой
+# нужно, чтобы её услуги называли в ответ на «кто делает сайты на КМВ»,
+# это выгодный обмен. Если когда-нибудь передумаете — поменяйте Allow
+# на Disallow в этой секции, остальной сайт не затронется.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Amazonbot
+User-agent: Bytespider
 Allow: /
 Disallow: /api/
 

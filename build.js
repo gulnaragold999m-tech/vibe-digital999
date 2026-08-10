@@ -29,7 +29,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { PAGES, SITE, BUILD } = require('./src/pages');
+const { PAGES, SITE, BUILD, VERIFY } = require('./src/pages');
 const { cityDatalist } = require('./src/cities');
 
 const SRC = path.join(__dirname, 'src');
@@ -170,6 +170,15 @@ function serviceSchema(page) {
   };
 }
 
+/* Мета-теги подтверждения прав. Пустой код — тега нет вовсе: Вебмастер
+   читает пустой content как неверный код, и подтверждение не проходит. */
+function verifyTags() {
+  const tags = [];
+  if (VERIFY.yandex) tags.push(`  <meta name="yandex-verification" content="${attr(VERIFY.yandex)}" />`);
+  if (VERIFY.google) tags.push(`  <meta name="google-site-verification" content="${attr(VERIFY.google)}" />`);
+  return tags.join('\n');
+}
+
 /* ── Разметка самой страницы ─────────────────────────────────────
    Две вещи, которых не было на одностраничнике.
 
@@ -246,6 +255,7 @@ function buildPage(page) {
     .replace(/\{\{TITLE\}\}/g, attr(page.title))
     .replace(/\{\{CANONICAL\}\}/g, SITE + page.url)
     .replace('{{ROBOTS}}', page.noindex ? 'noindex, follow' : 'index, follow')
+    .replace('{{VERIFY}}', verifyTags())
     .replace('{{BUILD}}', BUILD)
     .replace('{{HEAD_EXTRA}}', schemas.map(ldJson).join('\n'));
 
@@ -319,9 +329,20 @@ ${urls}
    Но собирается из того же списка страниц, что и всё остальное, поэтому
    стоит ровно ноль усилий на поддержку — и не может разойтись с сайтом. */
 function buildLlms() {
+  /* Страницы, попавшие хоть в одну группу. Нужны для последней,
+     подбирающей группы: без неё новая страница молча не попадала
+     в llms.txt — так уже случилось с тремя региональными страницами
+     и пакетами. Список групп статический, а страницы добавляются
+     постоянно, и заметить пропажу невозможно: файл всё равно
+     собирается и выглядит целым. */
+  const seen = new Set();
+
   const group = (title, filter) => {
-    const items = PAGES.filter((p) => !p.noindex && filter(p))
-      .map((p) => `- [${p.crumb}](${SITE}${p.url}): ${p.description || ''}`.trim());
+    const items = PAGES.filter((p) => !p.noindex && !seen.has(p.url) && filter(p))
+      .map((p) => {
+        seen.add(p.url);
+        return `- [${p.crumb}](${SITE}${p.url}): ${p.description || ''}`.trim();
+      });
     return items.length ? `## ${title}\n\n${items.join('\n')}\n` : '';
   };
 
@@ -329,10 +350,15 @@ function buildLlms() {
      они и разделяют блоки. Поэтому фильтруем только группы. */
   const groups = [
     group('Услуги', (p) => (p.url.startsWith('/uslugi/') && p.url !== '/uslugi/') || p.url === '/vibecoding/'),
+    group('Пакеты', (p) => p.url === '/pakety/'),
     group('Разделы', (p) => ['/uslugi/', '/portfolio/', '/blog/', '/o-nas/', '/kontakty/'].includes(p.url)),
     group('Кейсы', (p) => p.parent === '/portfolio/'),
     group('Статьи', (p) => p.parent === '/blog/'),
-    group('География', (p) => ['/pyatigorsk/', '/essentuki/'].includes(p.url)),
+    group('География', (p) => ['/kmv/', '/krasnodar-krai/', '/krasnoyarsk-krai/', '/pyatigorsk/', '/essentuki/'].includes(p.url)),
+    /* Подбирающая группа. Всё, что не описали выше, попадает сюда,
+       а не исчезает. Страница главной сюда не идёт: она описана
+       заголовком файла. */
+    group('Ещё', (p) => p.url !== '/' && p.file),
   ].filter(Boolean);
 
   return [
@@ -355,6 +381,21 @@ function buildLlms() {
     '- Лендинг «Продажи» с воронкой и квизом: от 65 000 ₽',
     '- Сайт на 5–10 страниц: от 90 000 ₽, срок от трёх недель',
     '- Сервис, приложение, MVP: от 150 000 ₽, после предпроектной оценки',
+    '',
+    '## Пакеты по масштабу бизнеса',
+    '',
+    '> Цена пакета — сумма позиций прайса, скидки внутри нет.',
+    '> Размер команды — ориентир для подбора, а не формальная проверка.',
+    '',
+    '- «Старт», от 50 000 ₽, срок от 10 дней: небольшая команда до 15 человек. Лендинг «Старт» плюс лид-бот.',
+    '- «Поток», от 100 000 ₽, срок от трёх недель: команда до 100 человек, стабильный поток обращений. Лендинг «Продажи» плюс бот записи и продаж.',
+    '- «Система», от 150 000 ₽, срок от пяти недель: растущая компания до 250 человек. Сайт на 5–10 страниц плюс ИИ-агент с базой знаний.',
+    '',
+    '> Итоговая стоимость зависит от сценариев, интеграций, числа страниц и каналов.',
+    '> База знаний, CRM, оплаты, WhatsApp, API, хостинг и расходы на нейросеть',
+    '> считаются отдельно, если не включены в согласованный пакет.',
+    '> Для компаний больше 250 человек готового пакета нет: берём отдельный',
+    '> участок с понятной зоной ответственности.',
     '',
   ].join('\n');
 }
