@@ -439,7 +439,7 @@ const BUILD = '2026-08-09-v8-multipage';
    значение атрибута content, БЕЗ самого тега. Строка вида
    'a1b2c3d4e5f60718'. */
 const VERIFY = {
-  yandex: '',
+  yandex: '75f670095b8ac749',
   google: '',
 };
 
