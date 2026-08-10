@@ -2393,6 +2393,24 @@
       transition:border-color .25s ease, text-shadow .25s ease; }
     .svc-more a:hover{ border-color:var(--cyan); text-shadow:0 0 12px rgba(0,240,255,.5); }
     .svc-more a:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+
+    /* Выбор региона под блоком географии. Карточки те же, что на внутренних
+       страницах, но их стилей на главной нет — она свои держит у себя. */
+    .geo-pick{ max-width:1200px; margin:3rem auto 0; }
+    .geo-pick-title{ text-align:center; font-size:.9rem; letter-spacing:.03em;
+      color:var(--white); margin:0 0 1.4rem; }
+    .geo-pick .related{ display:grid; gap:1rem;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+    .geo-pick .related-card{ display:block; padding:1.3rem 1.4rem;
+      border:1.5px solid rgba(45,156,255,.2); border-radius:12px;
+      background:rgba(5,14,30,.6); text-decoration:none;
+      transition:border-color .3s ease, transform .3s var(--ease-out-expo); }
+    .geo-pick .related-card:hover{ border-color:rgba(0,240,255,.5); transform:translateY(-3px); }
+    .geo-pick .related-card:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+    .geo-pick .related-name{ display:block; font-family:var(--f-display); font-size:.9rem;
+      font-weight:700; letter-spacing:.06em; color:var(--white); margin-bottom:.4rem; }
+    .geo-pick .related-desc{ display:block; font-size:.78rem; line-height:1.6; color:var(--mist); }
+    @media (max-width:600px){ .geo-pick{ margin-top:2.2rem; } }
   </style>
   <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -3224,6 +3242,35 @@
     <p><strong>По всей России — удалённо.</strong> Созвон, промежуточная версия по ссылке, передача исходников в конце. Договор, счёт и закрывающие документы как ИП, оплата на расчётный счёт. Разница часовых поясов роли не играет: заявка из формы приходит в Telegram мгновенно.</p>
     <p><strong>На Кавказских Минеральных Водах — можно приехать в офис.</strong> Мы в <strong>Лермонтове</strong>, Ставропольский край, — это центр Кавминвод, дорога из <strong>Пятигорска</strong>, <strong>Железноводска</strong>, <strong>Ессентуков</strong>, <strong>Минеральных Вод</strong> и <strong>Кисловодска</strong> короткая. Обсудить проект вживую иногда быстрее, чем перепиской. О встрече договариваемся заранее — просто напишите.</p>
     <p class="geo-note">Выездных встреч не проводим: работаем из офиса и удалённо. На результат это не влияет — весь процесс всё равно идёт в переписке, созвонах и по ссылке на рабочую версию.</p>
+  </div>
+
+  <!-- Явный выбор региона.
+
+       Подмена по метке из рекламы работает только там, где метку можно
+       поставить. В Яндекс Бизнесе её поставить нельзя: там автоматическая
+       реклама от карточки организации, а не кампании с настраиваемыми
+       ссылками. Значит человек с рекламы приходит на общую главную,
+       и единственный способ отправить его в свой регион — спросить.
+
+       Три ссылки, а не выпадающий список: список нужно открыть, а ссылку
+       видно сразу. И это внутренняя перелинковка — региональные страницы
+       перестают быть тупиками, до которых надо додуматься. -->
+  <div class="geo-pick">
+    <p class="geo-pick-title">Откуда вы? Покажем цены и условия для вашего региона</p>
+    <div class="related">
+      <a class="related-card" href="/kmv/">
+        <span class="related-name">Кавминводы</span>
+        <span class="related-desc">Лермонтов, Пятигорск, Ессентуки, Кисловодск — можно встретиться в офисе</span>
+      </a>
+      <a class="related-card" href="/krasnodar-krai/">
+        <span class="related-name">Краснодарский край</span>
+        <span class="related-desc">Краснодар, Сочи, Анапа, Новороссийск — удалённо по договору</span>
+      </a>
+      <a class="related-card" href="/krasnoyarsk-krai/">
+        <span class="related-name">Красноярский край</span>
+        <span class="related-desc">Полностью удалённо: бриф, смета, прототип по ссылке, запуск</span>
+      </a>
+    </div>
   </div>
 </section>
 
