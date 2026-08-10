@@ -46,6 +46,85 @@ function saveLead(entry) {
   }
 }
 
+/* ── Номер заявки ────────────────────────────────────────────────
+   Заявке нужен номер: по нему её ищут в переписке, на неё ссылаются
+   в разговоре с клиентом и по нему видно, сколько пришло за месяц.
+   Без номера единственный способ сослаться на заявку — «та, где про
+   гостиницу», и это работает ровно до второй гостиницы.
+
+   Счётчик лежит отдельным файлом на том же постоянном диске. Если файл
+   потеряется, номер восстанавливается пересчётом строк в leads.jsonl —
+   поэтому нумерация не начнётся заново с единицы после сбоя.
+
+   Синхронные операции здесь намеренно: заявок единицы в день, а гонка
+   за номером при асинхронной записи дала бы двум заявкам один номер. */
+const COUNTER_FILE = path.join(DATA_DIR, 'lead-counter.json');
+
+function nextLeadNumber() {
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+
+    let last = 0;
+    try {
+      last = JSON.parse(fs.readFileSync(COUNTER_FILE, 'utf8')).last || 0;
+    } catch (e) {
+      /* Счётчика нет — первый запуск или файл потеряли. Восстанавливаем
+         по журналу заявок, чтобы не начать нумерацию заново. */
+      try {
+        const lines = fs.readFileSync(LEADS_FILE, 'utf8').split('\n').filter(Boolean);
+        last = lines.filter((l) => !l.includes('delivered_mark_for')).length;
+      } catch (e2) { last = 0; }
+    }
+
+    const num = last + 1;
+    fs.writeFileSync(COUNTER_FILE, JSON.stringify({ last: num }), 'utf8');
+    return num;
+  } catch (err) {
+    console.error('[lead] Счётчик недоступен:', err.message);
+    return null;      // без номера заявка всё равно уйдёт
+  }
+}
+
+/* ── Заметки к заявке ────────────────────────────────────────────
+   Не скоринг и не отказ. Автоматически отклонять заявку по тому, как
+   человек пишет, — верный способ потерять живого заказчика: половина
+   малого бизнеса пишет коротко, голосовыми и без запятых, и платит
+   ровно так же, как тот, кто прислал ТЗ в Notion.
+
+   Поэтому здесь только пометки: что в заявке есть, а чего не хватает.
+   Решение принимает человек, видя те же данные, что и раньше. */
+function leadNotes({ comment, contact }) {
+  const notes = [];
+  const text = comment.toLowerCase();
+
+  if (!comment) notes.push('задача не описана — спросить первым делом');
+  else if (comment.length < 40) notes.push('описание короткое');
+
+  if (/\d[\d\s]{2,}\s*(₽|р\b|руб|тыс|к\b)|бюджет|до \d+/i.test(comment)) {
+    notes.push('назван бюджет');
+  }
+  /* Месяцы ловим по корню слова: «к сентябрю», «в сентябре», «до сентября» —
+     одна и та же мысль в трёх падежах, и человек пишет любым из них. */
+  if (/срочно|как можно скорее|горит|поскорее|вчера|дедлайн|недел|месяц|январ|феврал|март|апрел|ма[йея]|июн|июл|август|сентябр|октябр|ноябр|декабр|\bк \d|\bдо \d/i.test(text)) {
+    notes.push('назван срок');
+  }
+  if (/^\+?[78]/.test(contact.replace(/[\s()-]/g, ''))) notes.push('контакт — телефон');
+  else if (contact.startsWith('@')) notes.push('контакт — Telegram');
+  else if (contact.includes('@')) notes.push('контакт — почта');
+
+  return notes;
+}
+
+/** Читаем рекламные метки из адреса страницы, с которой пришла заявка. */
+function utmFrom(pageUrl) {
+  const q = pageUrl.split('?')[1];
+  if (!q) return '';
+  const p = new URLSearchParams(q);
+  const parts = [p.get('utm_source'), p.get('utm_medium'), p.get('utm_campaign')]
+    .filter(Boolean);
+  return parts.join(' / ');
+}
+
 function clean(value, max) {
   return String(value ?? '').trim().slice(0, max);
 }
@@ -71,9 +150,18 @@ async function handleLead(req, res) {
     return res.status(400).json({ ok: false, error: 'Заполните имя и контакт' });
   }
 
+  /* Адрес страницы, с которой отправили форму. Присылает браузер: сервер
+     сам его не знает — заголовок referer показывает предыдущую страницу,
+     а не текущую, и рекламных меток в нём может не быть вовсе. */
+  const page = clean(req.body?.page, 300);
+
   /* Бот общий с Гранат, поэтому метка источника обязательна:
      иначе в одном чате смешаются заявки двух разных бизнесов. */
   const site = process.env.SITE_NAME || 'vibe-digital999.ru';
+
+  const num = nextLeadNumber();
+  const notes = leadNotes({ comment, contact });
+  const utm = utmFrom(page);
 
   /* ── Шаг 1: сохранить. Раньше всего остального ──────────────────
      Проверку токена намеренно сдвинули НИЖЕ записи на диск: если
@@ -82,27 +170,40 @@ async function handleLead(req, res) {
      заполнивший форму, исчезал вместе с ней. */
   const saved = saveLead({
     at: new Date().toISOString(),
+    num,
     site,
     name,
     contact,
     service,
     comment: comment || null,
-    /* Откуда пришёл — пригодится, когда будем считать,
-       какая реклама приводит клиентов, а какая жжёт бюджет. */
+    /* Страница и рекламные метки. По ним потом видно, какая страница
+       и какая реклама приводят клиентов, а какая жжёт бюджет. */
+    page: page || null,
+    utm: utm || null,
+    notes,
     referer: clean(req.headers?.referer, 300) || null,
     delivered: false,     // проставим true, если примет хотя бы один канал
   });
 
   /* Один и тот же текст в двух видах. В Telegram уходит разметка,
-     в ВК её нет вовсе — теги там отобразятся буквально, как «<b>». */
+     в ВК её нет вовсе — теги там отобразятся буквально, как «<b>».
+
+     Порядок строк — по тому, в каком порядке это нужно читать: сначала
+     кто и как с ним связаться, потом что нужно, и только в конце откуда
+     пришёл. Контекст важен, но он для разбора, а не для ответа. */
+  const head = num ? `🔵 ВАЙБКОДИНГ — заявка № ${num}` : '🔵 ВАЙБКОДИНГ — новая заявка';
   const lines = [
-    ['🔵 ВАЙБКОДИНГ — новая заявка', '🔵 <b>ВАЙБКОДИНГ — новая заявка</b>'],
+    [head, `🔵 <b>${escapeHtml(head.replace('🔵 ', ''))}</b>`],
     [`🌐 ${site}`, `🌐 ${escapeHtml(site)}`],
     ['', ''],
     [`👤 Имя: ${name}`, `👤 Имя: ${escapeHtml(name)}`],
     [`📱 Контакт: ${contact}`, `📱 Контакт: ${escapeHtml(contact)}`],
     [`💼 Услуга: ${service}`, `💼 Услуга: ${escapeHtml(service)}`],
-    comment ? [`💬 Комментарий: ${comment}`, `💬 Комментарий: ${escapeHtml(comment)}`] : null,
+    comment ? [`💬 Задача: ${comment}`, `💬 Задача: ${escapeHtml(comment)}`] : null,
+    ['', ''],
+    page ? [`📄 Страница: ${page}`, `📄 Страница: ${escapeHtml(page)}`] : null,
+    utm ? [`📣 Реклама: ${utm}`, `📣 Реклама: ${escapeHtml(utm)}`] : null,
+    notes.length ? [`🔎 Заметки: ${notes.join(' · ')}`, `🔎 Заметки: ${escapeHtml(notes.join(' · '))}`] : null,
   ].filter(Boolean);
 
   const plainText = lines.map(pair => pair[0]).join('\n');
@@ -119,7 +220,7 @@ async function handleLead(req, res) {
 
   if (tg.ok || vk.ok) {
     markDelivered();
-    console.log(`[lead] Заявка принята: ${name} / ${service}`,
+    console.log(`[lead] Заявка № ${num ?? "—"} принята: ${name} / ${service}`,
       `| Telegram: ${tg.ok ? 'доставлено' : tg.error}`,
       `| ВК: ${vk.ok ? 'доставлено' : vk.error}`);
     return res.json({ ok: true });

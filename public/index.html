@@ -4913,7 +4913,10 @@ async function submitForm({ name, contact, service, comment = '' }, successEl, f
     const res = await fetch('/api/lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, contact, service, comment })
+      /* page — адрес страницы с рекламными метками. Сервер его не знает:
+         заголовок referer показывает предыдущую страницу, а не текущую. */
+      body: JSON.stringify({ name, contact, service, comment,
+                             page: location.pathname + location.search })
     });
 
     const data = await res.json().catch(() => ({}));

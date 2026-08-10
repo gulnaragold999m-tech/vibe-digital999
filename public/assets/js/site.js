@@ -249,7 +249,10 @@
             name: nameEl.value.trim(),
             contact: contactEl.value.trim(),
             service: serviceEl ? serviceEl.value : 'Не указана',
-            comment: commentEl ? commentEl.value.trim() : ''
+            comment: commentEl ? commentEl.value.trim() : '',
+            /* Адрес страницы вместе с метками из рекламы: по нему потом
+               видно, какая страница и какое объявление привели человека. */
+            page: location.pathname + location.search
           })
         });
 
