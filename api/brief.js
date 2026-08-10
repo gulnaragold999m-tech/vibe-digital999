@@ -25,6 +25,7 @@
  */
 
 const { sendVkToOwner, vkConfigured } = require('./vk');
+const { saveLead, nextLeadNumber, leadNotes } = require('./lead');
 
 const BASE_URL = (process.env.LLM_BASE_URL || 'https://inference.waw0.amvera.ru/v1').replace(/\/$/, '');
 const MODEL = process.env.LLM_MODEL || 'gpt-5';
@@ -297,6 +298,69 @@ function findContact(text) {
  * разговор с живым человеком, который уже назвал телефон, — самое дорогое,
  * что есть на сайте, и терять его из-за отказа одного мессенджера нельзя.
  */
+/* ── Свод ТЗ по разговору ────────────────────────────────────────
+   Раньше в Telegram падал весь диалог целиком, и владелице приходилось
+   вычитывать из него нишу, задачу, срок и бюджет руками. Разговор на
+   двадцать реплик — это пять минут чтения на каждую заявку, и половина
+   их в итоге не читается вовсе.
+
+   Теперь ту же работу делает модель: она уже прочитала разговор, ей
+   осталось разложить его по полям. Диалог всё равно прикладываем ниже —
+   свод помогает решить, звонить ли сейчас, а подробности всё равно
+   иногда нужны.
+
+   Главное правило промпта — НИЧЕГО НЕ ДОДУМЫВАТЬ. Свод, в котором
+   выдуманы срок и бюджет, хуже отсутствия свода: по нему звонят
+   и попадают впросак. */
+const SUMMARY_SYSTEM = `
+Ты разбираешь разговор клиента с ассистентом веб-студии и составляешь
+короткий свод для владельца студии.
+
+Выведи РОВНО эти строки, каждую с новой строки, без заголовков и пояснений:
+
+Ниша: <чем занимается клиент>
+Задача: <что ему нужно сделать, своими словами, одно предложение>
+Сейчас не так: <что у него не работает, если говорил>
+Каналы: <Telegram, ВКонтакте, WhatsApp, сайт — что упоминалось>
+Город: <если называл>
+Срок: <если называл>
+Бюджет: <если называл>
+Подходит: <позиция прайса или пакет с ценой «от», если по разговору ясно>
+Спросить первым делом: <главное, чего не хватает для сметы>
+
+ЖЕЛЕЗНОЕ ПРАВИЛО: пиши только то, что человек СКАЗАЛ. Не додумывай,
+не предполагай, не округляй. Если чего-то в разговоре не было —
+пиши «не назван» или «не назвал». Свод с выдуманным сроком и бюджетом
+хуже отсутствия свода: по нему звонят и попадают впросак.
+
+В строке «Подходит» опирайся на прайс из своей роли ассистента, но если
+по разговору не ясно, что человеку нужно, — пиши «рано говорить».
+`.trim();
+
+/**
+ * Просит модель разложить разговор по полям.
+ * Не получилось — возвращаем пустоту: диалог уйдёт и без свода.
+ */
+async function summarize(messages) {
+  const dialog = messages
+    .map((m) => (m.role === 'user' ? 'Клиент: ' : 'Ассистент: ') + m.content)
+    .join('\n')
+    .slice(0, 6000);
+
+  try {
+    const text = await askOnce(
+      [{ role: 'user', content: 'Разговор:\n\n' + dialog }],
+      SUMMARY_SYSTEM,
+    );
+    return String(text || '').trim().slice(0, 1200);
+  } catch (err) {
+    /* Свод — удобство, а не условие доставки. Модель не ответила —
+       бриф всё равно уходит, просто без разбора по полям. */
+    console.warn('[brief] Свод не составлен:', err.message);
+    return '';
+  }
+}
+
 async function notifyOwner(messages, contact, sessionKey) {
   if (notified.has(sessionKey)) return;    // один бриф на диалог, без спама
   notified.add(sessionKey);
@@ -309,21 +373,64 @@ async function notifyOwner(messages, contact, sessionKey) {
 
   const site = process.env.SITE_NAME || 'vibe-digital999.ru';
 
+  /* Номер из того же счётчика, что и у заявок с формы. Разговор в чате —
+     такая же заявка: без общего номера подсчёт «сколько пришло за месяц»
+     не видит чат вовсе. */
+  const num = nextLeadNumber();
+
+  /* Свод ждём не дольше восьми секунд.
+
+     Запрос к модели идёт ПЕРЕД записью на диск и отправкой — иначе свода
+     в сохранённой заявке не будет. Но у него нет своего ограничения по
+     времени, и зависшая модель задержала бы весь бриф: человек уже назвал
+     телефон, а владелица об этом не знает.
+
+     Поэтому гонка: что придёт первым — свод или таймер. Проиграл свод —
+     бриф уходит без него, с полным диалогом. Удобство не должно
+     задерживать доставку. */
+  const summary = await Promise.race([
+    summarize(messages),
+    new Promise((resolve) => setTimeout(() => resolve(''), 8000)),
+  ]);
+
+  /* На диск — ДО отправки и независимо от неё. У заявок с формы эта защита
+     появилась после того, как 3 августа Telegram перестал принимать
+     сообщения и заявки исчезали бесследно. Брифы из чата её не имели,
+     хотя разговор с человеком, который уже назвал телефон, — самое
+     дорогое, что есть на сайте. */
+  saveLead({
+    at: new Date().toISOString(),
+    num,
+    site,
+    source: 'chat',
+    name: null,                        // в чате имя спрашивают не всегда
+    contact,
+    service: 'Разговор в чате',
+    summary: summary || null,
+    dialog,
+    notes: leadNotes({ comment: dialog, contact }),
+    delivered: false,
+  });
+
+  const head = num ? `💬 ВАЙБКОДИНГ — бриф из чата № ${num}` : '💬 ВАЙБКОДИНГ — бриф из чата';
+
   const plainText = [
-    '💬 ВАЙБКОДИНГ — бриф из чата',
+    head,
     `🌐 ${site}`,
     '',
     `📱 Контакт: ${contact}`,
+    ...(summary ? ['', summary] : []),
     '',
     'Диалог:',
     dialog,
   ].join('\n');
 
   const htmlText = [
-    '💬 <b>ВАЙБКОДИНГ — бриф из чата</b>',
+    `💬 <b>ВАЙБКОДИНГ — бриф из чата${num ? ' № ' + num : ''}</b>`,
     `🌐 ${escapeHtml(site)}`,
     '',
     `📱 Контакт: ${escapeHtml(contact)}`,
+    ...(summary ? ['', escapeHtml(summary)] : []),
     '',
     '<b>Диалог:</b>',
     escapeHtml(dialog),
@@ -364,7 +471,7 @@ async function notifyOwner(messages, contact, sessionKey) {
    Два формата отличаются тем, где лежит системный промпт и как
    называются поля. Разводим это в одном месте, чтобы всё остальное
    работало одинаково независимо от того, чей инференс подключён. */
-function buildRequest(messages, stream = true) {
+function buildRequest(messages, stream = true, system = SYSTEM) {
   if (FORMAT === 'anthropic') {
     return {
       url: BASE_URL + '/messages',
@@ -374,7 +481,7 @@ function buildRequest(messages, stream = true) {
         'authorization': 'Bearer ' + process.env.LLM_API_KEY,
         'anthropic-version': '2023-06-01',
       },
-      body: { model: MODEL, max_tokens: MAX_TOKENS, system: SYSTEM, messages, stream },
+      body: { model: MODEL, max_tokens: MAX_TOKENS, system, messages, stream },
     };
   }
   return {
@@ -387,7 +494,7 @@ function buildRequest(messages, stream = true) {
       model: MODEL,
       max_tokens: MAX_TOKENS,
       stream,
-      messages: [{ role: 'system', content: SYSTEM }].concat(messages),
+      messages: [{ role: 'system', content: system }].concat(messages),
     },
   };
 }
@@ -401,8 +508,8 @@ function buildRequest(messages, stream = true) {
  *
  * @returns {Promise<string>} текст ответа
  */
-async function askOnce(messages) {
-  const req = buildRequest(messages, false);
+async function askOnce(messages, system = SYSTEM) {
+  const req = buildRequest(messages, false, system);
 
   const res = await fetch(req.url, {
     method: 'POST',

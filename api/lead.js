@@ -392,4 +392,9 @@ function handleLeadsExport(req, res) {
   res.json({ ok: true, total: leads.length, ne_dostavleny: lost, leads });
 }
 
-module.exports = { handleLead, handleLeadsExport };
+/* saveLead и nextLeadNumber отдаём наружу для брифов из чата.
+   Разговор в чате — такая же заявка: ей нужен тот же номер из общего
+   счётчика и та же запись на диск раньше отправки. Иначе счёт заявок
+   за месяц не видит чат вовсе, а при отказе мессенджеров разговор
+   с живым человеком пропадает бесследно. */
+module.exports = { handleLead, handleLeadsExport, saveLead, nextLeadNumber, leadNotes };
