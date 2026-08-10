@@ -145,6 +145,10 @@ async function handleLead(req, res) {
   const contact = clean(req.body?.contact, 100);
   const service = clean(req.body?.service, 100) || 'Не указана';
   const comment = clean(req.body?.comment, 1500);
+  /* Город человек пишет сам. В Яндекс Бизнесе меток из рекламы нет,
+     и это единственный честный ответ на вопрос, какой регион приносит
+     заявки. Поле необязательное: пустое оно ничего не ломает. */
+  const city = clean(req.body?.city, 80);
 
   if (!name || !contact) {
     return res.status(400).json({ ok: false, error: 'Заполните имя и контакт' });
@@ -176,6 +180,7 @@ async function handleLead(req, res) {
     contact,
     service,
     comment: comment || null,
+    city: city || null,
     /* Страница и рекламные метки. По ним потом видно, какая страница
        и какая реклама приводят клиентов, а какая жжёт бюджет. */
     page: page || null,
@@ -199,6 +204,7 @@ async function handleLead(req, res) {
     [`👤 Имя: ${name}`, `👤 Имя: ${escapeHtml(name)}`],
     [`📱 Контакт: ${contact}`, `📱 Контакт: ${escapeHtml(contact)}`],
     [`💼 Услуга: ${service}`, `💼 Услуга: ${escapeHtml(service)}`],
+    city ? [`📍 Город: ${city}`, `📍 Город: ${escapeHtml(city)}`] : null,
     comment ? [`💬 Задача: ${comment}`, `💬 Задача: ${escapeHtml(comment)}`] : null,
     ['', ''],
     page ? [`📄 Страница: ${page}`, `📄 Страница: ${escapeHtml(page)}`] : null,

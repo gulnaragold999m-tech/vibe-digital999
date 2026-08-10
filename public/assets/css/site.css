@@ -1613,3 +1613,7 @@ input[type="checkbox"].invalid{ outline:2px solid rgba(255,60,110,.55); outline-
   .cookie-btn { flex: 1; }
 }
 @media (prefers-reduced-motion: reduce) { .cookie-bar { animation: none; } }
+
+/* Пометка «необязательно» у поля города. Мелкая и приглушённая:
+   она уточняет, а не спорит с названием поля за внимание. */
+.form-opt { font-weight: 400; opacity: 0.6; font-size: 0.9em; }

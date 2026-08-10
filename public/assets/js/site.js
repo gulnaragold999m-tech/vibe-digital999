@@ -207,6 +207,7 @@
     var nameEl = formEl.querySelector('[name="name"]');
     var contactEl = formEl.querySelector('[name="contact"]');
     var commentEl = formEl.querySelector('[name="comment"]');
+    var cityEl = formEl.querySelector('[name="city"]');
     var serviceEl = formEl.querySelector('[name="service"]');
     var consentEl = formEl.querySelector('[data-consent]');
     var policyEl = formEl.querySelector('[data-policy]');
@@ -250,6 +251,7 @@
             contact: contactEl.value.trim(),
             service: serviceEl ? serviceEl.value : 'Не указана',
             comment: commentEl ? commentEl.value.trim() : '',
+            city: cityEl ? cityEl.value.trim() : '',
             /* Адрес страницы вместе с метками из рекламы: по нему потом
                видно, какая страница и какое объявление привели человека. */
             page: location.pathname + location.search

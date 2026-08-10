@@ -2396,6 +2396,8 @@
 
     /* Выбор региона под блоком географии. Карточки те же, что на внутренних
        страницах, но их стилей на главной нет — она свои держит у себя. */
+    .form-opt{ font-weight:400; opacity:.6; font-size:.9em; }
+
     .geo-pick{ max-width:1200px; margin:3rem auto 0; }
     .geo-pick-title{ text-align:center; font-size:.9rem; letter-spacing:.03em;
       color:var(--white); margin:0 0 1.4rem; }
@@ -4242,6 +4244,11 @@
       </div>
 
       <div class="form-group">
+        <label for="f-city">Город <span class="form-opt">— необязательно</span></label>
+        <input type="text" id="f-city" name="city" placeholder="Пятигорск, Краснодар, Красноярск…" autocomplete="address-level2" />
+      </div>
+
+      <div class="form-group">
         <label for="f-comment">Описание проекта</label>
         <textarea id="f-comment" name="comment" rows="4" placeholder="Расскажите о вашей идее..." style="resize: vertical;"></textarea>
       </div>
@@ -5141,7 +5148,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') quickModal.c
 ═══════════════════════════════════════════ */
 /* Заявка уходит на наш сервер, а он уже отправляет её в Telegram.
    Токен бота живёт только на сервере и в браузер никогда не попадает. */
-async function submitForm({ name, contact, service, comment = '' }, successEl, formEl) {
+async function submitForm({ name, contact, service, comment = '', city = '' }, successEl, formEl) {
   const btn = formEl.querySelector('.btn-submit');
   btn.disabled = true;
   btn.classList.add('loading');
@@ -5152,7 +5159,7 @@ async function submitForm({ name, contact, service, comment = '' }, successEl, f
       headers: { 'Content-Type': 'application/json' },
       /* page — адрес страницы с рекламными метками. Сервер его не знает:
          заголовок referer показывает предыдущую страницу, а не текущую. */
-      body: JSON.stringify({ name, contact, service, comment,
+      body: JSON.stringify({ name, contact, service, comment, city,
                              page: location.pathname + location.search })
     });
 
@@ -5280,6 +5287,7 @@ document.getElementById('order-form').addEventListener('submit', async e => {
       contact: document.getElementById('f-contact').value.trim(),
       service: document.getElementById('f-service').value,
       comment: document.getElementById('f-comment').value.trim(),
+      city:    document.getElementById('f-city').value.trim(),
     },
     document.getElementById('order-success'),
     formEl
