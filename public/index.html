@@ -4249,6 +4249,7 @@
     document.getElementById('modal-success').classList.remove('visible');
     document.getElementById('mf-name').value = '';
     document.getElementById('mf-contact').value = '';
+    document.getElementById('mf-city').value = '';
     document.getElementById('quick-modal').classList.add('open');
   });
 })();
@@ -4573,6 +4574,18 @@
         <label for="mf-contact">Телефон или Telegram</label>
         <input type="text" id="mf-contact" name="contact" placeholder="@yourname или +7..." required />
       </div>
+      <!-- Город есть и здесь. Раньше не было, и это была дыра в учёте:
+           через это окно уходит часть заявок, и по ним регион оставался
+           неизвестным — а именно ради региона поле и заводили. Список
+           подсказок тот же, что в основной форме. -->
+      <div class="form-group">
+        <label for="mf-city">Ваш город <span class="form-opt">— необязательно</span></label>
+        <input type="text" id="mf-city" name="city" list="city-list"
+               placeholder="Например: Пятигорск, Краснодар, Красноярск"
+               autocomplete="address-level2" />
+        <p class="form-hint" data-city-hint>Поможет быстрее рассчитать стоимость и предложить подходящий формат работы.</p>
+      </div>
+
       <input type="hidden" id="mf-service" name="service" />
 
       <!-- Разведены на две по той же причине, что и в основной форме. -->
@@ -5201,6 +5214,7 @@ document.querySelectorAll('.btn-svc[data-service]').forEach(btn => {
     document.getElementById('modal-success').style.display = 'none';
     document.getElementById('mf-name').value = '';
     document.getElementById('mf-contact').value = '';
+    document.getElementById('mf-city').value = '';
     quickModal.classList.add('open');
   });
 });
@@ -5385,6 +5399,8 @@ document.getElementById('modal-form').addEventListener('submit', async e => {
       name:    document.getElementById('mf-name').value.trim(),
       contact: document.getElementById('mf-contact').value.trim(),
       service: document.getElementById('mf-service').value,
+      city:    document.getElementById('mf-city').value.trim(),
+      citySource: document.getElementById('mf-city').dataset.auto ? 'ip' : 'user',
     },
     document.getElementById('modal-success'),
     formEl
@@ -5638,6 +5654,7 @@ document.getElementById('modal-form').addEventListener('submit', async e => {
       document.getElementById('modal-success').style.display = 'none';
       document.getElementById('mf-name').value = '';
       document.getElementById('mf-contact').value = '';
+      document.getElementById('mf-city').value = '';
       document.getElementById('quick-modal').classList.add('open');
     });
   }
