@@ -45,24 +45,66 @@ app.use(compression({
 
 app.use(express.json({ limit: '32kb' }));
 
-/* Простая защита от спама: не больше 5 заявок с одного адреса за 10 минут. */
-const attempts = new Map();
+/* ── Защита от спама ─────────────────────────────────────────────
+   Считали по IP-адресу — и это тихо ломало приём заявок.
+
+   За прокси Amvera адрес у всех посетителей ОДИН И ТОТ ЖЕ: прокси
+   подставляет свой внутренний 10.x.x.x вместо адреса человека (см.
+   api/geo.js, там та же причина). Значит лимит «5 заявок за 10 минут»
+   действовал не на человека, а на весь сайт разом: шестой клиент за
+   десять минут получал «слишком много заявок» и уходил. Заметить это
+   было невозможно — в журнале ошибки нет, заявка просто не приходит.
+
+   Теперь считаем по КОНТАКТУ. Он и есть то, что нужно ограничивать:
+   спамер шлёт с одного адреса или ника, а десять разных клиентов
+   в одну минуту — это удачный день, а не атака.
+
+   Общий потолок оставлен, но поднят до уровня, на котором его задевает
+   только поток от робота: пятнадцать заявок в минуту живые люди с сайта
+   такого размера не дают. Он нужен на случай, если контакт в каждой
+   заявке будет новым. */
 const WINDOW_MS = 10 * 60 * 1000;
-const MAX_ATTEMPTS = 5;
+const MAX_PER_CONTACT = 3;        // один и тот же телефон или ник
+const MAX_TOTAL = 150;            // весь сайт за то же окно — только против робота
+
+const byContact = new Map();
+let total = { start: 0, count: 0 };
+
+/* Один и тот же телефон в разных записях выглядит по-разному:
+   «+7 999 244-99-99», «89992449999», «8 (999) 244 99 99». Оставляем
+   только цифры, иначе три записи одного номера считаются за три разных
+   контакта и лимит не срабатывает вовсе. */
+function contactKey(req) {
+  const raw = String(req.body?.contact ?? '').trim().toLowerCase();
+  if (!raw) return '';
+  const digits = raw.replace(/\D/g, '');
+  return digits.length >= 10 ? digits.slice(-10) : raw;
+}
 
 function rateLimit(req, res, next) {
-  const ip = req.ip;
   const now = Date.now();
-  const record = attempts.get(ip);
+  const tooMany = () => res.status(429).json({
+    ok: false,
+    error: 'Слишком много заявок подряд. Подождите десять минут или позвоните по +7 999 244 99 99.',
+  });
 
+  if (now - total.start > WINDOW_MS) total = { start: now, count: 0 };
+  if (total.count >= MAX_TOTAL) return tooMany();
+  total.count += 1;
+
+  /* Контакта нет — заявку всё равно пропускаем: её отклонит проверка
+     в api/lead.js с понятным человеку сообщением, а не безликим
+     «слишком много заявок». */
+  const key = contactKey(req);
+  if (!key) return next();
+
+  const record = byContact.get(key);
   if (!record || now - record.start > WINDOW_MS) {
-    attempts.set(ip, { start: now, count: 1 });
+    byContact.set(key, { start: now, count: 1 });
     return next();
   }
 
-  if (record.count >= MAX_ATTEMPTS) {
-    return res.status(429).json({ ok: false, error: 'Слишком много заявок. Попробуйте позже.' });
-  }
+  if (record.count >= MAX_PER_CONTACT) return tooMany();
 
   record.count += 1;
   return next();
@@ -71,8 +113,8 @@ function rateLimit(req, res, next) {
 /* Чистим старые записи раз в час, чтобы память не росла. */
 setInterval(() => {
   const now = Date.now();
-  for (const [ip, record] of attempts) {
-    if (now - record.start > WINDOW_MS) attempts.delete(ip);
+  for (const [key, record] of byContact) {
+    if (now - record.start > WINDOW_MS) byContact.delete(key);
   }
 }, 60 * 60 * 1000).unref();
 
