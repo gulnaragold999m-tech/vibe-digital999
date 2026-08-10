@@ -27,9 +27,23 @@
         <input type="text" id="f-contact" name="contact" placeholder="@yourname или +7..." autocomplete="tel" required />
       </div>
 
+      <!-- Город. Необязательное поле, и это принципиально: обязательным оно
+           отсекает тех, кому всё равно, откуда мы работаем, — а таких среди
+           удалённых заказов большинство. Зато у заполнивших сразу виден
+           регион, и по заявкам понятно, какая реклама из трёх работает.
+
+           Подсказки — datalist, а не выпадающий список: поле остаётся
+           текстовым, свой город можно вписать целиком. Список городов
+           собирается из src/cities.js. -->
       <div class="form-group">
-        <label for="f-city">Город <span class="form-opt">— необязательно</span></label>
-        <input type="text" id="f-city" name="city" placeholder="Пятигорск, Краснодар, Красноярск…" autocomplete="address-level2" />
+        <label for="f-city">Ваш город <span class="form-opt">— необязательно</span></label>
+        <input type="text" id="f-city" name="city" list="city-list"
+               placeholder="Например: Пятигорск, Краснодар, Красноярск"
+               autocomplete="address-level2" />
+        <datalist id="city-list">
+        {{CITY_OPTIONS}}
+        </datalist>
+        <p class="form-hint" data-city-hint>Поможет быстрее рассчитать стоимость и предложить подходящий формат работы.</p>
       </div>
 
       <div class="form-group">

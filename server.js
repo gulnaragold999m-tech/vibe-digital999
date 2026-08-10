@@ -5,6 +5,7 @@ const express = require('express');
 const compression = require('compression');
 const { handleLead, handleLeadsExport } = require('./api/lead');
 const { handleBrief } = require('./api/brief');
+const { handleGeo } = require('./api/geo');
 const { startVkBot } = require('./api/vk-bot');
 
 const app = express();
@@ -69,6 +70,13 @@ app.post('/api/lead', rateLimit, handleLead);
 /* ИИ-брифер чата. Свой лимитер внутри: у диалога другой ритм, чем у заявки —
    пять сообщений за десять минут здесь мало, разговор оборвётся на середине. */
 app.post('/api/brief', handleBrief);
+
+/* Регион посетителя по IP — подсказка для полоски «похоже, вы из…».
+   Подробности и предупреждения — в api/geo.js. Здесь важно одно: этот
+   адрес ничего не решает за человека и не участвует в отдаче страниц.
+   Робот его не вызывает — он не выполняет скрипты, — и /api/ закрыт
+   в robots.txt. Любой адрес сайта отдаётся всем одинаково. */
+app.get('/api/geo', handleGeo);
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 

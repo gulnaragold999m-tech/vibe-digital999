@@ -252,6 +252,11 @@
             service: serviceEl ? serviceEl.value : 'Не указана',
             comment: commentEl ? commentEl.value.trim() : '',
             city: cityEl ? cityEl.value.trim() : '',
+            /* Кто вписал город: человек или определение по IP. Определение
+               ошибается — на мобильном интернете и через VPN регулярно.
+               Без этой пометки догадка сервиса выглядела бы в заявке так
+               же уверенно, как ответ клиента. */
+            city_source: cityEl && cityEl.dataset.auto ? 'ip' : 'user',
             /* Адрес страницы вместе с метками из рекламы: по нему потом
                видно, какая страница и какое объявление привели человека. */
             page: location.pathname + location.search

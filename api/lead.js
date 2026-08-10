@@ -150,6 +150,17 @@ async function handleLead(req, res) {
      заявки. Поле необязательное: пустое оно ничего не ломает. */
   const city = clean(req.body?.city, 80);
 
+  /* Кто вписал город. 'ip' — подставило определение по интернет-адресу,
+     'user' — написал человек (или подтвердил подставленное, начав править).
+
+     Разница не косметическая. Определение по IP на мобильном интернете
+     показывает город опорной сети оператора, через VPN — вообще другой
+     регион. Заявка «Краснодар», которую никто не подтвердил, — это
+     догадка сервиса, и звонить по ней с «вы же из Краснодара» нельзя.
+     В сообщении такой город помечен отдельно. */
+  const citySource = clean(req.body?.city_source, 10) === 'ip' ? 'ip' : 'user';
+  const cityGuessed = Boolean(city) && citySource === 'ip';
+
   if (!name || !contact) {
     return res.status(400).json({ ok: false, error: 'Заполните имя и контакт' });
   }
@@ -181,6 +192,7 @@ async function handleLead(req, res) {
     service,
     comment: comment || null,
     city: city || null,
+    city_source: city ? citySource : null,
     /* Страница и рекламные метки. По ним потом видно, какая страница
        и какая реклама приводят клиентов, а какая жжёт бюджет. */
     page: page || null,
@@ -204,7 +216,10 @@ async function handleLead(req, res) {
     [`👤 Имя: ${name}`, `👤 Имя: ${escapeHtml(name)}`],
     [`📱 Контакт: ${contact}`, `📱 Контакт: ${escapeHtml(contact)}`],
     [`💼 Услуга: ${service}`, `💼 Услуга: ${escapeHtml(service)}`],
-    city ? [`📍 Город: ${city}`, `📍 Город: ${escapeHtml(city)}`] : null,
+    city ? [
+      `📍 Город: ${city}${cityGuessed ? ' (определён по IP, не подтверждён)' : ''}`,
+      `📍 Город: ${escapeHtml(city)}${cityGuessed ? ' <i>(определён по IP, не подтверждён)</i>' : ''}`,
+    ] : null,
     comment ? [`💬 Задача: ${comment}`, `💬 Задача: ${escapeHtml(comment)}`] : null,
     ['', ''],
     page ? [`📄 Страница: ${page}`, `📄 Страница: ${escapeHtml(page)}`] : null,

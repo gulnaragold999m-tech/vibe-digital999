@@ -387,9 +387,32 @@
         <input type="text" id="f-contact" name="contact" placeholder="@yourname или +7..." autocomplete="tel" required />
       </div>
 
+      <!-- Город. Необязательное поле, и это принципиально: обязательным оно
+           отсекает тех, кому всё равно, откуда мы работаем, — а таких среди
+           удалённых заказов большинство. Зато у заполнивших сразу виден
+           регион, и по заявкам понятно, какая реклама из трёх работает.
+
+           Подсказки — datalist, а не выпадающий список: поле остаётся
+           текстовым, свой город можно вписать целиком. Список городов
+           собирается из src/cities.js. -->
       <div class="form-group">
-        <label for="f-city">Город <span class="form-opt">— необязательно</span></label>
-        <input type="text" id="f-city" name="city" placeholder="Пятигорск, Краснодар, Красноярск…" autocomplete="address-level2" />
+        <label for="f-city">Ваш город <span class="form-opt">— необязательно</span></label>
+        <input type="text" id="f-city" name="city" list="city-list"
+               placeholder="Например: Пятигорск, Краснодар, Красноярск"
+               autocomplete="address-level2" />
+        <datalist id="city-list">
+        <option value="Лермонтов"></option>
+        <option value="Пятигорск"></option>
+        <option value="Ессентуки"></option>
+        <option value="Кисловодск"></option>
+        <option value="Минеральные Воды"></option>
+        <option value="Железноводск"></option>
+        <option value="Краснодар"></option>
+        <option value="Сочи"></option>
+        <option value="Новороссийск"></option>
+        <option value="Красноярск"></option>
+        </datalist>
+        <p class="form-hint" data-city-hint>Поможет быстрее рассчитать стоимость и предложить подходящий формат работы.</p>
       </div>
 
       <div class="form-group">
@@ -485,6 +508,25 @@
       <a class="footer-link" href="/portfolio/">Портфолио</a>
       <a class="footer-link" href="/blog/">Блог</a>
       <a class="footer-link" href="/o-nas/">О студии</a>
+      <a class="footer-link" href="/kontakty/">Контакты</a>
+    </div>
+
+    <!-- Регионы отдельной колонкой, а не строкой в «Разделах».
+
+         Три региональные страницы — единственные, до которых иначе не
+         дойти ниоткуда, кроме главной: человек, пришедший из поиска сразу
+         на страницу услуги, о них не узнает. Здесь они есть на каждой
+         странице сайта.
+
+         Порядок не алфавитный. Первыми — регионы, по которым идёт реклама,
+         и первым из них КМВ: там мы физически находимся, там карточка на
+         Картах и возможность встретиться. Города КМВ ниже — это уточнение
+         внутри региона, а не четвёртое и пятое направление. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Регионы</h3>
+      <a class="footer-link" href="/kmv/">Кавминводы</a>
+      <a class="footer-link" href="/krasnodar-krai/">Краснодарский край</a>
+      <a class="footer-link" href="/krasnoyarsk-krai/">Красноярский край</a>
       <a class="footer-link" href="/pyatigorsk/">Пятигорск</a>
       <a class="footer-link" href="/essentuki/">Ессентуки</a>
     </div>
@@ -536,6 +578,10 @@
 </div>
 
 <script src="/assets/js/site.js" defer></script>
+<!-- Подсказка региона по IP. Ничего не переадресовывает и не подменяет
+     в тексте страницы: подставляет город в форму и на главной предлагает
+     перейти в свой раздел. Не загрузился — сайт работает как работал. -->
+<script src="/assets/js/geo.js" defer></script>
 <!-- Пиксель для посетителей без JavaScript: считает заход обезличенно,
      без cookie и без записи экрана. Заодно это то, что ищут роботы Яндекса
      при проверке «установлен ли счётчик» — скрипт они не выполняют,

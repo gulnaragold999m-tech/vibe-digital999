@@ -30,6 +30,7 @@
 const fs = require('fs');
 const path = require('path');
 const { PAGES, SITE, BUILD } = require('./src/pages');
+const { cityDatalist } = require('./src/cities');
 
 const SRC = path.join(__dirname, 'src');
 const OUT = path.join(__dirname, 'public');
@@ -252,7 +253,9 @@ function buildPage(page) {
      Странице 404 форма заявки не нужна: человек попал не туда, ему нужен
      выход, а не анкета. */
   const hasForm = body.includes('{{ORDER_FORM}}');
-  const order = PARTIALS.order.replace('{{SERVICE}}', attr(page.service || 'Не указана'));
+  const order = PARTIALS.order
+    .replace('{{SERVICE}}', attr(page.service || 'Не указана'))
+    .replace('{{CITY_OPTIONS}}', cityDatalist());
   const withOrder = body.replace('{{ORDER_FORM}}', order);
 
   const header = PARTIALS.header

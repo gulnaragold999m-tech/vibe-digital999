@@ -2398,6 +2398,34 @@
        страницах, но их стилей на главной нет — она свои держит у себя. */
     .form-opt{ font-weight:400; opacity:.6; font-size:.9em; }
 
+    /* Подпись под полем: зачем его заполнять. Отвечает на немой вопрос
+       «а вам-то зачем мой город» — без этого поле пропускают. */
+    .form-hint{ margin:.45rem 0 0; font-size:.78rem; line-height:1.55; color:var(--mist); }
+
+    /* Полоска «похоже, вы из…». Внизу экрана: сверху уже стоят шапка и
+       уведомление о куках, третья плашка перекрыла бы кнопку меню.
+       Появляется один раз за сессию и только если сервер сумел
+       определить регион. Подробности — public/assets/js/geo.js */
+    .geo-bar{ position:fixed; left:1rem; right:1rem; bottom:1rem; z-index:90;
+      max-width:640px; margin:0 auto; display:flex; flex-wrap:wrap;
+      align-items:center; justify-content:space-between; gap:.9rem 1.2rem;
+      padding:1rem 1.2rem; border-radius:14px; border:1px solid rgba(0,240,255,.28);
+      background:rgba(5,14,30,.96); box-shadow:0 12px 40px rgba(0,0,0,.5);
+      backdrop-filter:blur(10px); }
+    .geo-bar-text{ flex:1 1 16rem; margin:0; font-size:.85rem; line-height:1.55; color:var(--mist); }
+    .geo-bar-actions{ display:flex; gap:.6rem; flex-shrink:0; }
+    .geo-bar-btn{ font-family:inherit; font-size:.8rem; white-space:nowrap;
+      padding:.55rem 1.1rem; border-radius:999px; border:1px solid transparent;
+      cursor:pointer; text-decoration:none; }
+    .geo-bar-yes{ background:var(--cyan); color:#04121f; font-weight:600; }
+    .geo-bar-no{ background:transparent; color:var(--mist); border-color:rgba(255,255,255,.22); }
+    .geo-bar-btn:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+    @media (max-width:600px){
+      .geo-bar{ bottom:.8rem; padding:.9rem 1rem; }
+      .geo-bar-actions{ width:100%; }
+      .geo-bar-btn{ flex:1; text-align:center; }
+    }
+
     .geo-pick{ max-width:1200px; margin:3rem auto 0; }
     .geo-pick-title{ text-align:center; font-size:.9rem; letter-spacing:.03em;
       color:var(--white); margin:0 0 1.4rem; }
@@ -4244,8 +4272,26 @@
       </div>
 
       <div class="form-group">
-        <label for="f-city">Город <span class="form-opt">— необязательно</span></label>
-        <input type="text" id="f-city" name="city" placeholder="Пятигорск, Краснодар, Красноярск…" autocomplete="address-level2" />
+        <label for="f-city">Ваш город <span class="form-opt">— необязательно</span></label>
+        <input type="text" id="f-city" name="city" list="city-list"
+               placeholder="Например: Пятигорск, Краснодар, Красноярск"
+               autocomplete="address-level2" />
+        <!-- Подсказки, а не выбор из списка: поле остаётся текстовым, свой
+             город можно вписать целиком. Тот же список, что и на внутренних
+             страницах, — src/cities.js. Меняете там — поменяйте и здесь. -->
+        <datalist id="city-list">
+          <option value="Лермонтов"></option>
+          <option value="Пятигорск"></option>
+          <option value="Ессентуки"></option>
+          <option value="Кисловодск"></option>
+          <option value="Минеральные Воды"></option>
+          <option value="Железноводск"></option>
+          <option value="Краснодар"></option>
+          <option value="Сочи"></option>
+          <option value="Новороссийск"></option>
+          <option value="Красноярск"></option>
+        </datalist>
+        <p class="form-hint" data-city-hint>Поможет быстрее рассчитать стоимость и предложить подходящий формат работы.</p>
       </div>
 
       <div class="form-group">
@@ -4443,6 +4489,18 @@
       <a class="footer-link" href="/portfolio/">Портфолио</a>
       <a class="footer-link" href="/blog/">Блог</a>
       <a class="footer-link" href="/o-nas/">О студии</a>
+      <a class="footer-link" href="/kontakty/">Контакты</a>
+    </div>
+
+    <!-- Регионы отдельной колонкой. Порядок не алфавитный: первым КМВ —
+         там мы физически находимся, там карточка на Картах и возможность
+         встретиться. Города КМВ ниже — уточнение внутри региона, а не
+         отдельные направления. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Регионы</h3>
+      <a class="footer-link" href="/kmv/">Кавминводы</a>
+      <a class="footer-link" href="/krasnodar-krai/">Краснодарский край</a>
+      <a class="footer-link" href="/krasnoyarsk-krai/">Красноярский край</a>
       <a class="footer-link" href="/pyatigorsk/">Пятигорск</a>
       <a class="footer-link" href="/essentuki/">Ессентуки</a>
     </div>
@@ -5148,7 +5206,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') quickModal.c
 ═══════════════════════════════════════════ */
 /* Заявка уходит на наш сервер, а он уже отправляет её в Telegram.
    Токен бота живёт только на сервере и в браузер никогда не попадает. */
-async function submitForm({ name, contact, service, comment = '', city = '' }, successEl, formEl) {
+async function submitForm({ name, contact, service, comment = '', city = '', citySource = 'user' }, successEl, formEl) {
   const btn = formEl.querySelector('.btn-submit');
   btn.disabled = true;
   btn.classList.add('loading');
@@ -5159,7 +5217,12 @@ async function submitForm({ name, contact, service, comment = '', city = '' }, s
       headers: { 'Content-Type': 'application/json' },
       /* page — адрес страницы с рекламными метками. Сервер его не знает:
          заголовок referer показывает предыдущую страницу, а не текущую. */
+      /* city_source — кто вписал город: человек или определение по IP.
+         Определение ошибается на мобильном интернете и через VPN, и без
+         пометки его догадка выглядела бы в заявке так же уверенно,
+         как ответ клиента. */
       body: JSON.stringify({ name, contact, service, comment, city,
+                             city_source: citySource,
                              page: location.pathname + location.search })
     });
 
@@ -5288,6 +5351,7 @@ document.getElementById('order-form').addEventListener('submit', async e => {
       service: document.getElementById('f-service').value,
       comment: document.getElementById('f-comment').value.trim(),
       city:    document.getElementById('f-city').value.trim(),
+      citySource: document.getElementById('f-city').dataset.auto ? 'ip' : 'user',
     },
     document.getElementById('order-success'),
     formEl
@@ -6407,5 +6471,10 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 })();
 </script>
 
+<!-- Подсказка региона по IP. Ничего не переадресовывает и не подменяет текст
+     страницы: подставляет город в форму и предлагает перейти в свой раздел.
+     Не загрузился или выключен на сервере — сайт работает как работал.
+     Подробности и оговорки — в public/assets/js/geo.js -->
+<script src="/assets/js/geo.js" defer></script>
 </body>
 </html>
