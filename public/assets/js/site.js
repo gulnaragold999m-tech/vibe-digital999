@@ -209,7 +209,9 @@
     var commentEl = formEl.querySelector('[name="comment"]');
     var cityEl = formEl.querySelector('[name="city"]');
     var serviceEl = formEl.querySelector('[name="service"]');
+    var packageEl = formEl.querySelector('[name="package"]');
     var segmentEl = formEl.querySelector('[name="segment"]');
+    var partsEl = formEl.querySelector('[name="package_parts"]');
     var consentEl = formEl.querySelector('[data-consent]');
     var policyEl = formEl.querySelector('[data-policy]');
 
@@ -258,10 +260,12 @@
                Без этой пометки догадка сервиса выглядела бы в заявке так
                же уверенно, как ответ клиента. */
             city_source: cityEl && cityEl.dataset.auto ? 'ip' : 'user',
-            /* Размер бизнеса — пустой, если человек не приходил с кнопки
+            /* Пакет и масштаб — пустые, если человек не приходил с кнопки
                пакета. Пустое поле честнее домысла: лучше не знать сегмент,
                чем записать не тот. */
+            package: packageEl ? packageEl.value : '',
             segment: segmentEl ? segmentEl.value : '',
+            package_parts: partsEl ? partsEl.value : '',
             /* Адрес страницы вместе с метками из рекламы: по нему потом
                видно, какая страница и какое объявление привели человека. */
             page: location.pathname + location.search
@@ -289,18 +293,28 @@
   /* Кнопки «Обсудить задачу» на карточках: подставляют услугу в форму
      и прокручивают к ней. Отдельного окна на внутренних страницах нет —
      форма и так стоит внизу, на расстоянии одного экрана. */
-  document.querySelectorAll('[data-service]').forEach(function (btn) {
+  document.querySelectorAll('[data-service], [data-package]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var form = document.querySelector('form[data-lead-form]');
       if (!form) return;
+      /* Кнопки пакетов вместо услуги несут название пакета, масштаб
+         и состав. Услугу для них собираем здесь, чтобы в заявке она
+         не оказалась пустой, а цели Метрики продолжали работать. */
+      var pack = btn.dataset.package || '';
       var serviceEl = form.querySelector('[name="service"]');
-      if (serviceEl) serviceEl.value = btn.dataset.service;
+      if (serviceEl) serviceEl.value = pack ? 'Пакет «' + pack + '»' : btn.dataset.service;
 
-      /* Кнопки пакетов дополнительно несут размер бизнеса. У кнопок
-         обычных услуг его нет — тогда поле остаётся пустым, а не
-         перезаписывается пустотой поверх ранее выбранного пакета. */
-      var segEl = form.querySelector('[name="segment"]');
-      if (segEl && btn.dataset.segment) segEl.value = btn.dataset.segment;
+      /* Поля пакета трогаем, только если нажали кнопку пакета. Кнопка
+         обычной услуги не должна стирать выбор, сделанный до неё. */
+      if (pack) {
+        var set = function (name, value) {
+          var el = form.querySelector('[name="' + name + '"]');
+          if (el) el.value = value || '';
+        };
+        set('package', pack);
+        set('segment', btn.dataset.scale);
+        set('package_parts', btn.dataset.parts);
+      }
       reachGoal('click_order');
       var box = document.getElementById('order-section');
       if (box) box.scrollIntoView({ behavior: 'smooth', block: 'start' });

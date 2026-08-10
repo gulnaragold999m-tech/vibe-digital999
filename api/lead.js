@@ -161,10 +161,16 @@ async function handleLead(req, res) {
   const citySource = clean(req.body?.city_source, 10) === 'ip' ? 'ip' : 'user';
   const cityGuessed = Boolean(city) && citySource === 'ip';
 
-  /* Размер бизнеса. Приходит только если человек нажал кнопку пакета
-     на /pakety/ — то есть сам себя отнёс к микро-, малому или среднему.
-     Пустое поле означает «не знаем», и это честнее догадки. */
+  /* Пакет. Приходит только если человек нажал кнопку пакета на /pakety/ —
+     то есть сам отнёс себя к масштабу, ничего не подтверждая. Пустое поле
+     означает «не знаем», и это честнее догадки.
+
+     Масштаб пишем словами про команду, а не «малый бизнес»: у ФНС малый —
+     это от 16 человек, и назвать так салон из пяти мастеров значит
+     сбить с толку и себя, и клиента. */
+  const pkg = clean(req.body?.package, 40);
   const segment = clean(req.body?.segment, 80);
+  const pkgParts = clean(req.body?.package_parts, 120);
 
   if (!name || !contact) {
     return res.status(400).json({ ok: false, error: 'Заполните имя и контакт' });
@@ -198,7 +204,9 @@ async function handleLead(req, res) {
     comment: comment || null,
     city: city || null,
     city_source: city ? citySource : null,
+    package: pkg || null,
     segment: segment || null,
+    package_parts: pkgParts || null,
     /* Страница и рекламные метки. По ним потом видно, какая страница
        и какая реклама приводят клиентов, а какая жжёт бюджет. */
     page: page || null,
@@ -221,8 +229,12 @@ async function handleLead(req, res) {
     ['', ''],
     [`👤 Имя: ${name}`, `👤 Имя: ${escapeHtml(name)}`],
     [`📱 Контакт: ${contact}`, `📱 Контакт: ${escapeHtml(contact)}`],
-    [`💼 Услуга: ${service}`, `💼 Услуга: ${escapeHtml(service)}`],
-    segment ? [`🏷 Размер бизнеса: ${segment}`, `🏷 Размер бизнеса: ${escapeHtml(segment)}`] : null,
+    /* Пакет вместо услуги: строка «Услуга: Пакет «Поток»» и строка
+       «Пакет: Поток» рядом — это одно и то же дважды. */
+    pkg ? null : [`💼 Услуга: ${service}`, `💼 Услуга: ${escapeHtml(service)}`],
+    pkg ? [`🏷 Пакет: ${pkg}`, `🏷 Пакет: ${escapeHtml(pkg)}`] : null,
+    pkg && segment ? [`🏢 Ориентир масштаба: ${segment}`, `🏢 Ориентир масштаба: ${escapeHtml(segment)}`] : null,
+    pkg && pkgParts ? [`🧩 Состав: ${pkgParts}`, `🧩 Состав: ${escapeHtml(pkgParts)}`] : null,
     city ? [
       `📍 Город: ${city}${cityGuessed ? ' (определён по IP, не подтверждён)' : ''}`,
       `📍 Город: ${escapeHtml(city)}${cityGuessed ? ' <i>(определён по IP, не подтверждён)</i>' : ''}`,
