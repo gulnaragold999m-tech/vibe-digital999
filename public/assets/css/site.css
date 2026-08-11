@@ -1654,3 +1654,117 @@ input[type="checkbox"].invalid{ outline:2px solid rgba(255,60,110,.55); outline-
   .geo-bar-actions { width: 100%; }
   .geo-bar-btn { flex: 1; text-align: center; }
 }
+
+
+/* ── Карта ────────────────────────────────────────────────────────
+   Три состояния в одном блоке, и переключаются они классами:
+
+     без классов   — ключей нет: виден только адрес и ссылка на Карты;
+     .has-static   — есть картинка-подложка от Static API;
+     .is-live      — поверх подложки встала настоящая карта.
+
+   Рамка, скругление и тень — те же, что у карточек услуг. Это и есть
+   разница между «встроенной картой» и «вставленным виджетом»: карта
+   должна выглядеть как остальные блоки страницы, а не как окно
+   в чужой сайт. */
+.ymap {
+  position: relative;
+  overflow: hidden;
+  margin-top: 2rem;
+  aspect-ratio: 16 / 9;
+  max-height: 460px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 240, 255, 0.18);
+  background: linear-gradient(160deg, rgba(8, 20, 38, 0.9), rgba(4, 10, 22, 0.95));
+}
+@media (max-width: 600px) { .ymap { aspect-ratio: 4 / 3; } }
+
+/* Подложка и холст лежат друг на друге: подмена идёт прозрачностью,
+   без скачка вёрстки. Если менять display, блок дёргается по высоте. */
+.ymap-static,
+.ymap-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.ymap-static { object-fit: cover; }
+.ymap-canvas { opacity: 0; transition: opacity 0.4s ease; }
+.ymap.is-live .ymap-canvas { opacity: 1; }
+
+/* Пока карта не подключена, блок остаётся полезным: адрес и ссылка.
+   Пустой прямоугольник вместо карты хуже, чем честный адрес текстом. */
+.ymap-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+.ymap.has-static .ymap-fallback,
+.ymap.is-live .ymap-fallback { display: none; }
+.ymap-fallback-addr { margin: 0; font-size: 0.95rem; line-height: 1.6; color: var(--white); }
+
+/* Подсказка «нажмите, чтобы открыть» на подложке: без неё человек
+   не догадается, что картинка станет картой. */
+.ymap.is-ready.has-static::after {
+  content: 'Нажмите, чтобы открыть карту';
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  color: var(--white);
+  background: rgba(5, 14, 30, 0.85);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.ymap.is-live::after { opacity: 0; }
+.ymap.is-ready { cursor: pointer; }
+
+/* Метка — свой элемент, а не синяя капля Яндекса. Именно это и отличает
+   «встроенную карту» от чужого виджета: цвет метки берётся из палитры
+   сайта, и при работе на клиента здесь будут его цвета. */
+.ymap-pin {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+.ymap-pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.25), 0 0 16px rgba(0, 240, 255, 0.7);
+}
+.ymap-pin-label {
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  font-family: var(--f-display, inherit);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  background: rgba(5, 14, 30, 0.92);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+}
+
+/* Метка пульсирует, но не у тех, кто просил анимацию выключить. */
+@media (prefers-reduced-motion: no-preference) {
+  .ymap-pin-dot { animation: ymap-pulse 2.4s ease-in-out infinite; }
+  @keyframes ymap-pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.25), 0 0 16px rgba(0, 240, 255, 0.7); }
+    50%      { box-shadow: 0 0 0 9px rgba(0, 240, 255, 0.08), 0 0 22px rgba(0, 240, 255, 0.5); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ymap-canvas { transition: none; }
+}

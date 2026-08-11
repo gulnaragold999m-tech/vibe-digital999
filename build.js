@@ -29,7 +29,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { PAGES, SITE, BUILD, VERIFY } = require('./src/pages');
+const { PAGES, SITE, BUILD, VERIFY, MAPS } = require('./src/pages');
 const { cityDatalist } = require('./src/cities');
 
 const SRC = path.join(__dirname, 'src');
@@ -172,6 +172,15 @@ function serviceSchema(page) {
 
 /* Мета-теги подтверждения прав. Пустой код — тега нет вовсе: Вебмастер
    читает пустой content как неверный код, и подтверждение не проходит. */
+/* Настройки карт уезжают в страницу одной строкой. Ключи публичные,
+   прятать их незачем и невозможно: карту рисует браузер. */
+function mapsConfig() {
+  return '<script>window.__YMAP=' + JSON.stringify({
+    jsKey: MAPS.jsKey,
+    staticKey: MAPS.staticKey,
+  }) + ';</script>';
+}
+
 function verifyTags() {
   const tags = [];
   if (VERIFY.yandex) tags.push(`  <meta name="yandex-verification" content="${attr(VERIFY.yandex)}" />`);
@@ -256,6 +265,7 @@ function buildPage(page) {
     .replace(/\{\{CANONICAL\}\}/g, SITE + page.url)
     .replace('{{ROBOTS}}', page.noindex ? 'noindex, follow' : 'index, follow')
     .replace('{{VERIFY}}', verifyTags())
+    .replace('{{MAPS}}', mapsConfig())
     .replace('{{BUILD}}', BUILD)
     .replace('{{HEAD_EXTRA}}', schemas.map(ldJson).join('\n'));
 
