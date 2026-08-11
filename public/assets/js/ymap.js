@@ -35,20 +35,63 @@
 
   var CFG = window.__YMAP || {};
 
-  /* ── Палитра карты под сайт ──────────────────────────────────────
-     Перекрашиваем только фон, воду, дороги и подписи: этого хватает,
-     чтобы карта перестала быть светлым пятном. Полностью переопределять
-     схему не нужно — карта должна остаться узнаваемой картой, иначе
-     человек перестанет понимать, что на ней изображено. */
-  var THEME = [
-    { tags: 'water',                     elements: 'geometry', stylers: [{ color: '#071427' }] },
-    { tags: 'landscape',                 elements: 'geometry', stylers: [{ color: '#050e1e' }] },
-    { tags: { any: ['road', 'structure'] }, elements: 'geometry', stylers: [{ color: '#12233d' }] },
-    { tags: 'building',                  elements: 'geometry', stylers: [{ color: '#0d1a2e' }] },
-    { tags: { any: ['park', 'medical', 'sport'] }, elements: 'geometry', stylers: [{ color: '#08182b' }] },
-    { elements: 'label.text.fill',       stylers: [{ color: '#8ea3c4' }] },
-    { elements: 'label.text.outline',    stylers: [{ color: '#04060f' }] },
-  ];
+  /* ── Палитра карты берётся из палитры сайта ──────────────────────
+     Не вписана сюда числами намеренно. Цвета живут в одном месте —
+     в блоке :root файла site.css, — и карта читает их оттуда при
+     запуске. Поменяли палитру сайта — карта перекрасилась вместе с ним,
+     без единой правки здесь.
+
+     Это же и есть то, что мы продаём клиенту: карта не чужое пятно,
+     а часть интерфейса. Когда будем делать карту клиенту, поменяются
+     только переменные в его :root, а этот файл останется как есть.
+
+     Запасные значения на случай, если переменную переименуют: карта
+     должна остаться тёмной, а не стать белой посреди тёмной страницы. */
+  function brand(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    return (v || '').trim() || fallback;
+  }
+
+  /* Подложку и дороги делаем чуть светлее фона страницы, иначе карта
+     сливается с ней в одно пятно и перестаёт читаться как карта.
+     Смешиваем фон с акцентом — цвет остаётся из палитры, но отличим. */
+  function mix(hex, withHex, ratio) {
+    var a = parse(hex), b = parse(withHex);
+    if (!a || !b) return hex;
+    return '#' + [0, 1, 2].map(function (i) {
+      var v = Math.round(a[i] + (b[i] - a[i]) * ratio);
+      return ('0' + Math.max(0, Math.min(255, v)).toString(16)).slice(-2);
+    }).join('');
+  }
+
+  function parse(hex) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(hex).trim());
+    if (!m) return null;
+    var n = parseInt(m[1], 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+
+  function mapTheme() {
+    var ink = brand('--ink', '#020813');
+    var deep = brand('--deep', '#050E1E');
+    var cyan = brand('--cyan', '#00F0FF');
+    var mist = brand('--mist', '#6B7A9F');
+
+    return [
+      /* Вода темнее суши — так карта читается с одного взгляда. */
+      { tags: 'water', elements: 'geometry', stylers: [{ color: mix(ink, cyan, 0.06) }] },
+      { tags: 'landscape', elements: 'geometry', stylers: [{ color: ink }] },
+      /* Дороги — единственное, что заметно светлее фона: по ним человек
+         и ориентируется. Подмешиваем акцент, а не белый. */
+      { tags: { any: ['road', 'structure'] }, elements: 'geometry', stylers: [{ color: mix(deep, cyan, 0.14) }] },
+      { tags: 'building', elements: 'geometry', stylers: [{ color: mix(deep, cyan, 0.05) }] },
+      { tags: { any: ['park', 'medical', 'sport'] }, elements: 'geometry', stylers: [{ color: mix(ink, cyan, 0.09) }] },
+      /* Подписи — цветом второстепенного текста сайта, обводка — фоном:
+         так они читаются на тёмном и не спорят с меткой. */
+      { elements: 'label.text.fill', stylers: [{ color: mist }] },
+      { elements: 'label.text.outline', stylers: [{ color: ink }] },
+    ];
+  }
 
   /**
    * Картинка карты от Static API — то, что человек видит до того,
@@ -118,7 +161,13 @@
 
       var map = new y.YMap(canvas, { location: { center: center, zoom: zoom } });
 
-      map.addChild(new y.YMapDefaultSchemeLayer({ customization: THEME }));
+      /* theme: 'dark' — тёмная основа от Яндекса, поверх неё наша
+         перекраска. Без него подписи и мелкие детали остаются
+         рассчитанными на светлую карту и плохо читаются. */
+      map.addChild(new y.YMapDefaultSchemeLayer({
+        theme: 'dark',
+        customization: mapTheme(),
+      }));
       map.addChild(new y.YMapDefaultFeaturesLayer());
       map.addChild(new y.YMapMarker(
         { coordinates: center },
