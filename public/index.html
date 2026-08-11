@@ -828,6 +828,27 @@
       z-index: 1;
     }
 
+    /* Ссылка на отдельную страницу услуги. Стоит НАД кнопкой «обсудить
+       задачу» и намеренно тише её: главное действие на главной — заявка,
+       а страница услуги нужна тому, кто ещё читает и сравнивает.
+
+       Ссылка настоящая, с href, а не открывается скриптом: по ней ходит
+       поисковик. Без внутренних ссылок отдельные страницы для него
+       просто не существуют — карты сайта для этого мало. */
+    .svc-more {
+      display: inline-block;
+      margin: 0 0 0.9rem;
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--blue);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(45,156,255,0.3);
+      transition: color 0.25s ease, border-color 0.25s ease;
+    }
+    .svc-more:hover { color: var(--cyan); border-color: var(--cyan); }
+    .svc-more + .svc-more { margin-left: 1rem; }
+
     .btn-svc {
       display: inline-block;
       font-size: 0.66rem;
@@ -3036,6 +3057,7 @@
 </svg></div>
       <h3 class="svc-name">Чат-боты и ИИ-агенты</h3>
       <p class="svc-desc">Разработка Telegram-бота или ИИ-агента для бизнеса на Anthropic и OpenAI. Приём заявок, ответы на вопросы клиентов, поддержка 24/7.</p>
+      <div><a class="svc-more" href="/uslugi/telegram-bot/">Telegram-бот →</a><a class="svc-more" href="/uslugi/ai-agent/">ИИ-агент →</a></div>
       <button class="btn-svc" data-service="Вайбкодинг / AI-агент">Обсудить задачу</button>
     </article>
 
@@ -3060,6 +3082,7 @@
 </svg></div>
       <h3 class="svc-name">Разработка сайтов и лендингов</h3>
       <p class="svc-desc">Заказать продающий лендинг, корпоративный сайт или интернет-магазин. Полный цикл: дизайн, вёрстка, интеграции, запуск.</p>
+      <div><a class="svc-more" href="/uslugi/razrabotka-sajta/">Подробнее об услуге и ценах →</a></div>
       <button class="btn-svc" data-service="Создать сайт / лендинг">Обсудить задачу</button>
     </article>
 
@@ -3085,6 +3108,7 @@
 </svg></div>
       <h3 class="svc-name">Чистый код + SEO</h3>
       <p class="svc-desc">Сайты без тяжёлых конструкторов: высокая скорость в PageSpeed. Мета-теги и структура под Яндекс и Google закладываются сразу на сборке.</p>
+      <div><a class="svc-more" href="/uslugi/seo-audit-152fz/">SEO-аудит и проверка по 152-ФЗ →</a></div>
       <button class="btn-svc" data-service="Сайт на чистом коде + SEO">Обсудить задачу</button>
     </article>
 
@@ -3098,6 +3122,7 @@
 </svg></div>
       <h3 class="svc-name">Автоматизация</h3>
       <p class="svc-desc">Бизнес-процессы: n8n, Make, Zapier. Интеграции между сервисами и CRM.</p>
+      <div><a class="svc-more" href="/uslugi/avtomatizaciya/">Подробнее об услуге →</a></div>
       <button class="btn-svc" data-service="Вайбкодинг / AI-агент">Обсудить задачу</button>
     </article>
   </div>
@@ -3575,6 +3600,7 @@
       <!-- Живая ссылка важнее описания. Портфолио без ссылок читается
            как список выдуманных работ — проверить-то нечем. -->
       <a class="case-link" href="https://granat-kmv.ru" target="_blank" rel="noopener" data-goal="case_granat">granat-kmv.ru — открыть сайт →</a>
+      <div><a class="svc-more" href="/portfolio/granat/">Разбор проекта →</a></div>
       <button class="btn-svc" data-service="Сайт/Лендинг">Обсудить похожий проект</button>
     </article>
 
@@ -3593,6 +3619,7 @@
       </ul>
       <p class="case-stack">Node.js · чистый HTML, CSS, JS</p>
       <span class="case-status">В работе — запуск скоро</span>
+      <div><a class="svc-more" href="/portfolio/avtoshkola-start/">Разбор проекта →</a></div>
       <button class="btn-svc" data-service="Сайт/Лендинг">Обсудить похожий проект</button>
     </article>
 
@@ -3637,6 +3664,7 @@
       <p class="svc-desc">Технический и поисковый разбор сайта, проверка форм на соответствие закону о персональных данных. Отчёт с пошаговыми правками.</p>
       <div class="price-value"><span class="price-was">20 000 ₽</span>15 000 ₽</div>
       <p class="price-note">Цена по акции</p>
+      <div><a class="svc-more" href="/uslugi/seo-audit-152fz/">Что входит в аудит →</a></div>
       <button class="btn-svc" data-service="SEO-аудит + проверка по 152-ФЗ">Заказать</button>
     </article>
 
@@ -3644,6 +3672,7 @@
       <h3 class="svc-name">Лендинг на чистом коде</h3>
       <p class="svc-desc">Одностраничный сайт на Node.js без конструкторов и лимитов Tilda. Свой дизайн, анимация 60 кадров, адаптив под смартфоны, базовое SEO.</p>
       <div class="price-value">От 35 000 ₽</div>
+      <div><a class="svc-more" href="/uslugi/razrabotka-sajta/">Что входит в лендинг →</a></div>
       <button class="btn-svc" data-service="Лендинг на чистом коде">Заказать</button>
     </article>
 
@@ -3651,6 +3680,7 @@
       <h3 class="svc-name">ИИ-агенты и чат-боты на LLM</h3>
       <p class="svc-desc">Бот для Telegram и WhatsApp, обученный на ваших регламентах. Консультирует круглосуточно, квалифицирует заявки и разгружает оператора.</p>
       <div class="price-value">От 40 000 ₽</div>
+      <div><a class="svc-more" href="/uslugi/ai-agent/">Что умеет ИИ-агент →</a></div>
       <button class="btn-svc" data-service="ИИ-агенты и чат-боты на LLM">Заказать</button>
     </article>
 
@@ -3658,6 +3688,7 @@
       <h3 class="svc-name">Комплексная веб-разработка</h3>
       <p class="svc-desc">Многостраничные порталы, сервисы и MVP под ключ: архитектура, базы данных, интеграция сторонних API и платёжных шлюзов. Оплата по этапам.</p>
       <div class="price-value">От 90 000 ₽</div>
+      <div><a class="svc-more" href="/uslugi/razrabotka-sajta/">Состав работ и сроки →</a></div>
       <button class="btn-svc" data-service="Комплексная веб-разработка">Заказать</button>
     </article>
   </div>
