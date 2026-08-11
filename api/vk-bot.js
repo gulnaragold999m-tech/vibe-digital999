@@ -30,14 +30,16 @@
  *      Человек нажимает кнопку вместо того, чтобы придумывать первую фразу.
  *      Галочку «Разрешать добавлять сообщество в чаты» не трогаем: бот
  *      рассчитан на личную переписку, в групповом чате он будет мешать.
- *   4. Управление → Настройки → Работа с API → Long Poll API → включить,
- *      версия API 5.199.
- *   5. Там же вкладка «Типы событий» → отметить «Входящее сообщение».
+ *
+ * Long Poll и подписку на входящие сообщения бот включает сам при запуске
+ * (см. ensureLongPollSettings ниже) — руками в интерфейс лезть не нужно.
+ * Для этого у ключа доступа должны быть отмечены две галочки:
+ * «Сообщения сообщества» и «Управление сообществом».
  *
  * Если переменных нет — модуль просто молчит, и сайт работает как раньше.
  */
 
-const { vkApi, sendVk } = require('./vk');
+const { vkApi, sendVk, API_VERSION } = require('./vk');
 const { askOnce, findContact, notifyOwner } = require('./brief');
 
 /* ── Память диалогов ──────────────────────────────────────────────
@@ -134,6 +136,48 @@ async function handleMessage(message) {
 
 /* ── Long Poll ────────────────────────────────────────────────── */
 
+/**
+ * Включает Long Poll и подписку на входящие сообщения через API.
+ *
+ * ЗАЧЕМ. Те же две настройки есть в интерфейсе сообщества, но раздел
+ * «Работа с API» ВК время от времени переносит, и найти его вслепую тяжело.
+ * Метод groups.setLongPollSettings делает ровно то же самое одним запросом,
+ * поэтому настройку берёт на себя код: при переезде на другое сообщество
+ * достаточно поменять токен и номер группы.
+ *
+ * Требует у ключа доступа право «Управление сообществом». Если права нет,
+ * это не смертельно: настройки могли быть уже выставлены руками, поэтому
+ * пишем понятное предупреждение и всё равно пробуем подключиться.
+ *
+ * @returns {Promise<'ok'|'denied'|'error'>} denied — ВК ответил отказом,
+ *          повторять бесполезно; error — не дозвонились, есть смысл повторить.
+ */
+async function ensureLongPollSettings(groupId) {
+  try {
+    const res = await vkApi('groups.setLongPollSettings', {
+      group_id: String(groupId),
+      enabled: '1',
+      api_version: API_VERSION,
+      message_new: '1',
+    });
+
+    if (!res.ok) {
+      console.warn('[vk-bot] Long Poll не включился автоматически:', res.error);
+      console.warn('[vk-bot] Проверьте, что у ключа доступа отмечено ' +
+                   '«Управление сообществом», либо включите Long Poll вручную: ' +
+                   'Управление → Работа с API → Long Poll API, версия ' + API_VERSION +
+                   ', и тип события «Входящее сообщение».');
+      return 'denied';
+    }
+
+    console.log('[vk-bot] Long Poll включён, подписка на входящие сообщения есть');
+    return 'ok';
+  } catch (err) {
+    console.error('[vk-bot] Не дозвонились до ВК при включении Long Poll:', err.message);
+    return 'error';
+  }
+}
+
 async function connect(groupId) {
   const res = await vkApi('groups.getLongPollServer', { group_id: String(groupId) });
   if (!res.ok) throw new Error(res.error);
@@ -150,10 +194,16 @@ async function connect(groupId) {
 async function loop(groupId) {
   let conn = null;
   let failures = 0;
+  /* Настройки выставляем один раз за запуск. Повторяем только если ВК не
+     ответил: на отказ по правам повтор ничего не изменит, а лог засорит. */
+  let settingsDone = false;
 
   while (true) {
     try {
       if (!conn) {
+        if (!settingsDone) {
+          settingsDone = (await ensureLongPollSettings(groupId)) !== 'error';
+        }
         conn = await connect(groupId);
         console.log('[vk-bot] Подключился к сообществу', groupId);
         failures = 0;
