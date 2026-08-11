@@ -290,8 +290,24 @@ function overLimit(ip) {
   return rec.n > LIMIT;
 }
 
-/* ── Бриф в Telegram, когда посетитель оставил контакт ── */
-const notified = new Set();
+/* ── Бриф в Telegram, когда посетитель оставил контакт ──────────────
+   Помним, кому и какой контакт уже отправляли, чтобы один разговор
+   не превратился в десять одинаковых брифов.
+
+   Раньше здесь был Set из одних ключей диалога, и он не забывал никогда.
+   Из-за этого терялись заявки: человек оставил телефон в понедельник,
+   вернулся в пятницу с новым заказом — и второй бриф уже не приходил.
+   В логах при этом пусто, потому что выход был молчаливый.
+
+   Теперь помним ещё контакт и время:
+     тот же контакт в пределах шести часов — молчим, это повтор;
+     другой контакт или другой день — шлём, это новая заявка.
+
+   Шесть часов взяты не случайно: столько же живёт история разговора
+   в боте ВК (DIALOG_TTL_MS в api/vk-bot.js). Дольше — уже другой
+   разговор, даже если человек тот же. */
+const notified = new Map();
+const NOTIFY_TTL_MS = 6 * 60 * 60 * 1000;
 
 function escapeHtml(text) {
   return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -377,9 +393,26 @@ async function summarize(messages) {
 }
 
 async function notifyOwner(messages, contact, sessionKey) {
-  if (notified.has(sessionKey)) return;    // один бриф на диалог, без спама
-  notified.add(sessionKey);
-  if (notified.size > 2000) notified.clear();
+  const now = Date.now();
+  const seen = notified.get(sessionKey);
+
+  if (seen && seen.contact === contact && now - seen.at < NOTIFY_TTL_MS) {
+    /* Пишем в лог, а не молчим. Молчаливый пропуск неотличим от поломки:
+       заявки нет, в журнале пусто, и час уходит на поиски несуществующей
+       ошибки в доставке. */
+    console.log(`[brief] Повтор, бриф уже отправляли: ${contact} (${sessionKey})`);
+    return;
+  }
+
+  notified.set(sessionKey, { contact, at: now });
+
+  /* Выбрасываем протухшие записи, а не весь список разом: очистка целиком
+     означала бы, что для части живых разговоров бриф уйдёт по второму кругу. */
+  if (notified.size > 2000) {
+    for (const [key, rec] of notified) {
+      if (now - rec.at > NOTIFY_TTL_MS) notified.delete(key);
+    }
+  }
 
   const dialog = messages
     .map(m => (m.role === 'user' ? '👤 ' : '🤖 ') + m.content)
