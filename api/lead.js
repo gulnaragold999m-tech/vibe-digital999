@@ -490,4 +490,53 @@ function summarize(leads) {
    счётчика и та же запись на диск раньше отправки. Иначе счёт заявок
    за месяц не видит чат вовсе, а при отказе мессенджеров разговор
    с живым человеком пропадает бесследно. */
-module.exports = { handleLead, handleLeadsExport, saveLead, nextLeadNumber, leadNotes };
+/* ── Сброс нумерации после проверок ──────────────────────────────
+   Пока сайт настраивают, через журнал проходят тестовые заявки, и потом
+   первый настоящий клиент получает номер вроде «№ 7». Это мелочь, но она
+   видна человеку и выдаёт, что до него никого не было.
+
+   Файлы лежат на постоянном диске Amvera, куда нет доступа ни из панели,
+   ни из редактора. Поэтому сброс включается переменной окружения:
+   RESET_LEADS=любое-слово, перезапуск, готово.
+
+   Журнал НЕ удаляем, а переименовываем: тестовые заявки — тоже записи
+   о том, что происходило, и стирать их безвозвратно ради красивого
+   номера неправильно. Настоящую заявку, случайно попавшую в тестовый
+   период, потом можно достать.
+
+   Метка защищает от забытой переменной: если её не убрать из настроек,
+   при следующем перезапуске сброс не повторится и живые заявки уцелеют.
+   Без метки одна забытая строка в настройках стирала бы журнал каждую
+   ночь при плановом рестарте. */
+function resetLeadsIfAsked() {
+  const token = process.env.RESET_LEADS;
+  if (!token) return;
+
+  const markFile = path.join(DATA_DIR, `reset-${String(token).slice(0, 40)}.done`);
+
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+
+    if (fs.existsSync(markFile)) {
+      console.log('[lead] RESET_LEADS уже отработал — пропускаем. Переменную можно убрать.');
+      return;
+    }
+
+    if (fs.existsSync(LEADS_FILE)) {
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const archive = path.join(DATA_DIR, `leads-do-${stamp}.jsonl`);
+      fs.renameSync(LEADS_FILE, archive);
+      console.log('[lead] Прежний журнал сохранён как', path.basename(archive));
+    }
+
+    fs.writeFileSync(COUNTER_FILE, JSON.stringify({ last: 0 }), 'utf8');
+    fs.writeFileSync(markFile, new Date().toISOString(), 'utf8');
+
+    console.log('[lead] Нумерация сброшена: следующая заявка получит № 1.');
+    console.log('[lead] Переменную RESET_LEADS теперь можно удалить из настроек.');
+  } catch (err) {
+    console.error('[lead] Сброс нумерации не удался:', err.message);
+  }
+}
+
+module.exports = { handleLead, handleLeadsExport, saveLead, nextLeadNumber, leadNotes, resetLeadsIfAsked };

@@ -18,7 +18,7 @@ require('node:dns').setDefaultResultOrder('ipv4first');
 const path = require('path');
 const express = require('express');
 const compression = require('compression');
-const { handleLead, handleLeadsExport } = require('./api/lead');
+const { handleLead, handleLeadsExport, resetLeadsIfAsked } = require('./api/lead');
 const { handleBrief } = require('./api/brief');
 const { handleGeo } = require('./api/geo');
 const { startVkBot } = require('./api/vk-bot');
@@ -220,6 +220,11 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Сайт запущен: http://localhost:${PORT}`);
+
+  /* До ботов: если попросили сбросить нумерацию после проверок, сделать
+     это раньше, чем придёт первая заявка. Без переменной RESET_LEADS
+     вызов ничего не делает и молчит. */
+  resetLeadsIfAsked();
 
   /* Боты живут в этом же процессе: отдельное приложение на Amvera —
      это второй счёт и второй деплой ради одного долгого запроса.
