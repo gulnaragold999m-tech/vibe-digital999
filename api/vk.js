@@ -60,8 +60,14 @@ async function vkApi(method, params) {
     /* Расшифровываем частые коды прямо в логе: без этого «ошибка 901»
        ничего не говорит тому, кто откроет логи Amvera через месяц. */
     const code = data.error.error_code;
-    const hint = VK_ERRORS[code] ? ` — ${VK_ERRORS[code]}` : '';
-    return { ok: false, code, error: `${code} ${data.error.error_msg}${hint}` };
+    const msg = data.error.error_msg || '';
+    /* Один код ВК может значить разное — 100 приходит и на кривой peer_id,
+       и на выключенный Long Poll. Поэтому подсказка бывает функцией
+       от текста ошибки: неверная подсказка хуже, чем никакой. */
+    const rule = VK_ERRORS[code];
+    const text = typeof rule === 'function' ? rule(msg) : rule;
+    const hint = text ? ` — ${text}` : '';
+    return { ok: false, code, error: `${code} ${msg}${hint}` };
   }
 
   return { ok: true, response: data.response };
@@ -69,10 +75,18 @@ async function vkApi(method, params) {
 
 const VK_ERRORS = {
   5: 'ключ доступа недействителен или отозван, получить новый в настройках сообщества',
+  15: 'у ключа доступа не хватает прав — пересоздайте ключ и отметьте нужные галочки',
+  27: 'ключ выдан не тому сообществу либо отозван',
   901: 'получатель ни разу не писал сообществу — напишите сообществу любое сообщение со своей страницы',
   902: 'настройки приватности получателя запрещают сообществу писать ему',
+  912: 'у сообщества выключены «Возможности ботов»: Управление → Сообщения → ' +
+       'Настройки для бота → включить и нажать «Сохранить»',
   914: 'сообщение длиннее допустимого',
-  100: 'неверный параметр запроса (чаще всего peer_id)',
+  100: msg => /longpoll/i.test(msg)
+    ? 'Long Poll у сообщества выключен. Бот включает его сам при запуске, ' +
+      'но для этого ключу доступа нужно право «Управление сообществом» — ' +
+      'проверьте его у ключа или включите Long Poll вручную'
+    : 'неверный параметр запроса (чаще всего peer_id)',
 };
 
 /**
@@ -123,4 +137,4 @@ async function sendVk(peerId, text) {
   }
 }
 
-module.exports = { vkApi, vkConfigured, sendVk, sendVkToOwner };
+module.exports = { vkApi, vkConfigured, sendVk, sendVkToOwner, API_VERSION };

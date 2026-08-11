@@ -15,6 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const { sendVkToOwner, vkConfigured } = require('./vk');
+const { sendMailToOwner, mailConfigured } = require('./mail');
 
 const TELEGRAM_API = 'https://api.telegram.org';
 
@@ -280,24 +281,30 @@ async function handleLead(req, res) {
   const htmlText = lines.map(pair => pair[1]).join('\n');
 
   /* ── Шаг 2: разослать. Каналы независимы ────────────────────────
-     Telegram и ВК идут одновременно и ничего не знают друг о друге:
-     отказ одного не должен ни задерживать, ни отменять второй.
-     Заявка считается доставленной, если её принял хотя бы один. */
-  const [tg, vk] = await Promise.all([
+     Telegram, ВК и почта идут одновременно и ничего не знают друг
+     о друге: отказ одного не должен ни задерживать, ни отменять
+     остальные. Заявка считается доставленной, если её принял хотя бы
+     один — а почта здесь ценна тем, что письмо остаётся в ящике
+     и не тонет в ленте чатов. */
+  const subject = `Заявка${num ? ' № ' + num : ''} — ${service} — ${name}`;
+
+  const [tg, vk, mail] = await Promise.all([
     sendTelegram(htmlText, token, chatId),
     vkConfigured() ? sendVkToOwner(plainText) : Promise.resolve({ ok: false, error: 'не подключён' }),
+    mailConfigured() ? sendMailToOwner(subject, plainText) : Promise.resolve({ ok: false, error: 'не подключена' }),
   ]);
 
-  if (tg.ok || vk.ok) {
+  if (tg.ok || vk.ok || mail.ok) {
     markDelivered();
     console.log(`[lead] Заявка № ${num ?? "—"} принята: ${name} / ${service}`,
       `| Telegram: ${tg.ok ? 'доставлено' : tg.error}`,
-      `| ВК: ${vk.ok ? 'доставлено' : vk.error}`);
+      `| ВК: ${vk.ok ? 'доставлено' : vk.error}`,
+      `| Почта: ${mail.ok ? 'доставлено' : mail.error}`);
     return res.json({ ok: true });
   }
 
   console.error('[lead] Ни один канал не принял заявку.',
-    `Telegram: ${tg.error} | ВК: ${vk.error}`);
+    `Telegram: ${tg.error} | ВК: ${vk.error} | Почта: ${mail.error}`);
   return respondSaved(res, saved, name, service);
 
   /* Отмечаем в файле, что заявка дошла. Отдельной строкой-пометкой,
@@ -359,7 +366,7 @@ async function sendTelegram(text, token, chatId) {
  */
 function respondSaved(res, saved, name, service) {
   if (saved) {
-    console.warn(`[lead] ⚠ Заявка не ушла ни в Telegram, ни в ВК, но сохранена на диск: ${name} / ${service}. Файл: ${LEADS_FILE}`);
+    console.warn(`[lead] ⚠ Заявка не ушла ни в Telegram, ни в ВК, ни на почту, но сохранена на диск: ${name} / ${service}. Файл: ${LEADS_FILE}`);
     return res.json({ ok: true });
   }
   console.error(`[lead] ❌ ЗАЯВКА ПОТЕРЯНА — ни Telegram, ни диск: ${name} / ${service}`);
@@ -483,4 +490,53 @@ function summarize(leads) {
    счётчика и та же запись на диск раньше отправки. Иначе счёт заявок
    за месяц не видит чат вовсе, а при отказе мессенджеров разговор
    с живым человеком пропадает бесследно. */
-module.exports = { handleLead, handleLeadsExport, saveLead, nextLeadNumber, leadNotes };
+/* ── Сброс нумерации после проверок ──────────────────────────────
+   Пока сайт настраивают, через журнал проходят тестовые заявки, и потом
+   первый настоящий клиент получает номер вроде «№ 7». Это мелочь, но она
+   видна человеку и выдаёт, что до него никого не было.
+
+   Файлы лежат на постоянном диске Amvera, куда нет доступа ни из панели,
+   ни из редактора. Поэтому сброс включается переменной окружения:
+   RESET_LEADS=любое-слово, перезапуск, готово.
+
+   Журнал НЕ удаляем, а переименовываем: тестовые заявки — тоже записи
+   о том, что происходило, и стирать их безвозвратно ради красивого
+   номера неправильно. Настоящую заявку, случайно попавшую в тестовый
+   период, потом можно достать.
+
+   Метка защищает от забытой переменной: если её не убрать из настроек,
+   при следующем перезапуске сброс не повторится и живые заявки уцелеют.
+   Без метки одна забытая строка в настройках стирала бы журнал каждую
+   ночь при плановом рестарте. */
+function resetLeadsIfAsked() {
+  const token = process.env.RESET_LEADS;
+  if (!token) return;
+
+  const markFile = path.join(DATA_DIR, `reset-${String(token).slice(0, 40)}.done`);
+
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+
+    if (fs.existsSync(markFile)) {
+      console.log('[lead] RESET_LEADS уже отработал — пропускаем. Переменную можно убрать.');
+      return;
+    }
+
+    if (fs.existsSync(LEADS_FILE)) {
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const archive = path.join(DATA_DIR, `leads-do-${stamp}.jsonl`);
+      fs.renameSync(LEADS_FILE, archive);
+      console.log('[lead] Прежний журнал сохранён как', path.basename(archive));
+    }
+
+    fs.writeFileSync(COUNTER_FILE, JSON.stringify({ last: 0 }), 'utf8');
+    fs.writeFileSync(markFile, new Date().toISOString(), 'utf8');
+
+    console.log('[lead] Нумерация сброшена: следующая заявка получит № 1.');
+    console.log('[lead] Переменную RESET_LEADS теперь можно удалить из настроек.');
+  } catch (err) {
+    console.error('[lead] Сброс нумерации не удался:', err.message);
+  }
+}
+
+module.exports = { handleLead, handleLeadsExport, saveLead, nextLeadNumber, leadNotes, resetLeadsIfAsked };
