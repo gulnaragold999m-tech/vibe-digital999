@@ -98,13 +98,27 @@
    * как до блока долистают. Одна картинка вместо целой библиотеки.
    */
   function staticUrl(box, width, height) {
+    /* Размер просим В ТОЙ ЖЕ ПРОПОРЦИИ, что и блок на странице.
+
+       Это не про красоту. Условия бесплатного использования требуют, чтобы
+       копирайт и логотип Яндекса были видны на карте всегда — в том числе
+       на статичной. Логотип Яндекс рисует в углу картинки, а если попросить
+       картинку другой пропорции и вписать её в блок обрезкой, угол уедет
+       за край. Формально это скрытие копирайта, и за него отключают ключ
+       без права восстановления.
+
+       Поэтому пропорцию сохраняем, обрезать нечего, логотип на месте. */
+    var MAX_W = 650, MAX_H = 450;      // потолок Static API
+    var ratio = Math.min(MAX_W / width, MAX_H / height, 1);
+    var w = Math.max(200, Math.round(width * ratio));
+    var h = Math.max(150, Math.round(height * ratio));
+
     var params = new URLSearchParams({
       apikey: CFG.staticKey,
       ll: box.dataset.lon + ',' + box.dataset.lat,
       z: box.dataset.zoom || '16',
-      /* Static API берёт размер в пикселях и умеет удвоенную плотность —
-         на телефонах с retina без неё картинка выглядит мыльной. */
-      size: Math.min(650, Math.round(width)) + ',' + Math.min(450, Math.round(height)),
+      size: w + ',' + h,
+      /* Удвоенная плотность — на телефонах с retina без неё картинка мыльная. */
       scale: window.devicePixelRatio > 1 ? '2' : '1',
       theme: 'dark',
       pt: box.dataset.lon + ',' + box.dataset.lat + ',pm2dgl',

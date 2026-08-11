@@ -1688,7 +1688,13 @@ input[type="checkbox"].invalid{ outline:2px solid rgba(255,60,110,.55); outline-
   width: 100%;
   height: 100%;
 }
-.ymap-static { object-fit: cover; }
+/* contain, а не cover. cover обрезает картинку по краям, а в углу
+   статичной карты Яндекс рисует свой логотип и копирайт — по условиям
+   бесплатного использования их нельзя ни скрывать, ни перекрывать.
+   Обрезка углов формально и есть скрытие. Картинку заказываем той же
+   пропорции, что и блок (см. ymap.js), поэтому полей от contain
+   не появляется. */
+.ymap-static { object-fit: contain; }
 .ymap-canvas { opacity: 0; transition: opacity 0.4s ease; }
 .ymap.is-live .ymap-canvas { opacity: 1; }
 
@@ -1709,13 +1715,21 @@ input[type="checkbox"].invalid{ outline:2px solid rgba(255,60,110,.55); outline-
 .ymap.is-live .ymap-fallback { display: none; }
 .ymap-fallback-addr { margin: 0; font-size: 0.95rem; line-height: 1.6; color: var(--white); }
 
+/* Ссылка в Карты — под блоком, видна всегда, ничем не перекрывается. */
+.ymap-note { margin: 0.9rem 0 0; font-size: 0.85rem; }
+.ymap-note a { color: var(--cyan); text-decoration: none; }
+.ymap-note a:hover { text-decoration: underline; }
+
 /* Подсказка «нажмите, чтобы открыть» на подложке: без неё человек
    не догадается, что картинка станет картой. */
+/* Подсказка СВЕРХУ, а не снизу. Внизу карты Яндекс печатает копирайт
+   и кнопку «Открыть в Картах», перекрывать их запрещено условиями
+   бесплатного использования — вплоть до отключения ключа. */
 .ymap.is-ready.has-static::after {
   content: 'Нажмите, чтобы открыть карту';
   position: absolute;
   left: 50%;
-  bottom: 1rem;
+  top: 1rem;
   transform: translateX(-50%);
   padding: 0.5rem 1rem;
   border-radius: 999px;
