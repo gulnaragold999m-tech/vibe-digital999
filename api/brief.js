@@ -25,6 +25,7 @@
  */
 
 const { sendVkToOwner, vkConfigured } = require('./vk');
+const { sendMailToOwner, mailConfigured } = require('./mail');
 const { saveLead, nextLeadNumber, leadNotes } = require('./lead');
 
 const BASE_URL = (process.env.LLM_BASE_URL || 'https://inference.waw0.amvera.ru/v1').replace(/\/$/, '');
@@ -453,7 +454,9 @@ async function notifyOwner(messages, contact, sessionKey) {
   const token = process.env.BOT_TOKEN;
   const chatId = process.env.CHAT_ID;
 
-  const [tg, vk] = await Promise.all([
+  const subject = `Бриф из чата${num ? ' № ' + num : ''} — ${contact}`;
+
+  const [tg, vk, mail] = await Promise.all([
     (async () => {
       if (!token || !chatId) return { ok: false, error: 'BOT_TOKEN или CHAT_ID не заданы' };
       try {
@@ -469,15 +472,17 @@ async function notifyOwner(messages, contact, sessionKey) {
       }
     })(),
     vkConfigured() ? sendVkToOwner(plainText) : Promise.resolve({ ok: false, error: 'не подключён' }),
+    mailConfigured() ? sendMailToOwner(subject, plainText) : Promise.resolve({ ok: false, error: 'не подключена' }),
   ]);
 
-  if (tg.ok || vk.ok) {
+  if (tg.ok || vk.ok || mail.ok) {
     console.log(`[brief] Бриф отправлен: ${contact}`,
       `| Telegram: ${tg.ok ? 'доставлено' : tg.error}`,
-      `| ВК: ${vk.ok ? 'доставлено' : vk.error}`);
+      `| ВК: ${vk.ok ? 'доставлено' : vk.error}`,
+      `| Почта: ${mail.ok ? 'доставлено' : mail.error}`);
   } else {
     console.error(`[brief] ❌ Бриф НЕ доставлен ни одним каналом: ${contact}.`,
-      `Telegram: ${tg.error} | ВК: ${vk.error}. Диалог:`, dialog.slice(0, 500));
+      `Telegram: ${tg.error} | ВК: ${vk.error} | Почта: ${mail.error}. Диалог:`, dialog.slice(0, 500));
   }
 }
 

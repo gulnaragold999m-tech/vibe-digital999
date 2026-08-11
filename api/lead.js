@@ -15,6 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 const { sendVkToOwner, vkConfigured } = require('./vk');
+const { sendMailToOwner, mailConfigured } = require('./mail');
 
 const TELEGRAM_API = 'https://api.telegram.org';
 
@@ -280,24 +281,30 @@ async function handleLead(req, res) {
   const htmlText = lines.map(pair => pair[1]).join('\n');
 
   /* ── Шаг 2: разослать. Каналы независимы ────────────────────────
-     Telegram и ВК идут одновременно и ничего не знают друг о друге:
-     отказ одного не должен ни задерживать, ни отменять второй.
-     Заявка считается доставленной, если её принял хотя бы один. */
-  const [tg, vk] = await Promise.all([
+     Telegram, ВК и почта идут одновременно и ничего не знают друг
+     о друге: отказ одного не должен ни задерживать, ни отменять
+     остальные. Заявка считается доставленной, если её принял хотя бы
+     один — а почта здесь ценна тем, что письмо остаётся в ящике
+     и не тонет в ленте чатов. */
+  const subject = `Заявка${num ? ' № ' + num : ''} — ${service} — ${name}`;
+
+  const [tg, vk, mail] = await Promise.all([
     sendTelegram(htmlText, token, chatId),
     vkConfigured() ? sendVkToOwner(plainText) : Promise.resolve({ ok: false, error: 'не подключён' }),
+    mailConfigured() ? sendMailToOwner(subject, plainText) : Promise.resolve({ ok: false, error: 'не подключена' }),
   ]);
 
-  if (tg.ok || vk.ok) {
+  if (tg.ok || vk.ok || mail.ok) {
     markDelivered();
     console.log(`[lead] Заявка № ${num ?? "—"} принята: ${name} / ${service}`,
       `| Telegram: ${tg.ok ? 'доставлено' : tg.error}`,
-      `| ВК: ${vk.ok ? 'доставлено' : vk.error}`);
+      `| ВК: ${vk.ok ? 'доставлено' : vk.error}`,
+      `| Почта: ${mail.ok ? 'доставлено' : mail.error}`);
     return res.json({ ok: true });
   }
 
   console.error('[lead] Ни один канал не принял заявку.',
-    `Telegram: ${tg.error} | ВК: ${vk.error}`);
+    `Telegram: ${tg.error} | ВК: ${vk.error} | Почта: ${mail.error}`);
   return respondSaved(res, saved, name, service);
 
   /* Отмечаем в файле, что заявка дошла. Отдельной строкой-пометкой,
@@ -359,7 +366,7 @@ async function sendTelegram(text, token, chatId) {
  */
 function respondSaved(res, saved, name, service) {
   if (saved) {
-    console.warn(`[lead] ⚠ Заявка не ушла ни в Telegram, ни в ВК, но сохранена на диск: ${name} / ${service}. Файл: ${LEADS_FILE}`);
+    console.warn(`[lead] ⚠ Заявка не ушла ни в Telegram, ни в ВК, ни на почту, но сохранена на диск: ${name} / ${service}. Файл: ${LEADS_FILE}`);
     return res.json({ ok: true });
   }
   console.error(`[lead] ❌ ЗАЯВКА ПОТЕРЯНА — ни Telegram, ни диск: ${name} / ${service}`);
