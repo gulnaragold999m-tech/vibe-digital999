@@ -389,7 +389,63 @@ function handleLeadsExport(req, res) {
   for (const lead of leads) lead.delivered = delivered.has(lead.contact);
 
   const lost = leads.filter(l => !l.delivered).length;
-  res.json({ ok: true, total: leads.length, ne_dostavleny: lost, leads });
+  res.json({
+    ok: true,
+    total: leads.length,
+    ne_dostavleny: lost,
+    svodka: summarize(leads),
+    leads,
+  });
+}
+
+/* ── Сводка по заявкам ───────────────────────────────────────────
+   Список заявок отвечает на вопрос «что пришло», но не на вопрос
+   «откуда идут клиенты». А именно он и решает, куда вести рекламу:
+   реклама идёт на три очень разных региона, и без разбивки по городам
+   деньги делятся вслепую.
+
+   Считаем прямо здесь, а не отдельной таблицей: заявок единицы в день,
+   пересчитать весь файл дешевле, чем поддерживать вторую копию цифр,
+   которая рано или поздно разойдётся с первой.
+
+   Города НЕ приводим к общему виду. «Пятигорск» и «пятигорск» —
+   один город, а вот «Мин-Воды» и «Минеральные Воды» свести автоматически
+   нельзя, не начав угадывать. Приводим регистр и убираем пробелы;
+   остальное человек увидит глазами и не перепутает. */
+function countBy(items, pick) {
+  const map = new Map();
+  for (const item of items) {
+    const key = pick(item);
+    if (!key) continue;
+    map.set(key, (map.get(key) || 0) + 1);
+  }
+  /* От частого к редкому: первым идёт то, что приносит больше всего. */
+  return Object.fromEntries([...map.entries()].sort((a, b) => b[1] - a[1]));
+}
+
+function summarize(leads) {
+  const cityName = (l) => {
+    const c = String(l.city || '').trim();
+    if (!c) return '';
+    /* Город, определённый по IP и не подтверждённый человеком, помечаем.
+       Иначе в сводке догадка сервиса встанет рядом с ответом клиента,
+       и по ней будут принимать решения о рекламном бюджете. */
+    const name = c[0].toUpperCase() + c.slice(1).toLowerCase();
+    return l.city_source === 'ip' ? name + ' (не подтверждён)' : name;
+  };
+
+  const month = (l) => String(l.at || '').slice(0, 7);   // 2026-08
+
+  return {
+    po_gorodam: countBy(leads, cityName),
+    bez_goroda: leads.filter((l) => !l.city).length,
+    po_uslugam: countBy(leads, (l) => l.package
+      ? `Пакет «${l.package}»`
+      : (l.service || '')),
+    po_kanalu: countBy(leads, (l) => (l.source === 'chat' ? 'Чат на сайте' : 'Форма')),
+    po_reklame: countBy(leads, (l) => l.utm || ''),
+    po_mesyacam: countBy(leads, month),
+  };
 }
 
 /* saveLead и nextLeadNumber отдаём наружу для брифов из чата.
