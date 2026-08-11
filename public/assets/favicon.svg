@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Vibe Digital 999">
+  <!--
+    Значок для вкладки браузера. Вектор, а не картинка: 700 байт вместо
+    63 КБ у logo-mark.png, и он не мылится ни на каком экране — ни на
+    обычном, ни на ретине, ни в закладках, где значок рисуют крупнее.
+
+    Раньше в разметке стояли /assets/favicon.ico и /assets/apple-touch-icon.png,
+    которых в проекте не было вовсе: каждая страница просила у сервера два
+    несуществующих файла и получала 404. На вид это незаметно — браузер
+    молча рисует пустой лист вместо значка.
+  -->
+  <rect width="64" height="64" rx="14" fill="#020813"/>
+  <circle cx="32" cy="32" r="26" fill="none" stroke="#0B7A8C" stroke-width="1.5" opacity="0.55"/>
+  <!-- Буква G: дуга с горизонтальной перекладиной. -->
+  <path d="M43 21.5A15.5 15.5 0 1 0 45 39h-13"
+        fill="none" stroke="#00F0FF" stroke-width="5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

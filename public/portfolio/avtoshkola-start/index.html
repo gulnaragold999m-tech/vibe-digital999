@@ -1,251 +1,79 @@
+<!-- ═══════════════════════════════════════════════════════════
+     ФАЙЛ СОБРАН АВТОМАТИЧЕСКИ. Правки здесь пропадут.
+     Текст страницы:  src/pages/case-avtoshkola.html
+     Шапка и подвал:  src/partials/
+     Адрес и мета:    src/pages.js
+     Пересобрать:     npm run build
+     ═══════════════════════════════════════════════════════════ -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Кейс: сайт и приложение автошколы «Старт» — два филиала</title>
-<meta name="description" content="Как делаем сайт автошколы «Старт» на два филиала и мобильное приложение для учеников: расписание, запись, единый визуальный язык сайта и приложения. Node.js, чистый код." />
-<meta name="keywords" content="кейс сайт автошколы, приложение для автошколы, сайт на два филиала, разработка сайта автошкола" />
-<meta name="robots" content="index, follow" />
-<link rel="canonical" href="https://vibe-digital999.ru/portfolio/avtoshkola-start/" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Кейс: сайт и приложение автошколы «Старт» — два филиала</title>
+  <!-- Метка сборки. Нужна, чтобы за секунду понять, какой файл сейчас
+       на сервере, и не гадать, залился новый или остался старый. -->
+  <meta name="build" content="2026-08-09-v8-multipage" />
+  <meta name="description" content="Как делаем сайт автошколы на два филиала и мобильное приложение для учеников: расписание и запись по каждому филиалу, единый визуальный язык сайта и приложения." />
+  <meta name="robots" content="index, follow" />
+  <meta name="yandex-verification" content="75f670095b8ac749" />
+<script>window.__YMAP={"jsKey":"","staticKey":""};</script>
+  <!-- Канонический адрес. В многостраничнике это не формальность: одна и та
+       же страница открывается и с /uslugi/, и с /uslugi (сервер добавляет
+       слэш), и со ссылкой ?utm_source=... из рекламы. Без canonical поиск
+       считает их разными страницами и делит вес между ними. -->
+  <link rel="canonical" href="https://vibe-digital999.ru/portfolio/avtoshkola-start/" />
 
-<meta property="og:type" content="website" />
-<meta property="og:site_name" content="Vibe Digital 999" />
-<meta property="og:locale" content="ru_RU" />
-<meta property="og:url" content="https://vibe-digital999.ru/portfolio/avtoshkola-start/" />
-<meta property="og:title" content="Кейс: сайт и приложение автошколы «Старт» — два филиала" />
-<meta property="og:description" content="Как делаем сайт автошколы «Старт» на два филиала и мобильное приложение для учеников: расписание, запись, единый визуальный язык сайта и приложения. Node.js, чистый код." />
-<meta property="og:image" content="https://vibe-digital999.ru/assets/logo-g.png" />
-<meta name="twitter:card" content="summary_large_image" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:site_name" content="Vibe Digital 999" />
+  <meta property="og:url" content="https://vibe-digital999.ru/portfolio/avtoshkola-start/" />
+  <meta property="og:title" content="Кейс: сайт и приложение автошколы «Старт» — два филиала" />
+  <meta property="og:description" content="Как делаем сайт автошколы на два филиала и мобильное приложение для учеников: расписание и запись по каждому филиалу, единый визуальный язык сайта и приложения." />
+  <meta property="og:image" content="https://vibe-digital999.ru/assets/logo-g.png" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-<link rel="icon" href="/assets/favicon.ico" sizes="any" />
-<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
-<link rel="manifest" href="/site.webmanifest" />
-<meta name="theme-color" content="#020813" />
+  <!-- Шрифты свои, не гугловские: наружу не уходит ни один запрос.
+       Обновлять: см. assets/fonts/download-list.txt -->
+  <link rel="preload" href="/assets/fonts/manrope-cyrillic-xn7gYHE41ni1AdIRggOxSuXd.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/manrope-latin-xn7gYHE41ni1AdIRggexSg.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="/assets/css/site.css" />
 
-<link rel="preload" href="/assets/fonts/manrope-cyrillic-xn7gYHE41ni1AdIRggOxSuXd.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="stylesheet" href="/assets/fonts/fonts.css" />
-<link rel="stylesheet" href="/assets/site.css" />
-</head>
-<body>
-<!-- ═══════════════════════════════════════════════════════════
-     СТРАНИЦА СОБРАНА АВТОМАТИЧЕСКИ. Правки здесь пропадут.
-     Текст живёт в tools/pages-data.js, сборка — node tools/build-pages.js
-     Собрано: 2026-08-11
-════════════════════════════════════════════════════════════════ -->
+  <!-- Значок вкладки. Раньше здесь стояли favicon.ico и apple-touch-icon.png,
+       которых в проекте нет: каждая страница просила два несуществующих
+       файла и получала 404. Теперь вектор плюс запасная картинка для
+       браузеров постарше. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/logo-mark.png" sizes="256x256" />
+  <link rel="apple-touch-icon" href="/logo-mark.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0a0a" />
 
-<header class="top">
-  <a class="top-logo" href="/">Vibecoding</a>
-  <div class="top-right">
-    <a class="top-phone" href="tel:+79992449999" data-goal="click_tel">+7 999 244 99 99</a>
-    <a class="top-cta" href="#zayavka">Оставить заявку</a>
-  </div>
-</header>
-
-<nav class="crumbs wrap" aria-label="Хлебные крошки">
-  <ol>
-    <li><a href="/">Главная</a></li>
-    <li><a href="/#portfolio">Портфолио</a></li>
-    <li>Автошкола «Старт»</li>
-  </ol>
-</nav>
-<main>
-
-<section class="phero">
-  <div class="wrap">
-    <h1>Автошкола «Старт»<span class="accent">сайт на два филиала и приложение для учеников</span></h1>
-    <p class="phero-pain">У автошколы два филиала, и у каждого своё расписание. Ученик не должен гадать, куда ему ехать и когда занятие, а администратор — отвечать на это по телефону сто раз в день.</p>
-    <ul class="phero-facts">
-      <li>Ниша: <b>автошколы</b></li>
-      <li>Филиалов: <b>2</b></li>
-      <li>Статус: <b>в работе</b></li>
-    </ul>
-    <div class="actions">
-      <a class="btn" href="#zayavka">Получить расчёт</a>
-      <a class="btn btn-ghost" href="/#portfolio">Посмотреть кейсы</a>
-    </div>
-    <p class="status">В работе — запуск скоро, ссылку поставим после публикации</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="eyebrow">Задача</div>
-    <h2>Задача</h2>
-    <p class="lead">Сайт и приложение должны говорить на одном языке: ученик переходит из одного в другое и не должен переучиваться.</p>
-    <ul class="ticks" style="margin-top:1.4rem">
-      <li>Развести два филиала в одной структуре, не запутав ученика</li>
-      <li>Показать расписание и дать записаться без звонка</li>
-      <li>Сделать приложение для учеников: то же расписание всегда под рукой</li>
-    </ul>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="eyebrow">Результат</div>
-    <h2>Что делаем</h2>
-    
-    <ul class="ticks" >
-      <li><strong>Два филиала в одной структуре</strong> — выбор филиала не ломает навигацию и не плодит копии страниц</li>
-      <li><strong>Расписание и запись</strong> — по каждому филиалу отдельно</li>
-      <li><strong>Мобильное приложение для учеников</strong> — расписание и материалы в телефоне</li>
-      <li><strong>Один визуальный язык</strong> — сайт и приложение выглядят как одно целое</li>
-    </ul>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="eyebrow">Подробности</div>
-    <h2>Почему так</h2>
-    
-    <ul class="ticks" >
-      <li>Два филиала — самая частая причина, по которой сайт автошколы разрастается в свалку. Структура решается до вёрстки, а не после</li>
-      <li>Приложение снимает нагрузку с администратора: вопрос «когда занятие» перестаёт быть звонком</li>
-      <li>Стек тот же, что у остальных проектов: Node.js и чистый код, исходники у заказчика</li>
-    </ul>
-  </div>
-</section>
-
-
-
-
-<section>
-  <div class="wrap">
-    <div class="eyebrow">Отвечаем честно</div>
-    <h2>Частые вопросы</h2>
-    <div class="faq">
-      <details>
-        <summary>Почему нет ссылки на сайт?</summary>
-        <p>Потому что проект ещё не запущен, а кейс без ссылки рядом с кейсом со ссылкой читается как выдумка. Честный статус лучше: поставим ссылку в день публикации.</p>
-      </details>
-      <details>
-        <summary>Делаете мобильные приложения отдельно?</summary>
-        <p>Делаем, но почти всегда советуем начинать с сайта. Приложение ставят те, кто уже пользуется услугой, а найти вас впервые человек идёт через поиск. Приложение без сайта чаще всего преждевременно.</p>
-      </details>
-    </div>
-  </div>
-</section>
-
-<section id="zayavka">
-  <div class="wrap">
-    <div class="eyebrow">Следующий шаг</div>
-    <h2>Оставить заявку</h2>
-    <p class="lead" style="margin-bottom:1.6rem">Опишите задачу в двух словах. Ответим в день обращения и назовём вилку цены — до этого момента вы ничего не должны.</p>
-
-    <div class="formbox">
-      <form id="lead-form" novalidate>
-        <div class="field">
-          <label for="lf-name">Ваше имя</label>
-          <input type="text" id="lf-name" name="name" placeholder="Как к вам обращаться?" autocomplete="name" required />
-        </div>
-
-        <div class="field">
-          <label for="lf-contact">Телефон или Telegram</label>
-          <input type="text" id="lf-contact" name="contact" placeholder="+7... или @ник" required />
-        </div>
-
-        <div class="field">
-          <label for="lf-comment">Задача</label>
-          <textarea id="lf-comment" name="comment" rows="3" placeholder="Что нужно сделать и к какому сроку"></textarea>
-        </div>
-
-        <input type="hidden" id="lf-service" name="service" value="Сайт/Лендинг" />
-
-        <!-- Две галочки, а не одна. Согласие на обработку данных и
-             ознакомление с политикой — разные действия, и закон разводит
-             их намеренно. Обе пустые: предзаполненное согласие согласием
-             не является, отметить его должен человек. -->
-        <label class="consent">
-          <input type="checkbox" id="lf-consent" required />
-          <span>Даю <a href="/privacy.html#consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> — имени и контакта, чтобы со мной связались по этой заявке</span>
-        </label>
-
-        <label class="consent">
-          <input type="checkbox" id="lf-policy" required />
-          <span>Ознакомлен с <a href="/privacy.html" target="_blank" rel="noopener">политикой конфиденциальности</a></span>
-        </label>
-
-        <p class="err" id="lead-error" role="alert" hidden></p>
-
-        <button type="submit" class="submit">Отправить заявку</button>
-      </form>
-
-      <div class="done" id="lead-done">
-        <b>Заявка принята</b>
-        <span>Ответим на ваш контакт в день обращения.</span>
-      </div>
-
-      <p class="form-under">Не любите формы — напишите в <a href="https://wa.me/79992449999" target="_blank" rel="noopener" data-goal="click_wa">WhatsApp</a> или <a href="https://t.me/GranatJarvis_bot" target="_blank" rel="noopener" data-goal="click_tg">Telegram</a>.</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="eyebrow">Смотрите также</div>
-    <h2>Другие услуги и работы</h2>
-    <ul class="also">
-      <li><a href="/uslugi/razrabotka-sajta/">Разработка сайта</a></li>
-      <li><a href="/portfolio/granat/">Кейс: «Гранат»</a></li>
-      <li><a href="/uslugi/avtomatizaciya/">Автоматизация</a></li>
-    </ul>
-  </div>
-</section>
-</main>
-
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot-grid">
-      <div>
-        <div class="foot-brand">Vibe Digital 999</div>
-        <p class="req">Сайты, Telegram-боты и ИИ-автоматизация на чистом коде. Исходники передаём заказчику.</p>
-      </div>
-      <div>
-        <h4>Связаться</h4>
-        <a href="tel:+79992449999" data-goal="click_tel">+7 999 244 99 99</a>
-        <a href="mailto:gulnaravibecoder999@yandex.ru" data-goal="click_email">gulnaravibecoder999@yandex.ru</a>
-        <a href="https://wa.me/79992449999" target="_blank" rel="noopener" data-goal="click_wa">WhatsApp</a>
-        <a href="https://t.me/GranatJarvis_bot" target="_blank" rel="noopener" data-goal="click_tg">Telegram</a>
-        <a href="https://vk.ru/club240607590" target="_blank" rel="noopener" data-goal="click_vk">ВКонтакте</a>
-      </div>
-      <div>
-        <h4>Реквизиты</h4>
-        <p class="req">ИП Мелконян Гульнара Рифкатовна</p>
-        <p class="req">ИНН 490600091128</p>
-        <p class="req">ОГРНИП 326490000005218</p>
-        <p class="req">Ставропольский край, г. Лермонтов, ул. Нагорная, д. 2/1</p>
-      </div>
-    </div>
-
-    <div class="foot-bottom">
-      <span>© 2026 Vibe Digital 999</span>
-      <a href="/">Главная</a>
-      <a href="/privacy.html">Политика конфиденциальности</a>
-      <a href="/privacy.html#consent">Согласие на обработку персональных данных</a>
-      <a href="/privacy.html#cookies">Использование cookie</a>
-    </div>
-  </div>
-</footer>
-
-<div class="rail" role="group" aria-label="Связаться с нами">
-  <a href="tel:+79992449999" data-goal="click_tel" aria-label="Позвонить: +7 999 244 99 99"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></a>
-  <a href="https://wa.me/79992449999" target="_blank" rel="noopener" data-goal="click_wa" aria-label="Написать в WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.06 2.86 1.21 3.06c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35zM12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.13c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.41 5.83c0 4.54-3.7 8.21-8.24 8.21z"/></svg></a>
-  <a href="https://t.me/GranatJarvis_bot" target="_blank" rel="noopener" data-goal="click_tg" aria-label="Написать в Telegram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.94 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.64 6.86-1.55 7.33c-.12.52-.42.65-.85.4l-2.35-1.73-1.13 1.09c-.13.13-.24.24-.48.24l.17-2.4 4.37-3.95c.19-.17-.04-.26-.29-.09l-5.4 3.4-2.33-.73c-.5-.16-.51-.5.11-.75l9.1-3.51c.42-.15.79.1.63.7z"/></svg></a>
-  <a href="https://vk.me/club240607590" target="_blank" rel="noopener" data-goal="click_vk" aria-label="Написать во ВКонтакте"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.79 16.95c-5.24 0-8.4-3.63-8.52-9.66h2.65c.08 4.43 2.09 6.32 3.64 6.7V7.29h2.52v3.83c1.51-.16 3.1-1.9 3.63-3.83h2.49a7.24 7.24 0 0 1-3.34 4.73c1.72.79 3.09 2.24 3.72 4.93h-2.74c-.5-1.62-1.55-2.88-3.76-3.08v3.08h-.29z"/></svg></a>
-</div>
-
-<div class="ck" id="ck" role="dialog" aria-label="Согласие на обработку данных" hidden>
-  <p><span class="ck-full">Яндекс.Метрика считает посещения сайта обезличенно. Запись экрана и карта кликов включаются только с вашего согласия. Подробнее — в</span><span class="ck-short">Метрика считает посещения обезличенно. Запись экрана — только с вашего согласия. Подробнее — в</span> <a href="/privacy.html#cookies">разделе о cookie</a>.</p>
-  <div class="ck-btns">
-    <button type="button" id="ck-yes">Принять</button>
-    <button type="button" class="no" id="ck-no">Только необходимые</button>
-  </div>
-</div>
-
-<script type="application/ld+json">
-{
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://vibe-digital999.ru/portfolio/avtoshkola-start/#webpage",
+  "url": "https://vibe-digital999.ru/portfolio/avtoshkola-start/",
+  "name": "Кейс: сайт и приложение автошколы «Старт» — два филиала",
+  "description": "Как делаем сайт автошколы на два филиала и мобильное приложение для учеников: расписание и запись по каждому филиалу, единый визуальный язык сайта и приложения.",
+  "inLanguage": "ru-RU",
+  "isPartOf": {
+    "@id": "https://vibe-digital999.ru/#website"
+  },
+  "about": {
+    "@id": "https://vibe-digital999.ru/#organization"
+  },
+  "author": {
+    "@id": "https://vibe-digital999.ru/o-nas/#founder"
+  },
+  "publisher": {
+    "@id": "https://vibe-digital999.ru/#organization"
+  },
+  "datePublished": "2026-08-11",
+  "dateModified": "2026-08-11"
+}</script>
+  <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -259,7 +87,7 @@
       "@type": "ListItem",
       "position": 2,
       "name": "Портфолио",
-      "item": "https://vibe-digital999.ru/#portfolio"
+      "item": "https://vibe-digital999.ru/portfolio/"
     },
     {
       "@type": "ListItem",
@@ -268,24 +96,8 @@
       "item": "https://vibe-digital999.ru/portfolio/avtoshkola-start/"
     }
   ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "CreativeWork",
-  "name": "Автошкола «Старт»",
-  "description": "Как делаем сайт автошколы «Старт» на два филиала и мобильное приложение для учеников: расписание, запись, единый визуальный язык сайта и приложения. Node.js, чистый код.",
-  "url": "https://vibe-digital999.ru/portfolio/avtoshkola-start/",
-  "creator": {
-    "@type": "Organization",
-    "name": "Vibe Digital 999",
-    "url": "https://vibe-digital999.ru/"
-  }
-}
-</script>
-<script type="application/ld+json">
-{
+}</script>
+  <script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
@@ -294,20 +106,438 @@
       "name": "Почему нет ссылки на сайт?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Потому что проект ещё не запущен, а кейс без ссылки рядом с кейсом со ссылкой читается как выдумка. Честный статус лучше: поставим ссылку в день публикации."
+        "text": "Потому что проект ещё не запущен. Ставить ссылку не на что, а кейс без ссылки рядом с кейсом со ссылкой читается как выдумка — поэтому статус написан прямо. Поставим ссылку в день публикации."
       }
     },
     {
       "@type": "Question",
-      "name": "Делаете мобильные приложения отдельно?",
+      "name": "У меня тоже несколько филиалов. Это сильно дороже?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Делаем, но почти всегда советуем начинать с сайта. Приложение ставят те, кто уже пользуется услугой, а найти вас впервые человек идёт через поиск. Приложение без сайта чаще всего преждевременно."
+        "text": "Дороже не в разы. Основная работа — договориться о структуре до вёрстки: что общее, что различается, где человек выбирает филиал. Это разговор на созвоне, а не отдельный этап разработки. Дублировать страницы под каждый филиал мы не станем — это дороже и хуже для поиска."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Приложение обязательно, или хватит сайта?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Почти всегда хватает сайта, и начинать стоит с него. Приложение ставят те, кто уже пользуется услугой, а найти вас впервые человек идёт через поиск. Приложение без сайта чаще всего преждевременно — так и говорим, даже когда его просят."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Сколько занимает такой проект?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Сайт с двумя филиалами — от трёх недель, приложение считается отдельно. Точный срок называем в смете после разбора задачи. Дольше всего идёт не код, а согласование расписаний и текстов: без них работа встаёт."
       }
     }
   ]
-}
-</script>
-<script src="/assets/site.js" defer></script>
+}</script>
+</head>
+<body>
+<!-- Шапка. Ссылки ведут на настоящие страницы, а не на якоря: якорь
+     работает только внутри одной страницы, и на многостраничнике «Услуги»
+     с любой внутренней страницы вели бы в никуда. -->
+<div class="topbar">
+  <nav role="navigation" aria-label="Основное меню">
+    <a href="/" class="nav-logo">Vibe Digital 999</a>
+
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/uslugi/">Услуги</a></li>
+      <li><a href="/portfolio/" class="is-section">Портфолио</a></li>
+      <li><a href="/o-nas/">О студии</a></li>
+      <li><a href="/kontakty/">Контакты</a></li>
+      <li><a href="/blog/">Блог</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <!-- Номер в шапке — кнопка, а не строчка текста. Он и раньше был
+           ссылкой tel:, но выглядел обычным текстом, и по нему не нажимали:
+           человек не догадывался, что можно. А на телефоне — там, где как раз
+           и звонят, — номер вообще прятался правилом display:none.
+           Теперь на широком экране кнопка с номером, на узком — круглая
+           кнопка с трубкой: номер целиком туда не влезает, а звонок нужен. -->
+      <a href="tel:+79992449999" class="nav-phone" data-goal="click_tel"
+         aria-label="Позвонить: +7 999 244 99 99">
+        <svg class="nav-phone-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        <span class="nav-phone-num">+7 999 244 99 99</span>
+      </a>
+      <a href="#order-section" class="nav-cta">Заказать</a>
+      <button type="button" class="nav-burger" aria-expanded="false"
+              aria-controls="nav-links" aria-label="Меню">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<main class="page-main">
+
+<nav class="crumbs" aria-label="Вы находитесь здесь">
+  <ol>
+    <li><a href="/">Главная</a></li>
+    <li><a href="/portfolio/">Портфолио</a></li>
+    <li><span aria-current="page">Автошкола «Старт»</span></li>
+  </ol>
+</nav>
+<header class="page-head">
+  <div class="section-eyebrow">Кейс · Автошколы</div>
+  <h1 class="page-title">Автошкола «Старт»: сайт на два филиала и приложение</h1>
+  <p class="page-lead">Сайт автошколы с двумя филиалами и мобильное приложение для учеников.
+    Главная задача была не в дизайне, а в структуре: <strong>развести два филиала так,
+    чтобы ученик не гадал, куда ему ехать</strong>, а администратор перестал отвечать
+    на это по телефону сто раз в день.</p>
+
+  <div class="page-facts">
+    <div class="page-fact">
+      <span class="page-fact-label">Что делаем</span>
+      <span class="page-fact-value">Сайт и приложение</span>
+    </div>
+    <div class="page-fact">
+      <span class="page-fact-label">Ниша</span>
+      <span class="page-fact-value">Автошколы, обучение</span>
+    </div>
+    <div class="page-fact">
+      <span class="page-fact-label">Филиалов</span>
+      <span class="page-fact-value">2</span>
+    </div>
+  </div>
+
+  <!-- Ссылки на сайт нет намеренно: проект не запущен. Кейс без ссылки
+       рядом с кейсом со ссылкой читается как выдумка, поэтому статус
+       написан прямо. Запустится — снять плашку и поставить ссылку
+       первой кнопкой, как в кейсе «Гранат». -->
+  <p class="case-status">В работе — запуск скоро, ссылку поставим после публикации</p>
+
+  <div class="page-actions">
+    <a href="#order-section" class="btn-action">Обсудить похожий проект</a>
+    <a href="/uslugi/prilozheniya/" class="btn-action btn-action-secondary">Про приложения</a>
+  </div>
+</header>
+
+<section class="page-section" aria-label="Задача">
+  <div class="section-eyebrow">Задача</div>
+  <h2 class="section-title">С чего начинали</h2>
+  <div class="prose">
+    <p>У автошколы два филиала, и расписание у каждого своё. Ученик, выбирая
+      группу, должен был позвонить и спросить: когда занятия, в каком корпусе,
+      есть ли места. Администратор отвечал на это весь день одними и теми же
+      фразами.</p>
+    <p>Отдельная сложность — сама структура сайта. Два филиала соблазняют
+      сделать две копии всех страниц: две страницы «о нас», две «цены», две
+      «контакты». Так делают часто, и это плохо кончается: поиск видит
+      дублирующиеся страницы и выбирает из них одну сам, обычно не ту.
+      А человек, попав на страницу не своего филиала, уходит, не заметив
+      переключателя.</p>
+  </div>
+</section>
+
+<section class="page-section" aria-label="Что делаем">
+  <div class="section-eyebrow">Решение</div>
+  <h2 class="section-title">Что делаем</h2>
+  <ul class="incl">
+    <li><strong>Два филиала в одной структуре.</strong> Филиал — это выбор внутри
+      страницы, а не отдельная ветка сайта. Разделы не дублируются, дублей
+      в поиске не возникает.</li>
+    <li><strong>Расписание по каждому филиалу.</strong> Ученик видит своё расписание
+      и не сверяется по телефону.</li>
+    <li><strong>Запись без звонка.</strong> Заявка уходит администратору сразу,
+      а не остаётся в списке пропущенных вызовов.</li>
+    <li><strong>Мобильное приложение для учеников.</strong> То же расписание
+      и материалы в телефоне: у тех, кто уже учится, сайт открывать неудобно.</li>
+    <li><strong>Один визуальный язык.</strong> Сайт и приложение выглядят как одно
+      целое — ученик переходит между ними и не переучивается.</li>
+  </ul>
+</section>
+
+<section class="page-section" aria-label="Как устроено внутри">
+  <div class="section-eyebrow">Технически</div>
+  <h2 class="section-title">Как устроено внутри</h2>
+  <div class="prose">
+    <p><strong>Node.js и чистый HTML, CSS, JS.</strong> Тот же стек, что и в остальных
+      наших проектах: без конструкторов и подписок, исходники и доступы уходят
+      заказчику.</p>
+    <p><strong>Приложение поверх той же логики.</strong> Расписание не заводится
+      дважды: сайт и приложение берут его из одного места, иначе они разойдутся
+      в первую же неделю — и ученик поверит тому, что откроет первым.</p>
+    <p class="geo-note">Цифр по набору групп и заявкам здесь нет: проект ещё не
+      запущен, и приводить их было бы выдумкой. Появятся подтверждённые
+      данные — допишем.</p>
+  </div>
+</section>
+
+<section class="page-section" aria-label="Частые вопросы">
+  <div class="section-eyebrow">Вопросы</div>
+  <h2 class="section-title">Частые вопросы по кейсу</h2>
+  <div class="faq-list">
+    <details class="faq-item">
+      <summary>Почему нет ссылки на сайт?</summary>
+      <p>Потому что проект ещё не запущен. Ставить ссылку не на что, а кейс без ссылки рядом с кейсом со ссылкой читается как выдумка — поэтому статус написан прямо. Поставим ссылку в день публикации.</p>
+    </details>
+    <details class="faq-item">
+      <summary>У меня тоже несколько филиалов. Это сильно дороже?</summary>
+      <p>Дороже не в разы. Основная работа — договориться о структуре до вёрстки: что общее, что различается, где человек выбирает филиал. Это разговор на созвоне, а не отдельный этап разработки. Дублировать страницы под каждый филиал мы не станем — это дороже и хуже для поиска.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Приложение обязательно, или хватит сайта?</summary>
+      <p>Почти всегда хватает сайта, и начинать стоит с него. Приложение ставят те, кто уже пользуется услугой, а найти вас впервые человек идёт через поиск. Приложение без сайта чаще всего преждевременно — так и говорим, даже когда его просят.</p>
+    </details>
+    <details class="faq-item">
+      <summary>Сколько занимает такой проект?</summary>
+      <p>Сайт с двумя филиалами — от трёх недель, приложение считается отдельно. Точный срок называем в смете после разбора задачи. Дольше всего идёт не код, а согласование расписаний и текстов: без них работа встаёт.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ЗАЯВКА
+
+     Одна форма на страницу и один способ её отправить. Всплывающего окна
+     здесь нет намеренно: на внутренней странице форма и так в одном экране
+     от текста, а второе место, где можно оставить контакт, — это второе
+     место, где что-то может сломаться.
+
+     Услуга подставлена заранее, из адреса страницы: человек пришёл читать
+     про боты — в заявке будет написано «Telegram-бот», и переспрашивать
+     не придётся.
+════════════════════════════════════════════ -->
+<section id="order-section" class="page-section" aria-label="Форма заявки">
+  <div class="order-box">
+    <div class="order-eyebrow">Начните работать</div>
+    <h2 class="order-title">Оставить заявку</h2>
+    <p class="order-sub">Расскажите о задаче. Ответим в течение часа в рабочее время и назовём цену со сроком.</p>
+
+    <form class="order-form" data-lead-form novalidate>
+      <div class="form-group">
+        <label for="f-name">Ваше имя</label>
+        <input type="text" id="f-name" name="name" placeholder="Как вас зовут?" autocomplete="name" required />
+      </div>
+
+      <div class="form-group">
+        <label for="f-contact">Телефон или Telegram</label>
+        <input type="text" id="f-contact" name="contact" placeholder="@yourname или +7..." autocomplete="tel" required />
+      </div>
+
+      <!-- Город. Необязательное поле, и это принципиально: обязательным оно
+           отсекает тех, кому всё равно, откуда мы работаем, — а таких среди
+           удалённых заказов большинство. Зато у заполнивших сразу виден
+           регион, и по заявкам понятно, какая реклама из трёх работает.
+
+           Подсказки — datalist, а не выпадающий список: поле остаётся
+           текстовым, свой город можно вписать целиком. Список городов
+           собирается из src/cities.js. -->
+      <div class="form-group">
+        <label for="f-city">Ваш город <span class="form-opt">— необязательно</span></label>
+        <input type="text" id="f-city" name="city" list="city-list"
+               placeholder="Например: Пятигорск, Краснодар, Красноярск"
+               autocomplete="address-level2" />
+        <datalist id="city-list">
+        <option value="Лермонтов"></option>
+        <option value="Пятигорск"></option>
+        <option value="Ессентуки"></option>
+        <option value="Кисловодск"></option>
+        <option value="Минеральные Воды"></option>
+        <option value="Железноводск"></option>
+        <option value="Краснодар"></option>
+        <option value="Сочи"></option>
+        <option value="Новороссийск"></option>
+        <option value="Красноярск"></option>
+        </datalist>
+        <p class="form-hint" data-city-hint>Поможет быстрее рассчитать стоимость и предложить подходящий формат работы.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="f-comment">Опишите задачу</label>
+        <textarea id="f-comment" name="comment" rows="4" placeholder="Что нужно сделать и к какому сроку"></textarea>
+      </div>
+
+      <input type="hidden" id="f-service" name="service" value="Приложение" />
+
+      <!-- Выбранный пакет. Заполняется сам, если человек пришёл в форму
+           с кнопки пакета на /pakety/, и остаётся пустым во всех остальных
+           случаях. Спрашивать напрямую — «у вас микро или малый бизнес?» —
+           нельзя: вопрос звучит как проверка платёжеспособности, и половина
+           закроет форму. А нажатие на «Обсудить «Поток»» — это тот же ответ,
+           только данный добровольно.
+
+           Три поля, а не одно: в заявке нужно видеть и название пакета,
+           и по какому масштабу человек себя узнал, и что в этот пакет
+           входит. Иначе через месяц «Поток» — это просто слово. -->
+      <input type="hidden" id="f-package" name="package" value="" />
+      <input type="hidden" id="f-segment" name="segment" value="" />
+      <input type="hidden" id="f-parts" name="package_parts" value="" />
+
+      <!-- Две галочки, а не одна. Согласие на обработку данных и ознакомление
+           с политикой — разные действия, и закон разводит их намеренно: одна
+           общая галочка «согласен со всем» не считается конкретным и
+           информированным согласием. Обе пустые: отметить их должен человек,
+           это его действие, а не состояние по умолчанию. -->
+      <label class="consent">
+        <input type="checkbox" id="f-consent" data-consent required />
+        <span>Даю <a href="/privacy.html#consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> — имени и контакта, чтобы со мной связались по этой заявке</span>
+      </label>
+
+      <label class="consent">
+        <input type="checkbox" id="f-policy" data-policy required />
+        <span>Ознакомлен с <a href="/privacy.html" target="_blank" rel="noopener">политикой конфиденциальности</a></span>
+      </label>
+
+      <p class="form-error" role="alert" hidden></p>
+
+      <button type="submit" class="btn-submit">
+        <span class="btn-text">Отправить заявку</span>
+        <span class="btn-loader"></span>
+      </button>
+    </form>
+
+    <!-- Сообщение об успехе стоит СНАРУЖИ формы, а не внутри неё. После
+         отправки форма прячется целиком — вместе со всем, что лежит внутри.
+         Спрятанное сообщение об успехе человек не увидит, решит, что заявка
+         не ушла, и отправит её второй раз или уйдёт. -->
+    <div class="form-success">
+      <span class="success-icon">✦</span>
+      <div class="success-text">Заявка принята!</div>
+      <div class="success-sub">Ответим в течение часа в рабочее время.</div>
+    </div>
+  </div>
+</section>
+
+
+<section class="page-section" aria-label="Смотрите также">
+  <h2 class="section-title">Смотрите также</h2>
+  <div class="related">
+    <a class="related-card" href="/uslugi/prilozheniya/">
+      <span class="related-name">Приложения и PWA</span>
+      <span class="related-desc">Что входит, сколько стоит, когда нужно</span>
+    </a>
+    <a class="related-card" href="/uslugi/razrabotka-sajta/">
+      <span class="related-name">Разработка сайтов</span>
+      <span class="related-desc">Что входит, сколько стоит, сколько занимает</span>
+    </a>
+    <a class="related-card" href="/portfolio/sayt-dlya-tipografii-granat/">
+      <span class="related-name">Кейс: «Гранат»</span>
+      <span class="related-desc">Сайт студии полиграфии, запущен</span>
+    </a>
+    <a class="related-card" href="/portfolio/">
+      <span class="related-name">Все работы</span>
+      <span class="related-desc">Портфолио целиком</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-brand">Vibe Digital 999</div>
+      <p class="footer-tagline">Чистый код, автоматизация и ИИ-агенты. Пишем так, чтобы переписывать не пришлось.</p>
+    </div>
+
+    <!-- Список услуг в подвале — не украшение. Это единственные ссылки,
+         которые есть на КАЖДОЙ странице сайта: и человек, и робот попадают
+         в любой раздел за один переход, откуда бы ни начали. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Услуги</h3>
+      <a class="footer-link" href="/uslugi/razrabotka-sajta/">Разработка сайтов</a>
+      <a class="footer-link" href="/uslugi/telegram-bot/">Боты Telegram и ВК</a>
+      <a class="footer-link" href="/uslugi/ai-agent/">ИИ-агенты</a>
+      <a class="footer-link" href="/uslugi/avtomatizaciya/">Автоматизация</a>
+      <a class="footer-link" href="/vibecoding/">Вайбкодинг</a>
+      <a class="footer-link" href="/uslugi/prilozheniya/">Приложения</a>
+      <a class="footer-link" href="/uslugi/seo-audit-152fz/">SEO-аудит</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Разделы</h3>
+      <a class="footer-link" href="/uslugi/">Все услуги</a>
+      <a class="footer-link" href="/pakety/">Пакеты по размеру бизнеса</a>
+      <a class="footer-link" href="/portfolio/">Портфолио</a>
+      <a class="footer-link" href="/blog/">Блог</a>
+      <a class="footer-link" href="/o-nas/">О студии</a>
+      <a class="footer-link" href="/kontakty/">Контакты</a>
+    </div>
+
+    <!-- Регионы отдельной колонкой, а не строкой в «Разделах».
+
+         Три региональные страницы — единственные, до которых иначе не
+         дойти ниоткуда, кроме главной: человек, пришедший из поиска сразу
+         на страницу услуги, о них не узнает. Здесь они есть на каждой
+         странице сайта.
+
+         Порядок не алфавитный. Первыми — регионы, по которым идёт реклама,
+         и первым из них КМВ: там мы физически находимся, там карточка на
+         Картах и возможность встретиться. Города КМВ ниже — это уточнение
+         внутри региона, а не четвёртое и пятое направление. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Регионы</h3>
+      <a class="footer-link" href="/kmv/">Кавминводы</a>
+      <a class="footer-link" href="/krasnodar-krai/">Краснодарский край</a>
+      <a class="footer-link" href="/krasnoyarsk-krai/">Красноярский край</a>
+      <a class="footer-link" href="/pyatigorsk/">Пятигорск</a>
+      <a class="footer-link" href="/essentuki/">Ессентуки</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Связаться</h3>
+      <a class="footer-link" href="tel:+79992449999" data-goal="click_tel">+7 999 244 99 99</a>
+      <a class="footer-link" href="mailto:gulnaravibecoder999@yandex.ru" data-goal="click_email">gulnaravibecoder999@yandex.ru</a>
+      <a class="footer-link" href="https://wa.me/79992449999" target="_blank" rel="noopener" data-goal="click_wa">WhatsApp</a>
+      <a class="footer-link" href="https://t.me/GranatJarvis_bot" target="_blank" rel="noopener" data-goal="click_tg">Telegram</a>
+      <a class="footer-link" href="https://vk.ru/club240607590" target="_blank" rel="noopener" data-goal="click_vk">ВКонтакте</a>
+      <a class="footer-link" href="/kontakty/">Все контакты</a>
+      <a class="footer-link" href="/#pay">Оплатить по СБП</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Реквизиты</h3>
+      <p class="footer-req">ИП Мелконян Гульнара Рифкатовна</p>
+      <p class="footer-req">ИНН 490600091128</p>
+      <p class="footer-req">ОГРНИП 326490000005218</p>
+      <p class="footer-req">Ставропольский край, г. Лермонтов, ул. Нагорная, д. 2/1</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Vibe Digital 999</span>
+    <a class="footer-link" href="/privacy.html">Политика конфиденциальности</a>
+    <a class="footer-link" href="/privacy.html#consent">Согласие на обработку персональных данных</a>
+    <a class="footer-link" href="/privacy.html#cookies">Использование cookie</a>
+  </div>
+</footer>
+
+<!-- Плашка о куках. На одностраничнике она жила только на главной, и этого
+     хватало: другого входа на сайт не было. Теперь человек приходит из поиска
+     прямо на страницу услуги и главную может не открыть вовсе — значит,
+     уведомление должно быть и здесь. Выбор хранится в localStorage и общий
+     для всех страниц: ответил один раз — больше не спросим. -->
+<div class="cookie-bar" id="cookie-bar" role="dialog" aria-live="polite"
+     aria-label="Согласие на обработку данных" hidden>
+  <p class="cookie-text">
+    Яндекс.Метрика считает посещения сайта обезличенно. Запись экрана и карта кликов
+    включаются только с вашего согласия. Подробнее — в
+    <a href="/privacy.html#cookies">разделе о cookie</a>.
+  </p>
+  <div class="cookie-actions">
+    <button type="button" class="cookie-btn cookie-yes" id="cookie-yes">Принять</button>
+    <button type="button" class="cookie-btn cookie-no" id="cookie-no">Только необходимые</button>
+  </div>
+</div>
+
+<script src="/assets/js/site.js" defer></script>
+<!-- Подсказка региона по IP. Ничего не переадресовывает и не подменяет
+     в тексте страницы: подставляет город в форму и на главной предлагает
+     перейти в свой раздел. Не загрузился — сайт работает как работал. -->
+<script src="/assets/js/geo.js" defer></script>
+<!-- Ленивая карта. Без ключей в src/pages.js не делает ничего: в контактах
+     остаётся адрес и ссылка на Карты. Ключ есть — появляется картинка,
+     а настоящая карта включается, когда до блока долистали. -->
+<script src="/assets/js/ymap.js" defer></script>
+<!-- Пиксель для посетителей без JavaScript: считает заход обезличенно,
+     без cookie и без записи экрана. Заодно это то, что ищут роботы Яндекса
+     при проверке «установлен ли счётчик» — скрипт они не выполняют,
+     а картинку видят. -->
+<noscript><div><img src="https://mc.yandex.ru/watch/110416869" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 </body>
 </html>
