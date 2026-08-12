@@ -7,20 +7,21 @@
   <!-- Метка сборки. Нужна, чтобы за секунду понять, какой файл сейчас на сервере,
        и не гадать, залился новый или остался старый. -->
   <meta name="build" content="2026-08-06-v7-metrika" />
-  <meta name="description" content="Заказать сайт, лендинг, чат-бота или ИИ-агента для бизнеса. Пишем на чистом коде без конструкторов: сайт остаётся вашим, переделывать не придётся. Срок от 3 дней, работаем по всей России." />
-  <meta name="keywords" content="разработка сайтов на заказ, заказать лендинг, разработка телеграм бота, чат бот для бизнеса под ключ, создание сайта цена, ии агент для бизнеса, автоматизация бизнес процессов, вайбкодинг" />
+  <!-- Подтверждение прав в Яндекс Вебмастере. Яндекс проверяет тег именно
+       на главной, поэтому он здесь. На остальных 25 страницах его ставит
+       сборка — код лежит одной строкой в src/pages.js, менять его нужно
+       только там. Удалять после подтверждения нельзя: Яндекс перепроверяет
+       права и снимает их, если тег пропал. -->
+  <meta name="yandex-verification" content="75f670095b8ac749" />
+  <meta name="description" content="Заказать сайт, лендинг, чат-бота или ИИ-агента. Чистый код без конструкторов: сайт остаётся вашим. Срок от 3 дней, работаем по всей России." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://vibe-digital999.ru/" />
-
-  <!-- Подтверждение прав в Яндекс.Вебмастере. Не удалять: без него
-       панель отключится и сайт потеряет доступ к переобходу. -->
-  <meta name="yandex-verification" content="75f670095b8ac749" />
 
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ru_RU" />
   <meta property="og:url" content="https://vibe-digital999.ru/" />
   <meta property="og:title" content="Сайты и Telegram-боты на заказ — код, который не придётся переписывать" />
-  <meta property="og:description" content="Пишем на чистом коде без конструкторов: сайт остаётся вашим, исходники отдаём. SEO-аудит с проверкой по 152-ФЗ 15 000 ₽, лендинг от 35 000 ₽, ИИ-агент от 40 000 ₽." />
+  <meta property="og:description" content="Пишем на чистом коде без конструкторов: сайт остаётся вашим, исходники отдаём. Лид-бот от 15 000 ₽, SEO-аудит 15 000 ₽, лендинг от 35 000 ₽, ИИ-агент от 60 000 ₽." />
   <meta property="og:image" content="https://vibe-digital999.ru/assets/logo-g.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <!-- Шрифты свои, не гугловские. Раньше здесь стояли ссылки на
@@ -270,7 +271,7 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--cyan);
-      margin-bottom: 1.1rem;
+      margin-bottom: 1rem;
       opacity: 1;
       font-weight: 600;
       text-shadow: 0 0 10px rgba(45,156,255,0.5), 0 0 24px rgba(0,240,255,0.25);
@@ -345,10 +346,7 @@
       letter-spacing: 0.04em;
       color: var(--mist);
     }
-    .hero-trust li strong {
-      color: var(--white);
-      font-weight: 600;
-    }
+    .hero-trust li strong { color: var(--white); font-weight: 600; }
     /* Галочка нарисована рамкой, а не символом «✓»: символ в разных
        шрифтах съезжает по базовой линии, рамка везде одинаковая. */
     .hero-trust li::before {
@@ -374,20 +372,10 @@
        Данные в карточке выдуманы, и это подписано в заголовке. Ставить
        сюда настоящий телефон клиента нельзя: это персональные данные.
     ═══════════════════════════════════════════ */
-    .hero-demo {
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      text-align: left;
-    }
+    .hero-demo { margin: 0; display: flex; flex-direction: column; gap: 1rem; text-align: left; }
     .demo-cap {
-      font-size: 0.58rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--mist);
-      opacity: 0.75;
-      font-weight: 600;
+      font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--mist); opacity: 0.75; font-weight: 600;
     }
     .demo-phone {
       border-radius: 14px;
@@ -397,88 +385,43 @@
       overflow: hidden;
     }
     .demo-bar {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
+      display: flex; align-items: center; gap: 0.6rem;
       padding: 0.7rem 0.9rem;
       border-bottom: 1px solid rgba(45,156,255,0.18);
       background: rgba(45,156,255,0.07);
     }
     .demo-avatar {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-family: var(--f-display);
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--ink);
-      background: linear-gradient(135deg, #00F0FF, #2D9CFF);
+      width: 26px; height: 26px; border-radius: 50%;
+      display: grid; place-items: center;
+      font-family: var(--f-display); font-size: 0.72rem; font-weight: 700;
+      color: var(--ink); background: linear-gradient(135deg, #00F0FF, #2D9CFF);
     }
-    .demo-bar-name {
-      font-size: 0.7rem;
-      letter-spacing: 0.06em;
-      color: var(--white);
-      font-weight: 600;
-    }
+    .demo-bar-name { font-size: 0.7rem; letter-spacing: 0.06em; color: var(--white); font-weight: 600; }
     .demo-msg {
-      display: flex;
-      flex-direction: column;
-      gap: 0.32rem;
-      margin: 0.9rem;
-      padding: 0.85rem 0.95rem;
+      display: flex; flex-direction: column; gap: 0.32rem;
+      margin: 0.9rem; padding: 0.85rem 0.95rem;
       border-radius: 10px 10px 10px 2px;
       background: rgba(45,156,255,0.1);
       border: 1px solid rgba(45,156,255,0.2);
-      font-size: 0.74rem;
-      line-height: 1.5;
-      letter-spacing: 0.02em;
-      color: var(--white);
+      font-size: 0.74rem; line-height: 1.5; letter-spacing: 0.02em; color: var(--white);
     }
     .demo-msg b { font-size: 0.78rem; letter-spacing: 0.04em; }
     .demo-msg i { font-style: normal; color: var(--mist); }
-    .demo-time {
-      align-self: flex-end;
-      margin-top: 0.2rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.08em;
-      color: var(--cyan);
-      opacity: 0.8;
-    }
-    .demo-flow {
-      list-style: none;
-      counter-reset: flow;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+    .demo-time { align-self: flex-end; margin-top: 0.2rem; font-size: 0.6rem;
+      letter-spacing: 0.08em; color: var(--cyan); opacity: 0.8; }
+    .demo-flow { list-style: none; counter-reset: flow; margin: 0; padding: 0;
+      display: flex; flex-direction: column; gap: 0.5rem; }
     .demo-flow li {
-      counter-increment: flow;
-      position: relative;
-      padding-left: 2rem;
-      font-size: 0.72rem;
-      line-height: 1.5;
-      letter-spacing: 0.03em;
-      color: var(--mist);
+      counter-increment: flow; position: relative; padding-left: 2rem;
+      font-size: 0.72rem; line-height: 1.5; letter-spacing: 0.03em; color: var(--mist);
     }
     .demo-flow li::before {
       content: counter(flow);
-      position: absolute;
-      left: 0;
-      top: -0.05em;
-      width: 1.35rem;
-      height: 1.35rem;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      border: 1.5px solid rgba(45,156,255,0.45);
-      font-family: var(--f-display);
-      font-size: 0.62rem;
-      font-weight: 700;
-      color: var(--cyan);
+      position: absolute; left: 0; top: -0.05em;
+      width: 1.35rem; height: 1.35rem;
+      display: grid; place-items: center;
+      border-radius: 50%; border: 1.5px solid rgba(45,156,255,0.45);
+      font-family: var(--f-display); font-size: 0.62rem; font-weight: 700; color: var(--cyan);
     }
 
     /* Две колонки только там, где для них правда есть ширина.
@@ -828,27 +771,6 @@
       z-index: 1;
     }
 
-    /* Ссылка на отдельную страницу услуги. Стоит НАД кнопкой «обсудить
-       задачу» и намеренно тише её: главное действие на главной — заявка,
-       а страница услуги нужна тому, кто ещё читает и сравнивает.
-
-       Ссылка настоящая, с href, а не открывается скриптом: по ней ходит
-       поисковик. Без внутренних ссылок отдельные страницы для него
-       просто не существуют — карты сайта для этого мало. */
-    .svc-more {
-      display: inline-block;
-      margin: 0 0 0.9rem;
-      font-size: 0.74rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      color: var(--blue);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(45,156,255,0.3);
-      transition: color 0.25s ease, border-color 0.25s ease;
-    }
-    .svc-more:hover { color: var(--cyan); border-color: var(--cyan); }
-    .svc-more + .svc-more { margin-left: 1rem; }
-
     .btn-svc {
       display: inline-block;
       font-size: 0.66rem;
@@ -1187,10 +1109,10 @@
     /* Колонка прижата к правому краю по flex-end, но её собственная
        коробка шире содержимого: ширину задаёт самый широкий ребёнок —
        кнопка чата 64px, а кружки связи всего 48px. Слева от кружков
-       оставалась пустая, но кликабельная полоса в 16px высотой во всю
-       колонку. Она молча съедала нажатия по тому, что лежит под ней:
-       на телефоне туда попадал правый край кнопки первого экрана —
-       палец жал в пустоту вместо «Получить расчёт проекта».
+       оставалась пустая, но кликабельная полоса во всю колонку. Она
+       молча съедала нажатия по тому, что лежит под ней: на телефоне
+       туда попадал правый край кнопки первого экрана — палец жал
+       в пустоту вместо «Получить расчёт проекта».
 
        Контейнер сам по себе ничего не ловит, клики принимают только
        его дети. Добавляете сюда новый элемент — он получит клики
@@ -2225,11 +2147,16 @@
     }
 
     .footer-grid {
-      max-width: 1100px;
+      /* Колонок стало пять вместо трёх: к контактам и реквизитам добавились
+         списки услуг и разделов. Жёсткие доли 1.4fr 1fr 1.2fr под пять колонок
+         не подходят — четвёртая и пятая просто не помещались бы. auto-fit
+         раскладывает столько колонок, сколько влезает, и сам переносит
+         остальные на следующую строку. */
+      max-width: 1200px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1.4fr 1fr 1.2fr;
-      gap: 3rem;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 2.4rem 2rem;
     }
 
     .footer-brand {
@@ -2353,7 +2280,15 @@
       align-items: center;
     }
 
+    /* Номер в шапке. Раньше строчка текста: ссылка работала, но выглядела
+       подписью, и по ней не нажимали. Теперь рамка, трубка и высота 44 —
+       видно, что кнопка, и в неё попадают пальцем. */
     .nav-phone {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 44px;
+      padding: 0.5rem 1rem;
       font-family: var(--f-body);
       font-size: 0.82rem;
       font-weight: 600;
@@ -2361,18 +2296,33 @@
       color: #00F0FF;
       text-decoration: none;
       white-space: nowrap;
-      margin-right: 1.4rem;
-      transition: color 0.3s ease, text-shadow 0.3s ease;
+      margin-right: 0.8rem;
+      border: 1.5px solid rgba(0,240,255,0.35);
+      border-radius: 999px;
+      transition: color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
+    .nav-phone-ico { width: 17px; height: 17px; fill: currentColor; flex-shrink: 0; }
+    .nav-phone:active { transform: scale(0.97); }
     .nav-phone:hover,
     .nav-phone:focus-visible {
       color: #A8FBFF;
-      text-shadow: 0 0 14px rgba(0,240,255,0.6);
+      border-color: #00F0FF;
+      box-shadow: 0 0 18px rgba(0,240,255,0.35);
     }
+    .nav-phone:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 
     @media (max-width: 860px) {
-      /* На телефоне номер прячем: там уже есть плавающая кнопка звонка */
-      .nav-phone { display: none; }
+      /* Раньше номер прятали совсем. Теперь сворачиваем в круглую кнопку
+         с трубкой: целиком он в узкую шапку не влезает, а звонок нужен
+         именно с телефона. */
+      .nav-phone {
+        width: 44px;
+        padding: 0;
+        justify-content: center;
+        margin-right: 0.5rem;
+      }
+      .nav-phone-num { display: none; }
+      .nav-phone-ico { width: 19px; height: 19px; }
     }
 
     .contact-btn-wa:hover { border-color: #25D366; box-shadow: 0 0 24px rgba(37,211,102,0.45); }
@@ -2383,6 +2333,11 @@
     .contact-btn-vk:hover svg { fill: #0077FF; }
 
     @media (max-width: 600px) {
+      /* 64px на экране шириной 375px — четверть его ширины. Кнопка
+         вместе с невидимым полем контейнера накрывала правый нижний
+         угол блока доверия на первом экране. */
+      .chat-toggle { width: 52px; height: 52px; }
+      .chat-toggle svg { width: 22px; height: 22px; }
       .contact-btn { width: 44px; height: 44px; }
       .contact-btn svg { width: 21px; height: 21px; }
       .contact-rail { gap: 0.55rem; }
@@ -2401,15 +2356,22 @@
     }
   </style>
 
-  <link rel="icon" href="/assets/favicon.ico" sizes="any" />
-  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <!-- Значок вкладки. Раньше здесь стояли favicon.ico и apple-touch-icon.png,
+       которых в проекте нет: каждая страница просила два несуществующих
+       файла и получала 404. Теперь вектор плюс запасная картинка для
+       браузеров постарше. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/logo-mark.png" sizes="256x256" />
+  <link rel="apple-touch-icon" href="/logo-mark.png" />
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#0a0a0a" />
   <style>
     /* SEO-правки 02.08.2026 */
     /* Строка с болью клиента. Стоит между заголовком и подзаголовком:
        заголовок обещает результат, эта строка называет то, из-за чего
-       человек вообще открыл сайт, подзаголовок даёт решение и цену. */
+       человек вообще открыл сайт, подзаголовок даёт решение и цену.
+       На ней же висит крючок геоподмены — для рекламы по регионам
+       она заменяется строкой про конкретный край. */
     .hero-pain{ margin:1rem auto 0; max-width:540px; font-size:clamp(.95rem,2vw,1.15rem);
       line-height:1.55; letter-spacing:.02em; color:var(--white); opacity:.82; }
     .geo-text{ max-width:52rem; margin:0 auto; }
@@ -2497,13 +2459,86 @@
     .chat-note{ margin:0; padding:.5rem .9rem .8rem; font-size:.62rem; line-height:1.6;
       letter-spacing:.02em; color:var(--mist); opacity:.85; }
     .chat-note a{ color:var(--cyan); text-decoration:underline; }
+
+    /* Ссылка «подробно» в карточке услуги. Появилась вместе с отдельными
+       страницами услуг: карточка отвечает на «что это», страница — на
+       «что входит, сколько стоит, сколько ждать». Оформлена ссылкой,
+       а не второй кнопкой: спорить с «Обсудить задачу» ей незачем,
+       главное действие на странице одно. */
+    .svc-more{ display:flex; flex-wrap:wrap; gap:.2rem 1.1rem; margin:0 0 .9rem; }
+    .svc-more a{ display:inline-flex; align-items:center; min-height:32px;
+      font-size:.72rem; letter-spacing:.04em; color:var(--cyan);
+      text-decoration:none; border-bottom:1px solid rgba(0,240,255,.3);
+      transition:border-color .25s ease, text-shadow .25s ease; }
+    .svc-more a:hover{ border-color:var(--cyan); text-shadow:0 0 12px rgba(0,240,255,.5); }
+    .svc-more a:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+
+    /* Выбор региона под блоком географии. Карточки те же, что на внутренних
+       страницах, но их стилей на главной нет — она свои держит у себя. */
+    .form-opt{ font-weight:400; opacity:.6; font-size:.9em; }
+
+    /* Подпись под полем: зачем его заполнять. Отвечает на немой вопрос
+       «а вам-то зачем мой город» — без этого поле пропускают. */
+    .form-hint{ margin:.45rem 0 0; font-size:.78rem; line-height:1.55; color:var(--mist); }
+
+    /* Полоска «похоже, вы из…». Внизу экрана: сверху уже стоят шапка и
+       уведомление о куках, третья плашка перекрыла бы кнопку меню.
+       Появляется один раз за сессию и только если сервер сумел
+       определить регион. Подробности — public/assets/js/geo.js */
+    .geo-bar{ position:fixed; left:1rem; right:1rem; bottom:1rem; z-index:90;
+      max-width:640px; margin:0 auto; display:flex; flex-wrap:wrap;
+      align-items:center; justify-content:space-between; gap:.9rem 1.2rem;
+      padding:1rem 1.2rem; border-radius:14px; border:1px solid rgba(0,240,255,.28);
+      background:rgba(5,14,30,.96); box-shadow:0 12px 40px rgba(0,0,0,.5);
+      backdrop-filter:blur(10px); }
+    .geo-bar-text{ flex:1 1 16rem; margin:0; font-size:.85rem; line-height:1.55; color:var(--mist); }
+    .geo-bar-actions{ display:flex; gap:.6rem; flex-shrink:0; }
+    .geo-bar-btn{ font-family:inherit; font-size:.8rem; white-space:nowrap;
+      padding:.55rem 1.1rem; border-radius:999px; border:1px solid transparent;
+      cursor:pointer; text-decoration:none; }
+    .geo-bar-yes{ background:var(--cyan); color:#04121f; font-weight:600; }
+    .geo-bar-no{ background:transparent; color:var(--mist); border-color:rgba(255,255,255,.22); }
+    .geo-bar-btn:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+    @media (max-width:600px){
+      .geo-bar{ bottom:.8rem; padding:.9rem 1rem; }
+      .geo-bar-actions{ width:100%; }
+      .geo-bar-btn{ flex:1; text-align:center; }
+    }
+
+    .geo-pick{ max-width:1200px; margin:3rem auto 0; }
+    .geo-pick-title{ text-align:center; font-size:.9rem; letter-spacing:.03em;
+      color:var(--white); margin:0 0 1.4rem; }
+    .geo-pick .related{ display:grid; gap:1rem;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+    .geo-pick .related-card{ display:block; padding:1.3rem 1.4rem;
+      border:1.5px solid rgba(45,156,255,.2); border-radius:12px;
+      background:rgba(5,14,30,.6); text-decoration:none;
+      transition:border-color .3s ease, transform .3s var(--ease-out-expo); }
+    .geo-pick .related-card:hover{ border-color:rgba(0,240,255,.5); transform:translateY(-3px); }
+    .geo-pick .related-card:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+    .geo-pick .related-name{ display:block; font-family:var(--f-display); font-size:.9rem;
+      font-weight:700; letter-spacing:.06em; color:var(--white); margin-bottom:.4rem; }
+    .geo-pick .related-desc{ display:block; font-size:.78rem; line-height:1.6; color:var(--mist); }
+    @media (max-width:600px){ .geo-pick{ margin-top:2.2rem; } }
   </style>
-  <script type="application/ld+json">{
+  <!-- Два русских написания в alternateName — не небрежность.
+
+     Первое совпадает с карточкой в Яндекс Картах буква в букву: именно
+     по совпадению названия поиск связывает организацию с сайтом, и любое
+     расхождение эту связь ослабляет.
+
+     Второе — то, как слово «digital» пишут по-русски обычно, через «дж».
+     Так набирают в поиске те, кто услышал название на слух. Оба ведут
+     к одной студии, и сказать об этом поиску нужно прямо.
+
+     В самом JSON-LD комментариев быть не может: это строгий JSON,
+     и любой /* */ внутри ломает всю разметку страницы. -->
+<script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   "@id": "https://vibe-digital999.ru/#organization",
   "name": "Vibe Digital 999",
-  "alternateName": "Вайб Диджитал 999",
+  "alternateName": ["Вайб Дижитал 999", "Вайб Диджитал 999"],
   "description": "Разработка сайтов, Telegram-ботов и ИИ-агентов на чистом коде без конструкторов. Исходники передаём заказчику.",
   "url": "https://vibe-digital999.ru/",
   "logo": {
@@ -2547,8 +2582,23 @@
   "sameAs": [
     "https://t.me/GranatJarvis_bot",
     "https://vk.ru/club240607590",
-    "https://wa.me/79992449999"
+    "https://wa.me/79992449999",
+    "https://yandex.ru/maps/org/vibe_dizhital_999/172151749064/"
   ],
+  "hasMap": "https://yandex.ru/maps/org/vibe_dizhital_999/172151749064/",
+  "founder": {
+    "@type": "Person",
+    "@id": "https://vibe-digital999.ru/o-nas/#founder",
+    "name": "Гульнара Мелконян",
+    "jobTitle": "Основательница студии, разработчик",
+    "image": "https://vibe-digital999.ru/assets/gulnara.jpg",
+    "worksFor": { "@id": "https://vibe-digital999.ru/#organization" },
+    "url": "https://vibe-digital999.ru/o-nas/",
+    "sameAs": [
+      "https://t.me/GranatJarvis_bot",
+      "https://vk.ru/club240607590"
+    ]
+  },
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
     "name": "Услуги Vibe Digital 999",
@@ -2566,6 +2616,24 @@
         "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
+          "name": "Лид-бот для Telegram и ВКонтакте"
+        },
+        "priceCurrency": "RUB",
+        "price": "15000"
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Автоматизация бизнес-процессов"
+        },
+        "priceCurrency": "RUB",
+        "price": "30000"
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
           "name": "Разработка лендинга на чистом коде"
         },
         "priceCurrency": "RUB",
@@ -2575,19 +2643,46 @@
         "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
-          "name": "ИИ-агенты и чат-боты на LLM"
+          "name": "Бот для записи и продаж"
         },
         "priceCurrency": "RUB",
-        "price": "40000"
+        "price": "35000"
       },
       {
         "@type": "Offer",
         "itemOffered": {
           "@type": "Service",
-          "name": "Комплексная веб-разработка: сервисы, базы данных, API"
+          "name": "ИИ-агент с базой знаний"
+        },
+        "priceCurrency": "RUB",
+        "price": "60000"
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Лендинг «Продажи» с воронкой и квизом"
+        },
+        "priceCurrency": "RUB",
+        "price": "65000"
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Сайт на 5–10 страниц"
         },
         "priceCurrency": "RUB",
         "price": "90000"
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Сервис, приложение, MVP"
+        },
+        "priceCurrency": "RUB",
+        "price": "150000"
       }
     ]
   }
@@ -2602,6 +2697,22 @@
   "publisher": {
     "@id": "https://vibe-digital999.ru/#organization"
   }
+}</script>
+  <!-- Даты страницы. Модели поисковых подсказок и ИИ-ответов при прочих
+       равных цитируют то, у чего явно проставлена дата: свежий материал
+       вытесняет старый. Дату правки обновлять при каждой заметной правке
+       текста — вместе с lastmod в sitemap.xml. -->
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://vibe-digital999.ru/#webpage",
+  "url": "https://vibe-digital999.ru/",
+  "name": "Разработка сайтов и Telegram-ботов на заказ — от 15 000 ₽",
+  "inLanguage": "ru-RU",
+  "isPartOf": { "@id": "https://vibe-digital999.ru/#website" },
+  "about": { "@id": "https://vibe-digital999.ru/#organization" },
+  "datePublished": "2026-08-01",
+  "dateModified": "2026-08-09"
 }</script>
   <script type="application/ld+json">{
   "@context": "https://schema.org",
@@ -2669,17 +2780,40 @@
      промах давал щель или наезд на шапку. Внутри общего блока полоса
      просто идёт следующей строкой и стоит вплотную всегда. -->
 <div id="topbar">
-<nav role="navigation">
-  <a href="#hero" class="nav-logo">Vibecoding</a>
-  <ul class="nav-links">
+<!-- Меню ведёт на отдельные страницы, а не на якоря внутри главной.
+     Пока страница была одна, якоря были единственным вариантом. Теперь
+     у каждой услуги свой адрес, и ссылка на него нужна с главной: страница,
+     на которую не ведёт ни одна ссылка, не индексируется и не находится. -->
+<nav role="navigation" aria-label="Основное меню">
+  <a href="/" class="nav-logo">Vibe Digital 999</a>
+  <ul class="nav-links" id="nav-links">
     <li><a href="#try" class="nav-try">Попробовать</a></li>
-    <li><a href="#services">Услуги</a></li>
-    <li><a href="#portfolio">Портфолио</a></li>
-    <li><a href="#pricing">Прайс</a></li>
+    <li><a href="/uslugi/">Услуги</a></li>
+    <li><a href="/portfolio/">Портфолио</a></li>
+    <li><a href="/o-nas/">О студии</a></li>
+    <li><a href="/kontakty/">Контакты</a></li>
   </ul>
   <div class="nav-actions">
-    <a href="tel:+79992449999" class="nav-phone" data-goal="click_tel">+7 999 244 99 99</a>
+    <!-- Номер в шапке — кнопка, а не строчка текста. Он и раньше был
+         ссылкой tel:, но выглядел обычным текстом, и по нему не нажимали:
+         человек не догадывался, что можно. А на телефоне — там, где как раз
+         и звонят, — номер вообще прятался правилом display:none.
+         Теперь на широком экране кнопка с номером, на узком — круглая
+         кнопка с трубкой: номер целиком туда не влезает, а звонок нужен. -->
+    <a href="tel:+79992449999" class="nav-phone" data-goal="click_tel"
+       aria-label="Позвонить: +7 999 244 99 99">
+      <svg class="nav-phone-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      <span class="nav-phone-num">+7 999 244 99 99</span>
+    </a>
     <a href="#order-section" class="nav-cta">Заказать</a>
+    <!-- Кнопка меню для телефона. Раньше на узком экране список ссылок просто
+         прятался: разделы были на этой же странице, до них доезжали прокруткой.
+         Теперь разделы — отдельные страницы, и без этой кнопки с телефона
+         в них не попасть вовсе. -->
+    <button type="button" class="nav-burger" aria-expanded="false"
+            aria-controls="nav-links" aria-label="Меню">
+      <span aria-hidden="true"></span>
+    </button>
   </div>
 </nav>
 
@@ -2754,7 +2888,94 @@
     .chat-strip-lead,.chat-strip-tail{display:none}
   }
   @media (prefers-reduced-motion: reduce){ .chat-strip{animation:none} }
+
+  /* ── Кнопка меню на телефоне ──────────────────────────────
+     Появилась вместе с внутренними страницами. До них список ссылок
+     на узком экране прятался целиком и никто не страдал: все разделы
+     были на этой же странице. Теперь за ссылками стоят отдельные
+     адреса, и спрятать их — значит закрыть половину сайта. */
+  .nav-burger{display:none;width:44px;height:44px;padding:0;margin-left:.8rem;
+    background:transparent;border:1.5px solid rgba(45,156,255,.4);border-radius:8px;
+    cursor:pointer;position:relative}
+  .nav-burger:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  .nav-burger span,.nav-burger span::before,.nav-burger span::after{
+    position:absolute;left:50%;width:20px;height:2px;background:var(--cyan);
+    border-radius:2px;transition:transform .3s var(--ease-out-expo),opacity .2s ease}
+  .nav-burger span{top:50%;transform:translate(-50%,-50%)}
+  .nav-burger span::before,.nav-burger span::after{content:'';left:0}
+  .nav-burger span::before{transform:translateY(-6px)}
+  .nav-burger span::after{transform:translateY(6px)}
+  .nav-burger[aria-expanded="true"] span{background:transparent}
+  .nav-burger[aria-expanded="true"] span::before{transform:rotate(45deg)}
+  .nav-burger[aria-expanded="true"] span::after{transform:rotate(-45deg)}
+
+  @media (max-width:860px){
+    .nav-burger{display:block}
+    /* Перебиваем правило `.nav-links{display:none}` из основного блока
+       стилей: там оно прячет меню насовсем, здесь оно должно открываться. */
+    /* Непрозрачный фон, без полутонов: два процента просвета
+       у rgba(...,.98) давали читаемый насквозь заголовок страницы. */
+    .nav-links{display:none;position:absolute;top:100%;left:0;right:0;
+      flex-direction:column;gap:0;padding:.6rem 1.4rem 1.2rem;
+      background:var(--ink);border-bottom:1px solid rgba(0,240,255,.14);
+      box-shadow:0 14px 28px rgba(0,0,0,.5)}
+    /* Название из трёх слов не влезало в строку и уезжало на вторую. */
+    .nav-logo{white-space:nowrap;font-size:.62rem;letter-spacing:.26em}
+    nav{padding:1rem 1.1rem}
+    .nav-links.open{display:flex}
+    .nav-links li{width:100%}
+    .nav-links a{display:block;padding:.9rem 0;font-size:.8rem;
+      border-bottom:1px solid rgba(45,156,255,.1)}
+    /* Подчёркивание-подсветка из десктопного меню рисуется под текстом
+       и в столбик читается как ошибка вёрстки. */
+    .nav-links a::after{display:none}
+    .nav-try::after{display:none}
+  }
 </style>
+
+<script>
+/* Меню на телефоне. Отдельным маленьким скриптом, а не внутри большого:
+   если большой скрипт когда-нибудь упадёт, меню должно продолжать работать —
+   без него с телефона не попасть ни в один раздел сайта. */
+(() => {
+  const burger = document.querySelector('.nav-burger');
+  const links  = document.getElementById('nav-links');
+  if (!burger || !links) return;
+
+  const close = () => {
+    burger.setAttribute('aria-expanded', 'false');
+    links.classList.remove('open');
+  };
+
+  burger.addEventListener('click', () => {
+    const open = burger.getAttribute('aria-expanded') === 'true';
+    burger.setAttribute('aria-expanded', String(!open));
+    links.classList.toggle('open', !open);
+  });
+
+  /* Esc закрывает и возвращает фокус на кнопку: иначе фокус остаётся
+     внутри спрятанного списка и «проваливается». */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
+      close();
+      burger.focus();
+    }
+  });
+
+  /* Клик мимо меню закрывает его. Открытое меню перекрывает начало
+     страницы, и человек не понимает, куда делся текст. */
+  document.addEventListener('click', e => {
+    if (burger.getAttribute('aria-expanded') !== 'true') return;
+    if (e.target.closest('.nav-burger') || e.target.closest('#nav-links')) return;
+    close();
+  });
+
+  /* Переход по якорю внутри страницы меню не закрывает сам — закрываем. */
+  links.addEventListener('click', e => {
+    if (e.target.closest('a')) close();
+  });
+})();
+</script>
 
 <script>
 (() => {
@@ -2861,13 +3082,19 @@
      оставлены намеренно: по ним страница уже видна в поиске. Меняете
      заголовок — сверьтесь с title и description, они должны совпадать
      по смыслу, иначе сниппет разъедется с содержимым страницы.
+
+     Крючки data-geo-* трогать нельзя: по ним скрипт региональной
+     подмены заменяет текст для рекламного трафика с меткой края.
+     Главная кнопка обязана оставаться ПЕРВОЙ в .hero-actions —
+     скрипт находит её как «.hero-actions .btn-action».
 ════════════════════════════════════════════ -->
 <section id="hero" role="main">
   <div class="hero-grid">
 
     <div class="hero-copy">
       <p class="hero-eyebrow">
-        <img src="assets/logo-g.png" alt="" class="hero-mark" width="30" height="30" decoding="async" onerror="this.remove()" />
+        <img src="/assets/logo-g.png" alt="" class="hero-mark" width="30" height="30"
+             fetchpriority="high" decoding="async" onerror="this.remove()" />
         <span>Вайбкодинг · сайты, Telegram-боты, ИИ-автоматизация для бизнеса</span>
       </p>
 
@@ -2879,18 +3106,23 @@
         <span class="accent-line">которые приводят заявки</span>
       </h1>
 
-      <p class="hero-pain">Сайт есть, а заявок нет. Или сайта нет, и каждого клиента вы ловите вручную — в переписке, по звонку, по памяти.</p>
+      <p class="hero-pain" data-geo-tagline>Сайт есть, а заявок нет. Или сайта нет, и каждого клиента вы ловите вручную — в переписке, по звонку, по памяти.</p>
 
-      <p class="hero-sub">Собираем на чистом коде сайт, Telegram-бота и автоматизацию заявок: лид приходит вам в Telegram за секунды, а не теряется в почте. Лендинг от 35 000 ₽, запуск от 3 дней.</p>
+      <p class="hero-sub" data-geo-sub>Собираем на чистом коде сайт, Telegram-бота и автоматизацию заявок: лид приходит вам в Telegram за секунды, а не теряется в почте. Лендинг от 35 000 ₽, запуск от 3 дней.</p>
+
+      <!-- Строка появляется только у рекламного трафика с меткой региона.
+           Пустая и спрятанная по умолчанию: обычный посетитель и поисковый
+           робот видят страницу ровно такой, какой она была. -->
+      <p class="hero-geo" data-geo-proof hidden></p>
 
       <div class="hero-actions">
         <a href="#order-section" class="btn-action" data-quiz data-goal="click_order">Получить расчёт проекта</a>
-        <a href="#portfolio" class="btn-action btn-action-secondary">Посмотреть кейсы</a>
+        <a href="/portfolio/" class="btn-action btn-action-secondary">Посмотреть кейсы</a>
       </div>
 
       <ul class="hero-trust">
         <li><strong>ИП, договор</strong> и закрывающие документы</li>
-        <li><strong>Исходники и доступы</strong> передаём вам после сдачи</li>
+        <li><strong>Исходники и доступы</strong> передаём вам после полной оплаты</li>
         <li><strong>Ответим в день обращения</strong> и назовём вилку цены</li>
       </ul>
 
@@ -2927,7 +3159,7 @@
 
 
 <section id="try" class="try-strip" role="region" aria-label="Что можно попробовать прямо сейчас">
-  <p class="try-lead">Не верьте на слово — проверьте сами. Четыре инструмента прямо на этой странице: конструктор структуры сайта, живой ИИ-агент, сравнение с конструктором и калькулятор штрафов по 152-ФЗ.</p>
+  <p class="try-lead">Не верьте на слово — проверьте сами. Четыре инструмента прямо на этой странице.</p>
   <div class="try-cards">
 
     <a class="try-card" href="#sg">
@@ -3056,8 +3288,8 @@
   <line x1="37" y1="35" x2="29" y2="28" stroke="currentColor" stroke-width="1" opacity="0.5"/>
 </svg></div>
       <h3 class="svc-name">Чат-боты и ИИ-агенты</h3>
-      <p class="svc-desc">Разработка Telegram-бота или ИИ-агента для бизнеса на Anthropic и OpenAI. Приём заявок, ответы на вопросы клиентов, поддержка 24/7.</p>
-      <div><a class="svc-more" href="/uslugi/telegram-bot/">Telegram-бот →</a><a class="svc-more" href="/uslugi/ai-agent/">ИИ-агент →</a></div>
+      <p class="svc-desc">Разработка бота для Telegram и ВКонтакте или ИИ-агента на Anthropic и OpenAI. Приём заявок, ответы на вопросы клиентов, поддержка 24/7.</p>
+      <p class="svc-more"><a href="/uslugi/ai-agent/">Об ИИ-агентах →</a> <a href="/uslugi/telegram-bot/">О ботах Telegram и ВК →</a></p>
       <button class="btn-svc" data-service="Вайбкодинг / AI-агент">Обсудить задачу</button>
     </article>
 
@@ -3070,6 +3302,7 @@
 </svg></div>
       <h3 class="svc-name">Вайбкодинг</h3>
       <p class="svc-desc">Анимированные сайты, 3D-сцены, WebGL. Дорогие сайты с премиум-ощущением и микро-взаимодействиями.</p>
+      <p class="svc-more"><a href="/vibecoding/">Подробно о вайбкодинге →</a></p>
       <button class="btn-svc" data-service="Вайбкодинг / AI-агент">Обсудить задачу</button>
     </article>
 
@@ -3082,7 +3315,7 @@
 </svg></div>
       <h3 class="svc-name">Разработка сайтов и лендингов</h3>
       <p class="svc-desc">Заказать продающий лендинг, корпоративный сайт или интернет-магазин. Полный цикл: дизайн, вёрстка, интеграции, запуск.</p>
-      <div><a class="svc-more" href="/uslugi/razrabotka-sajta/">Подробнее об услуге и ценах →</a></div>
+      <p class="svc-more"><a href="/uslugi/razrabotka-sajta/">Подробно об услуге →</a></p>
       <button class="btn-svc" data-service="Создать сайт / лендинг">Обсудить задачу</button>
     </article>
 
@@ -3096,6 +3329,7 @@
 </svg></div>
       <h3 class="svc-name">Приложения</h3>
       <p class="svc-desc">PWA, мобильные приложения, интеграции с API. Быстрые, масштабируемые решения для мобилы.</p>
+      <p class="svc-more"><a href="/uslugi/prilozheniya/">Подробно о приложениях →</a></p>
       <button class="btn-svc" data-service="Создать приложение">Обсудить задачу</button>
     </article>
 
@@ -3108,7 +3342,7 @@
 </svg></div>
       <h3 class="svc-name">Чистый код + SEO</h3>
       <p class="svc-desc">Сайты без тяжёлых конструкторов: высокая скорость в PageSpeed. Мета-теги и структура под Яндекс и Google закладываются сразу на сборке.</p>
-      <div><a class="svc-more" href="/uslugi/seo-audit-152fz/">SEO-аудит и проверка по 152-ФЗ →</a></div>
+      <p class="svc-more"><a href="/uslugi/seo-audit-152fz/">Про SEO-аудит →</a></p>
       <button class="btn-svc" data-service="Сайт на чистом коде + SEO">Обсудить задачу</button>
     </article>
 
@@ -3122,9 +3356,48 @@
 </svg></div>
       <h3 class="svc-name">Автоматизация</h3>
       <p class="svc-desc">Бизнес-процессы: n8n, Make, Zapier. Интеграции между сервисами и CRM.</p>
-      <div><a class="svc-more" href="/uslugi/avtomatizaciya/">Подробнее об услуге →</a></div>
+      <p class="svc-more"><a href="/uslugi/avtomatizaciya/">Подробно об автоматизации →</a></p>
       <button class="btn-svc" data-service="Вайбкодинг / AI-агент">Обсудить задачу</button>
     </article>
+  </div>
+
+  <!-- Блок про ботов, вынесенный из страницы услуги. Стоит здесь, сразу
+       под карточками: человек уже понял, что мы делаем, — теперь ему нужно
+       понять, как это работает у него.
+
+       Написано описанием, а не обещанием. «Вы не потеряете клиентов» —
+       это про рынок и предложение, на которые мы не влияем, и такую фразу
+       читают как рекламный шум. «Заявка уходит в четыре канала и остаётся
+       на сервере» — это устройство, его можно проверить. Заодно это ответ
+       на реальный страх: мессенджеры блокируют и падают. -->
+  <div class="vibe-explain">
+    <p class="vibe-explain-title">Что делает бот-менеджер</p>
+    <p><strong>Бот доводит разговор до контакта.</strong> Спрашивает, что нужно,
+      уточняет сроки и бюджет, берёт имя и телефон и присылает вам готовую заявку.
+      Не «здравствуйте», а «гостиница, 12 номеров, нужен сайт с прямой бронью,
+      телефон такой-то».</p>
+    <p><strong>Дальше заявка расходится по каналам.</strong> Почта, Telegram,
+      ВКонтакте, WhatsApp — подключаем те, которыми вы пользуетесь. Плюс копия
+      остаётся на сервере: она записывается до отправки, а не после.</p>
+    <p><strong>Каналов несколько не для красоты.</strong> Мессенджеры блокируют,
+      они падают и меняют правила — это происходит регулярно и не спрашивает нас.
+      Пока каналов несколько, отказ одного из них означает, что заявка придёт
+      другим, а не что её не было.</p>
+    <p><strong>Каждая заявка получает номер.</strong> По номеру её легко найти,
+      на неё можно сослаться в переписке с клиентом, и по нему сразу видно,
+      сколько заявок пришло за месяц.</p>
+    <p><strong>Заявки можно раскладывать по группам.</strong> По городу, по услуге,
+      по любому признаку, который вам важен, — бот помечает заявку и собирает
+      сводку: откуда и на что сколько пришло. Это то, по чему потом решают,
+      какое направление тянуть дальше и где реклама окупается, а где нет.</p>
+    <p><a href="/uslugi/telegram-bot/">Подробно про ботов →</a></p>
+  </div>
+
+  <!-- Выход в раздел услуг. Карточки выше отвечают на «что вы делаете»,
+       а на «сколько это стоит и что входит» отвечают отдельные страницы. -->
+  <div class="pricing-cta">
+    <p class="pricing-cta-text">По каждой услуге есть страница с составом работ, ценой и сроком.</p>
+    <a href="/uslugi/" class="btn-action">Все услуги и цены</a>
   </div>
 </section>
 
@@ -3139,6 +3412,35 @@
     <p><strong>По всей России — удалённо.</strong> Созвон, промежуточная версия по ссылке, передача исходников в конце. Договор, счёт и закрывающие документы как ИП, оплата на расчётный счёт. Разница часовых поясов роли не играет: заявка из формы приходит в Telegram мгновенно.</p>
     <p><strong>На Кавказских Минеральных Водах — можно приехать в офис.</strong> Мы в <strong>Лермонтове</strong>, Ставропольский край, — это центр Кавминвод, дорога из <strong>Пятигорска</strong>, <strong>Железноводска</strong>, <strong>Ессентуков</strong>, <strong>Минеральных Вод</strong> и <strong>Кисловодска</strong> короткая. Обсудить проект вживую иногда быстрее, чем перепиской. О встрече договариваемся заранее — просто напишите.</p>
     <p class="geo-note">Выездных встреч не проводим: работаем из офиса и удалённо. На результат это не влияет — весь процесс всё равно идёт в переписке, созвонах и по ссылке на рабочую версию.</p>
+  </div>
+
+  <!-- Явный выбор региона.
+
+       Подмена по метке из рекламы работает только там, где метку можно
+       поставить. В Яндекс Бизнесе её поставить нельзя: там автоматическая
+       реклама от карточки организации, а не кампании с настраиваемыми
+       ссылками. Значит человек с рекламы приходит на общую главную,
+       и единственный способ отправить его в свой регион — спросить.
+
+       Три ссылки, а не выпадающий список: список нужно открыть, а ссылку
+       видно сразу. И это внутренняя перелинковка — региональные страницы
+       перестают быть тупиками, до которых надо додуматься. -->
+  <div class="geo-pick">
+    <p class="geo-pick-title">Откуда вы? Покажем цены и условия для вашего региона</p>
+    <div class="related">
+      <a class="related-card" href="/kmv/">
+        <span class="related-name">Кавминводы</span>
+        <span class="related-desc">Лермонтов, Пятигорск, Ессентуки, Кисловодск — можно встретиться в офисе</span>
+      </a>
+      <a class="related-card" href="/krasnodar-krai/">
+        <span class="related-name">Краснодарский край</span>
+        <span class="related-desc">Краснодар, Сочи, Анапа, Новороссийск — удалённо по договору</span>
+      </a>
+      <a class="related-card" href="/krasnoyarsk-krai/">
+        <span class="related-name">Красноярский край</span>
+        <span class="related-desc">Полностью удалённо: бриф, смета, прототип по ссылке, запуск</span>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -3600,7 +3902,6 @@
       <!-- Живая ссылка важнее описания. Портфолио без ссылок читается
            как список выдуманных работ — проверить-то нечем. -->
       <a class="case-link" href="https://granat-kmv.ru" target="_blank" rel="noopener" data-goal="case_granat">granat-kmv.ru — открыть сайт →</a>
-      <div><a class="svc-more" href="/portfolio/granat/">Разбор проекта →</a></div>
       <button class="btn-svc" data-service="Сайт/Лендинг">Обсудить похожий проект</button>
     </article>
 
@@ -3612,26 +3913,26 @@
     <article class="svc-card case-card">
       <div class="case-tag">Автошколы</div>
       <h3 class="svc-name">Автошкола «Старт»: сайт и мобильное приложение</h3>
-      <p class="svc-desc">Сайт автошколы на два филиала и приложение для учеников. Расписание и запись в обоих филиалах, один визуальный язык на сайте и в приложении.</p>
+      <p class="svc-desc">Сайт автошколы на три филиала — Лермонтов, Пятигорск и станица Суворовская — и приложение для учеников. Расписание и запись в каждом филиале, один визуальный язык на сайте и в приложении.</p>
       <ul class="case-facts">
-        <li>Два филиала в одной структуре сайта</li>
+        <li>Три филиала в одной структуре сайта</li>
         <li>Мобильное приложение для учеников</li>
       </ul>
       <p class="case-stack">Node.js · чистый HTML, CSS, JS</p>
       <span class="case-status">В работе — запуск скоро</span>
-      <div><a class="svc-more" href="/portfolio/avtoshkola-start/">Разбор проекта →</a></div>
       <button class="btn-svc" data-service="Сайт/Лендинг">Обсудить похожий проект</button>
     </article>
 
     <article class="svc-card case-card">
       <div class="case-tag">Автоматизация</div>
-      <h3 class="svc-name">Telegram-боты для сайтов</h3>
-      <p class="svc-desc">Боты принимают заявки с сайта, отвечают на типовые вопросы и сразу присылают контакт владельцу в Telegram.</p>
+      <h3 class="svc-name">Боты Telegram и ВКонтакте</h3>
+      <p class="svc-desc">Боты принимают заявки с сайта, отвечают на типовые вопросы и сразу присылают контакт владельцу — в Telegram и ВКонтакте одновременно.</p>
       <ul class="case-facts">
         <li>Работают круглосуточно</li>
         <li>Заявка доходит за секунды, а не за день</li>
+        <li>Два канала сразу: не дошло в один — дойдёт в другой</li>
       </ul>
-      <button class="btn-svc" data-service="ИИ-Агент">Обсудить похожий проект</button>
+      <button class="btn-svc" data-service="Telegram- или VK-бот">Обсудить похожий проект</button>
     </article>
 
     <article class="svc-card case-card">
@@ -3656,46 +3957,132 @@
   <p class="section-desc">Точная цена фиксируется после короткого разговора и брифа</p>
 
   <div class="svc-grid price-grid">
-    <!-- Порядок карточек — лестница чека: 15 → 35 → 40 → 90 тысяч.
-         Первой идёт самая дешёвая позиция: с неё начинают знакомство,
-         а не с той, ради которой всё затевалось. -->
+    <!-- Порядок карточек — лестница чека, от 15 до 150 тысяч. Первой идёт
+         самая дешёвая позиция: с неё начинают знакомство, а не с той,
+         ради которой всё затевалось.
+
+         Ступени внутри направлений — не про жадность. Без них клиент
+         сравнивает всё по нижней цене и приходит за сервисом с личными
+         кабинетами по цене лендинга. Разговор такой заканчивается обидой
+         на этапе сметы, а не сделкой. -->
     <article class="svc-card price-card">
       <h3 class="svc-name">SEO-аудит + проверка по 152-ФЗ</h3>
       <p class="svc-desc">Технический и поисковый разбор сайта, проверка форм на соответствие закону о персональных данных. Отчёт с пошаговыми правками.</p>
       <div class="price-value"><span class="price-was">20 000 ₽</span>15 000 ₽</div>
-      <p class="price-note">Цена по акции</p>
-      <div><a class="svc-more" href="/uslugi/seo-audit-152fz/">Что входит в аудит →</a></div>
+      <p class="price-note">Цена по акции · 3 дня</p>
       <button class="btn-svc" data-service="SEO-аудит + проверка по 152-ФЗ">Заказать</button>
     </article>
 
     <article class="svc-card price-card">
-      <h3 class="svc-name">Лендинг на чистом коде</h3>
-      <p class="svc-desc">Одностраничный сайт на Node.js без конструкторов и лимитов Tilda. Свой дизайн, анимация 60 кадров, адаптив под смартфоны, базовое SEO.</p>
+      <h3 class="svc-name">Лид-бот</h3>
+      <p class="svc-desc">Собирает заявку, отвечает на частые вопросы и присылает контакт вам в Telegram и ВКонтакте. Один-два простых сценария.</p>
+      <div class="price-value">От 15 000 ₽</div>
+      <p class="price-note">Срок от 7 дней</p>
+      <button class="btn-svc" data-service="Лид-бот">Заказать</button>
+    </article>
+
+    <!-- Карты стоят рядом с лид-ботом не случайно: обе позиции по 15 000,
+         и обе покупают «в довесок» к сайту. Отдельной линейкой пакетов
+         карты не заводим — они опция к «Старту», «Потоку» и «Системе»,
+         иначе на сайте окажутся две несовпадающие лестницы. -->
+    <article class="svc-card price-card">
+      <h3 class="svc-name">Интеграция Яндекс Карт</h3>
+      <p class="svc-desc">Карта в контактах, подсказки адреса в форме заявки, расчёт доставки. На чистом коде, без готового виджета: карта грузится только когда до неё долистали, и первый экран не задерживает.</p>
+      <div class="price-value">От 15 000 ₽</div>
+      <p class="price-note">Срок от 3 дней · ключ API оформляется на вас</p>
+      <button class="btn-svc" data-service="Интеграция Яндекс Карт">Заказать</button>
+    </article>
+
+    <article class="svc-card price-card">
+      <h3 class="svc-name">Автоматизация одной связки</h3>
+      <p class="svc-desc">Заявки из мессенджеров и с сайта в одном месте, напоминания, документы из шаблона. Считаем выгоду до начала работы.</p>
+      <div class="price-value">От 30 000 ₽</div>
+      <p class="price-note">CRM и сторонние сервисы — отдельно</p>
+      <button class="btn-svc" data-service="Автоматизация">Заказать</button>
+    </article>
+
+    <article class="svc-card price-card">
+      <h3 class="svc-name">Лендинг «Старт»</h3>
+      <p class="svc-desc">Одностраничный сайт на чистом коде: структура под задачу, свой дизайн, адаптив, форма с доставкой в Telegram, базовое SEO и документы по 152-ФЗ.</p>
       <div class="price-value">От 35 000 ₽</div>
-      <div><a class="svc-more" href="/uslugi/razrabotka-sajta/">Что входит в лендинг →</a></div>
-      <button class="btn-svc" data-service="Лендинг на чистом коде">Заказать</button>
+      <p class="price-note">Срок от 7 дней</p>
+      <button class="btn-svc" data-service="Лендинг «Старт»">Заказать</button>
     </article>
 
     <article class="svc-card price-card">
-      <h3 class="svc-name">ИИ-агенты и чат-боты на LLM</h3>
-      <p class="svc-desc">Бот для Telegram и WhatsApp, обученный на ваших регламентах. Консультирует круглосуточно, квалифицирует заявки и разгружает оператора.</p>
-      <div class="price-value">От 40 000 ₽</div>
-      <div><a class="svc-more" href="/uslugi/ai-agent/">Что умеет ИИ-агент →</a></div>
-      <button class="btn-svc" data-service="ИИ-агенты и чат-боты на LLM">Заказать</button>
+      <h3 class="svc-name">Бот для записи и продаж</h3>
+      <p class="svc-desc">Ветвления сценария, запись с датой и временем, напоминания клиенту, квалификация и передача менеджеру.</p>
+      <div class="price-value">От 35 000 ₽</div>
+      <p class="price-note">Срок от 7 дней</p>
+      <button class="btn-svc" data-service="Бот для записи и продаж">Заказать</button>
     </article>
 
     <article class="svc-card price-card">
-      <h3 class="svc-name">Комплексная веб-разработка</h3>
-      <p class="svc-desc">Многостраничные порталы, сервисы и MVP под ключ: архитектура, базы данных, интеграция сторонних API и платёжных шлюзов. Оплата по этапам.</p>
+      <h3 class="svc-name">ИИ-агент с базой знаний</h3>
+      <p class="svc-desc">Отвечает на вопросы своими словами по вашим материалам, квалифицирует обращение и передаёт человеку, когда нужно.</p>
+      <div class="price-value">От 60 000 ₽</div>
+      <p class="price-note">Один канал, одна база знаний, запуск MVP</p>
+      <button class="btn-svc" data-service="ИИ-агент">Заказать</button>
+    </article>
+
+    <article class="svc-card price-card">
+      <h3 class="svc-name">Лендинг «Продажи»</h3>
+      <p class="svc-desc">Проработка воронки и структуры текста, квиз или калькулятор, аналитика с целями. Для тех, кто ведёт платный трафик.</p>
+      <div class="price-value">От 65 000 ₽</div>
+      <p class="price-note">Срок от 14 дней</p>
+      <button class="btn-svc" data-service="Лендинг «Продажи»">Заказать</button>
+    </article>
+
+    <article class="svc-card price-card">
+      <h3 class="svc-name">Сайт на 5–10 страниц</h3>
+      <p class="svc-desc">Корпоративный сайт: услуги отдельными страницами, кейсы, блог под поиск, формы. Без личных кабинетов и сложной серверной логики.</p>
       <div class="price-value">От 90 000 ₽</div>
-      <div><a class="svc-more" href="/uslugi/razrabotka-sajta/">Состав работ и сроки →</a></div>
-      <button class="btn-svc" data-service="Комплексная веб-разработка">Заказать</button>
+      <p class="price-note">Срок от трёх недель</p>
+      <button class="btn-svc" data-service="Сайт на 5–10 страниц">Заказать</button>
+    </article>
+
+    <article class="svc-card price-card">
+      <h3 class="svc-name">Сервис, приложение, MVP</h3>
+      <p class="svc-desc">Личные кабинеты, база данных, роли и права, платежи, интеграции с чужими системами. Оплата по этапам.</p>
+      <div class="price-value">От 150 000 ₽</div>
+      <p class="price-note">Только после предпроектной оценки</p>
+      <button class="btn-svc" data-service="Сервис, приложение, MVP">Заказать</button>
+    </article>
+
+    <!-- Сопровождение стоит последним и с диапазоном, а не с одной цифрой:
+         это не разовая работа, а ежемесячный платёж, и ставить его в общий
+         ряд «от 15 000 ₽» значит перепутать разовое с абонентским. -->
+    <article class="svc-card price-card">
+      <h3 class="svc-name">Сопровождение после запуска</h3>
+      <p class="svc-desc">Правки, обновления, резервные копии, отчёт по заявкам раз в месяц. Первый месяц после запуска — бесплатно.</p>
+      <div class="price-value">5 000–15 000 ₽ в месяц</div>
+      <p class="price-note">По размеру пакета, 1–3 часа правок. Не обязательно</p>
+      <button class="btn-svc" data-service="Сопровождение после запуска">Заказать</button>
     </article>
   </div>
 
+  <!-- Оговорка по ИИ-агенту стоит прямо под прайсом, а не в мелком шрифте
+       внизу страницы. Без неё «от 60 000 ₽» читается как «ИИ-сотрудник
+       навсегда под ключ», и разговор кончается обидой на этапе сметы. -->
+  <div class="vibe-explain">
+    <p class="vibe-explain-title">Что входит в 60 000 ₽ за ИИ-агента</p>
+    <p>Запуск с <strong>одним каналом, одной базой знаний и согласованным
+      сценарием</strong> — рабочий агент, а не демонстрация.</p>
+    <p><strong>Считается отдельно:</strong> интеграции с CRM, подключение
+      WhatsApp и других каналов, приём оплаты внутри бота, большая база знаний,
+      расходы на обращения к модели и поддержка после первого месяца.
+      Мы называем это до сметы, а не после запуска.</p>
+  </div>
+
+  <!-- Девять позиций отвечают на вопрос «сколько стоит», но не на вопрос
+       «а мне-то что из этого нужно». Человек, который не знает разницы
+       между лид-ботом и ИИ-агентом, уходит, не выбрав ничего. Поэтому
+       рядом с прайсом — вход в пакеты: своё число сотрудников человек
+       знает точно, а из него уже следует связка. -->
   <div class="pricing-cta">
     <p class="pricing-cta-text">Не знаете, в какую позицию попадает ваша задача?</p>
     <a href="#order-section" class="btn-action" data-quiz>Рассчитать стоимость за минуту</a>
+    <a href="/pakety/" class="btn-action btn-action-secondary">Готовые связки по размеру бизнеса</a>
   </div>
 </section>
 
@@ -3722,7 +4109,7 @@
   <div class="pay-card">
     <!-- Десктоп: QR -->
     <div class="pay-qr" id="pay-qr" hidden>
-      <img src="" alt="QR-код для оплаты по системе быстрых платежей" width="220" height="220">
+      <img src="" alt="QR-код для оплаты по системе быстрых платежей" width="220" height="220" loading="lazy" decoding="async">
       <p class="pay-hint">Наведите камеру телефона или отсканируйте в приложении банка</p>
     </div>
 
@@ -3785,7 +4172,7 @@
       <div class="step-num">4</div>
       <div class="step-body">
         <h3 class="step-name">Передача</h3>
-        <p class="step-text">Отдаём исходники, доступы к хостингу и домену, короткую инструкцию по обновлению. Дальше вы ни от кого не зависите — ни от нас, ни от чужой платформы.</p>
+        <p class="step-text">После полной оплаты отдаём исходники, доступы к хостингу и домену и короткую инструкцию по обновлению — одним пакетом. Дальше вы ни от кого не зависите: ни от нас, ни от чужой платформы. До окончательного расчёта работа лежит на нашем сервере, вы видите её по ссылке.</p>
       </div>
     </li>
   </ol>
@@ -3821,6 +4208,11 @@
       <p>Не заменяет целиком и мы этого не обещаем. Он забирает рутину: отвечает на типовые вопросы круглосуточно, отсеивает нецелевые обращения, собирает контакты и передаёт менеджеру уже тёплого клиента. Разговор, где нужен человек, агент передаёт человеку. Экономия получается на первом контакте, а не на увольнении отдела.</p>
     </details>
 
+    <details class="faq-item">
+      <summary>Зачем интегрировать карту через API, если можно вставить готовый виджет?</summary>
+      <p>Готовый виджет тянет за собой сотни килобайт чужого кода и грузится вместе со страницей — даже если карту никто так и не откроет. На мобильном интернете это заметно. Мы пишем интеграцию руками: сначала показывается лёгкая картинка, настоящая карта включается, только когда до неё долистали.</p>
+      <p>И виджет — это просто точка на карте. Через API карта умеет подсказывать адрес прямо в форме заявки, показывать клиенту ближайший к нему филиал и считать стоимость доставки по километражу с учётом пробок.</p>
+    </details>
     <details class="faq-item">
       <summary>Вы работаете по договору?</summary>
       <p>Да. ИП Мелконян Г.Р., ИНН 490600091128. Договор, счёт и закрывающие документы предоставляем. Работаем по всей России удалённо.</p>
@@ -4025,6 +4417,7 @@
     document.getElementById('modal-success').classList.remove('visible');
     document.getElementById('mf-name').value = '';
     document.getElementById('mf-contact').value = '';
+    document.getElementById('mf-city').value = '';
     document.getElementById('quick-modal').classList.add('open');
   });
 })();
@@ -4052,6 +4445,29 @@
       <div class="form-group">
         <label for="f-contact">Телефон или Telegram</label>
         <input type="text" id="f-contact" name="contact" placeholder="@yourname или +7..." required />
+      </div>
+
+      <div class="form-group">
+        <label for="f-city">Ваш город <span class="form-opt">— необязательно</span></label>
+        <input type="text" id="f-city" name="city" list="city-list"
+               placeholder="Например: Пятигорск, Краснодар, Красноярск"
+               autocomplete="address-level2" />
+        <!-- Подсказки, а не выбор из списка: поле остаётся текстовым, свой
+             город можно вписать целиком. Тот же список, что и на внутренних
+             страницах, — src/cities.js. Меняете там — поменяйте и здесь. -->
+        <datalist id="city-list">
+          <option value="Лермонтов"></option>
+          <option value="Пятигорск"></option>
+          <option value="Ессентуки"></option>
+          <option value="Кисловодск"></option>
+          <option value="Минеральные Воды"></option>
+          <option value="Железноводск"></option>
+          <option value="Краснодар"></option>
+          <option value="Сочи"></option>
+          <option value="Новороссийск"></option>
+          <option value="Красноярск"></option>
+        </datalist>
+        <p class="form-hint" data-city-hint>Поможет быстрее рассчитать стоимость и предложить подходящий формат работы.</p>
       </div>
 
       <div class="form-group">
@@ -4087,12 +4503,19 @@
         <span class="btn-loader"></span>
       </button>
 
-      <div class="form-success" id="order-success">
-        <span class="success-icon">✦</span>
-        <div class="success-text">Заявка принята!</div>
-        <div class="success-sub">Ответим в течение часа.</div>
-      </div>
     </form>
+
+    <!-- Сообщение об успехе стоит СНАРУЖИ формы. Внутри оно не работало:
+         после отправки скрипт прячет форму целиком — `display: none` на
+         <form>, — и вместе с ней исчезало то, что должно было появиться.
+         Человек видел, как форма пропала, и не получал ни слова о том,
+         дошла заявка или нет. Половина таких отправляет заявку второй раз,
+         половина уходит. -->
+    <div class="form-success" id="order-success">
+      <span class="success-icon">✦</span>
+      <div class="success-text">Заявка принята!</div>
+      <div class="success-sub">Ответим в течение часа.</div>
+    </div>
   </div>
 </section>
 
@@ -4221,6 +4644,44 @@
       <p class="footer-tagline">Чистый код, автоматизация и ИИ-агенты. Пишем так, чтобы переписывать не пришлось.</p>
     </div>
 
+    <!-- Список услуг в подвале. Это единственные ссылки, которые есть на
+         КАЖДОЙ странице сайта: и человек, и поисковый робот попадают в любой
+         раздел за один переход, откуда бы ни начали. Без такого списка
+         страница, на которую забыли поставить ссылку, выпадает из обхода. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Услуги</h3>
+      <a class="footer-link" href="/uslugi/razrabotka-sajta/">Разработка сайтов</a>
+      <a class="footer-link" href="/uslugi/telegram-bot/">Боты Telegram и ВК</a>
+      <a class="footer-link" href="/uslugi/ai-agent/">ИИ-агенты</a>
+      <a class="footer-link" href="/uslugi/avtomatizaciya/">Автоматизация</a>
+      <a class="footer-link" href="/vibecoding/">Вайбкодинг</a>
+      <a class="footer-link" href="/uslugi/prilozheniya/">Приложения</a>
+      <a class="footer-link" href="/uslugi/seo-audit-152fz/">SEO-аудит</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Разделы</h3>
+      <a class="footer-link" href="/uslugi/">Все услуги</a>
+      <a class="footer-link" href="/pakety/">Пакеты по размеру бизнеса</a>
+      <a class="footer-link" href="/portfolio/">Портфолио</a>
+      <a class="footer-link" href="/blog/">Блог</a>
+      <a class="footer-link" href="/o-nas/">О студии</a>
+      <a class="footer-link" href="/kontakty/">Контакты</a>
+    </div>
+
+    <!-- Регионы отдельной колонкой. Порядок не алфавитный: первым КМВ —
+         там мы физически находимся, там карточка на Картах и возможность
+         встретиться. Города КМВ ниже — уточнение внутри региона, а не
+         отдельные направления. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Регионы</h3>
+      <a class="footer-link" href="/kmv/">Кавминводы</a>
+      <a class="footer-link" href="/krasnodar-krai/">Краснодарский край</a>
+      <a class="footer-link" href="/krasnoyarsk-krai/">Красноярский край</a>
+      <a class="footer-link" href="/pyatigorsk/">Пятигорск</a>
+      <a class="footer-link" href="/essentuki/">Ессентуки</a>
+    </div>
+
     <div class="footer-col">
       <h3 class="footer-head">Связаться</h3>
       <a class="footer-link" href="tel:+79992449999" data-goal="click_tel">+7 999 244 99 99</a>
@@ -4281,6 +4742,18 @@
         <label for="mf-contact">Телефон или Telegram</label>
         <input type="text" id="mf-contact" name="contact" placeholder="@yourname или +7..." required />
       </div>
+      <!-- Город есть и здесь. Раньше не было, и это была дыра в учёте:
+           через это окно уходит часть заявок, и по ним регион оставался
+           неизвестным — а именно ради региона поле и заводили. Список
+           подсказок тот же, что в основной форме. -->
+      <div class="form-group">
+        <label for="mf-city">Ваш город <span class="form-opt">— необязательно</span></label>
+        <input type="text" id="mf-city" name="city" list="city-list"
+               placeholder="Например: Пятигорск, Краснодар, Красноярск"
+               autocomplete="address-level2" />
+        <p class="form-hint" data-city-hint>Поможет быстрее рассчитать стоимость и предложить подходящий формат работы.</p>
+      </div>
+
       <input type="hidden" id="mf-service" name="service" />
 
       <!-- Разведены на две по той же причине, что и в основной форме. -->
@@ -4300,12 +4773,15 @@
         <span class="btn-text">Отправить</span>
         <span class="btn-loader"></span>
       </button>
-      <div class="form-success" id="modal-success">
-        <span class="success-icon">✦</span>
-        <div class="success-text">Спасибо!</div>
-        <div class="success-sub">Ответим на ваш контакт в течение часа.</div>
-      </div>
     </form>
+
+    <!-- Снаружи формы по той же причине, что и в основной форме ниже:
+         спрятанная форма прячет и сообщение внутри себя. -->
+    <div class="form-success" id="modal-success">
+      <span class="success-icon">✦</span>
+      <div class="success-text">Спасибо!</div>
+      <div class="success-sub">Ответим на ваш контакт в течение часа.</div>
+    </div>
   </div>
 </div>
 
@@ -4388,6 +4864,85 @@
     <span class="chat-badge hidden" id="chat-badge">0</span>
   </button>
 </div>
+
+
+<!-- ═══════════════════════════════════════════
+     РЕГИОН В ПЕРВОМ ЭКРАНЕ
+
+     Реклама идёт на три очень разных региона, и человеку важно увидеть,
+     что страница про него. Но подменять весь смысл страницы нельзя:
+     сайт, который показывает роботу одно, а человеку другое, ловит
+     фильтр. Поэтому здесь меняются ровно три строки — подзаголовок,
+     подпись и кнопка, — а всё остальное остаётся как есть.
+
+     Регион берём ТОЛЬКО из адреса: ?region=kmv или метка кампании
+     utm_campaign=kmv_sites. Определение по IP не используем: оно врёт
+     на мобильном интернете и через VPN, а показать жителю Красноярска
+     «встретимся в Лермонтове» хуже, чем не показать ничего.
+
+     Без метки в адресе не меняется ничего. Это же значит, что робот,
+     который приходит без меток, видит исходную страницу.
+
+     Для сильных регионов есть отдельные страницы — /kmv/,
+     /krasnodar-krai/, /krasnoyarsk-krai/. Подмена нужна тем кампаниям,
+     которые ведут на главную.
+════════════════════════════════════════════ -->
+<script>
+(() => {
+  const REGIONS = {
+    kmv: {
+      tagline: 'Сайты и Telegram-боты для бизнеса на Кавминводах',
+      sub: 'Заявки, запись клиентов и автоматизация — без хаоса в чатах. Мы в Лермонтове: проект можно обсудить онлайн или лично, до Пятигорска двадцать минут.',
+      proof: 'Лермонтов · Пятигорск · Ессентуки · Железноводск · Минеральные Воды · Кисловодск',
+      cta: 'Обсудить проект на КМВ',
+      page: '/kmv/',
+    },
+    krasnodar: {
+      tagline: 'Сайт или бот для бизнеса в Краснодарском крае',
+      sub: 'Заявки 24/7, запись клиентов и автоматизация по понятному удалённому процессу: смета до начала, версия по ссылке с первого дня, исходники ваши.',
+      proof: 'Краснодар · Сочи · Анапа · Новороссийск — работаем удалённо по договору',
+      cta: 'Получить расчёт для Краснодарского края',
+      page: '/krasnodar-krai/',
+    },
+    krasnoyarsk: {
+      tagline: 'Удалённая разработка сайтов и ботов — Красноярский край',
+      sub: 'Бриф, смета, прототип по ссылке, тест и запуск. Договор, оплата по этапам, исходники и доступы передаём вам.',
+      proof: 'Работаем полностью удалённо: разница четыре часа, ваш день целиком в нашем рабочем времени',
+      cta: 'Получить смету и план запуска',
+      page: '/krasnoyarsk-krai/',
+    },
+  };
+
+  const q = new URLSearchParams(location.search);
+
+  /* Сначала явный параметр, потом метка кампании: в utm_campaign
+     обычно пишут «kmv_sites», «krasnodar_bots» — берём первое слово. */
+  let key = (q.get('region') || '').toLowerCase();
+  if (!key) {
+    const camp = (q.get('utm_campaign') || '').toLowerCase();
+    key = Object.keys(REGIONS).find(k => camp.startsWith(k)) || '';
+  }
+
+  const r = REGIONS[key];
+  if (!r) return;                       // нет метки — страница остаётся прежней
+
+  const set = (sel, text) => {
+    const el = document.querySelector(sel);
+    if (el) el.textContent = text;
+  };
+
+  set('[data-geo-tagline]', r.tagline);
+  set('[data-geo-sub]', r.sub);
+
+  const proof = document.querySelector('[data-geo-proof]');
+  if (proof) { proof.textContent = r.proof; proof.hidden = false; }
+
+  /* Кнопка ведёт на страницу региона: там подробности, кейсы и вопросы,
+     которых на общей главной нет и быть не может. */
+  const cta = document.querySelector('.hero-actions .btn-action');
+  if (cta) { cta.textContent = r.cta; cta.setAttribute('href', r.page); }
+})();
+</script>
 
 <!-- ═══════════════════════════════════════════
      ЯНДЕКС.МЕТРИКА — счётчик 110416869
@@ -4827,6 +5382,7 @@ document.querySelectorAll('.btn-svc[data-service]').forEach(btn => {
     document.getElementById('modal-success').style.display = 'none';
     document.getElementById('mf-name').value = '';
     document.getElementById('mf-contact').value = '';
+    document.getElementById('mf-city').value = '';
     quickModal.classList.add('open');
   });
 });
@@ -4840,7 +5396,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') quickModal.c
 ═══════════════════════════════════════════ */
 /* Заявка уходит на наш сервер, а он уже отправляет её в Telegram.
    Токен бота живёт только на сервере и в браузер никогда не попадает. */
-async function submitForm({ name, contact, service, comment = '' }, successEl, formEl) {
+async function submitForm({ name, contact, service, comment = '', city = '', citySource = 'user' }, successEl, formEl) {
   const btn = formEl.querySelector('.btn-submit');
   btn.disabled = true;
   btn.classList.add('loading');
@@ -4849,7 +5405,15 @@ async function submitForm({ name, contact, service, comment = '' }, successEl, f
     const res = await fetch('/api/lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, contact, service, comment })
+      /* page — адрес страницы с рекламными метками. Сервер его не знает:
+         заголовок referer показывает предыдущую страницу, а не текущую. */
+      /* city_source — кто вписал город: человек или определение по IP.
+         Определение ошибается на мобильном интернете и через VPN, и без
+         пометки его догадка выглядела бы в заявке так же уверенно,
+         как ответ клиента. */
+      body: JSON.stringify({ name, contact, service, comment, city,
+                             city_source: citySource,
+                             page: location.pathname + location.search })
     });
 
     const data = await res.json().catch(() => ({}));
@@ -4976,6 +5540,8 @@ document.getElementById('order-form').addEventListener('submit', async e => {
       contact: document.getElementById('f-contact').value.trim(),
       service: document.getElementById('f-service').value,
       comment: document.getElementById('f-comment').value.trim(),
+      city:    document.getElementById('f-city').value.trim(),
+      citySource: document.getElementById('f-city').dataset.auto ? 'ip' : 'user',
     },
     document.getElementById('order-success'),
     formEl
@@ -5001,6 +5567,8 @@ document.getElementById('modal-form').addEventListener('submit', async e => {
       name:    document.getElementById('mf-name').value.trim(),
       contact: document.getElementById('mf-contact').value.trim(),
       service: document.getElementById('mf-service').value,
+      city:    document.getElementById('mf-city').value.trim(),
+      citySource: document.getElementById('mf-city').dataset.auto ? 'ip' : 'user',
     },
     document.getElementById('modal-success'),
     formEl
@@ -5254,6 +5822,7 @@ document.getElementById('modal-form').addEventListener('submit', async e => {
       document.getElementById('modal-success').style.display = 'none';
       document.getElementById('mf-name').value = '';
       document.getElementById('mf-contact').value = '';
+      document.getElementById('mf-city').value = '';
       document.getElementById('quick-modal').classList.add('open');
     });
   }
@@ -5648,9 +6217,12 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
        считается, его человек даёт галочкой в форме и нигде больше.
        Плашка отвечает только за аналитику — за то, на что она реально
        влияет кнопками «Принять» и «Только необходимые». -->
-  <!-- Два варианта одного текста: полный для экранов от 600px, плотный
-       для телефонов. На телефоне полный занимал три строки, плашка
-       вырастала до трети экрана и закрывала первый экран целиком. -->
+  <!-- Два варианта одного текста. Полный занимает на телефоне четыре
+       строки, и плашка вырастает до 215px — под шапкой она закрывает
+       заголовок первого экрана целиком, ради которого человек и пришёл
+       из поиска. Короткий вариант не убирает ни одного из трёх смыслов
+       (считаем обезличенно, запись экрана — только с согласия,
+       подробности по ссылке), только формулирует их плотнее. -->
   <p class="cookie-text">
     <span class="cookie-full">Яндекс.Метрика считает посещения сайта обезличенно. Запись экрана и карта кликов
     включаются только с вашего согласия. Подробнее — в</span><span class="cookie-short">Метрика считает посещения обезличенно. Запись экрана — только с вашего согласия. Подробнее — в</span>
@@ -5675,12 +6247,24 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
      это выглядело как «кнопка не работает». */
   .cookie-bar[hidden]{display:none !important}
 
-  /* На широких экранах плашка живёт наверху, а не внизу. Внизу справа у
-     сайта свой узел — панель контактов, кнопка чата и сама панель чата.
-     Любая карточка там конкурирует с ними за клик, и спор со слоями рано
-     или поздно проигрывается. Наверху свободно, поэтому кнопки жмутся
-     всегда. Про исключение для телефонов — в медиазапросе ниже. */
-  .cookie-bar{position:fixed;left:1rem;right:1rem;top:1rem;z-index:2147483000;
+  /* Плашка живёт наверху, а не внизу. Внизу справа у сайта свой узел —
+     панель контактов, кнопка чата и сама панель чата. Любая карточка там
+     конкурирует с ними за клик, и спор со слоями рано или поздно
+     проигрывается. Наверху свободно, поэтому кнопки жмутся всегда. */
+  /* Отступ сверху вырос с 1rem до 5.4rem. Плашка стояла ПОВЕРХ шапки, и
+     пока сайт был одностраничным, это ничему не мешало: на телефоне в шапке
+     не было ни одной ссылки. С появлением внутренних страниц там появилась
+     кнопка меню — единственный способ попасть в разделы с телефона, — и
+     плашка стала её перехватывать. Человек жал на меню, ничего не
+     происходило, и это читалось как сломанный сайт.
+     Вниз при этом не переносим: там плашка спорит за клик с плавающими
+     кнопками связи, из-за чего её когда-то и подняли наверх. */
+  /* Стоит ДО медиазапроса: если поставить после, перебьёт его по
+     порядку в каскаде, и на телефоне не покажется ни один вариант —
+     от плашки останется одна ссылка. */
+  .cookie-short{display:none}
+
+  .cookie-bar{position:fixed;left:1rem;right:1rem;top:6rem;z-index:2147483000;
     pointer-events:auto;
     display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;justify-content:space-between;
     max-width:820px;padding:.9rem 1.2rem;border-radius:12px;
@@ -5696,6 +6280,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     opacity:1;transform:none;
     animation:cookieIn .45s var(--ease-out-expo)}
   @keyframes cookieIn{from{opacity:0;transform:translateY(-16px)}}
+  @keyframes cookieInUp{from{opacity:0;transform:translateY(16px)}}
 
   .cookie-text{margin:0;flex:1 1 320px;font-size:.74rem;line-height:1.7;
     letter-spacing:.03em;color:var(--mist)}
@@ -5717,38 +6302,33 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
   .cookie-no{border:1.5px solid rgba(45,156,255,.2);background:transparent;color:var(--mist)}
   .cookie-no:hover{color:var(--white);border-color:rgba(45,156,255,.4)}
 
-  /* На телефоне плашка переезжает вниз и становится короче.
-
-     Наверху полный текст занимал треть экрана и закрывал заголовок:
-     человек открывал сайт и первым делом читал не «что вы делаете»,
-     а предупреждение про cookie. Первый экран после этого не работает.
-
-     Внизу плашка проходит под главной кнопкой «Получить расчёт проекта»
-     даже на iPhone SE — это и есть условие, ради которого всё двигали.
-     Меняете высоту первого экрана — проверьте, что кнопка осталась выше
-     плашки на экране 375×667.
-
-     Спор со слоями внизу, из-за которого её когда-то подняли наверх,
-     здесь не возникает: z-index плашки выше панели связи и чата, а живёт
-     она до первого нажатия. Кнопки связи вернутся через секунду. */
-  /* Смысл в обоих вариантах один: считаем обезличенно, запись экрана —
-     только с согласия, подробности по ссылке. Короткий вариант не
-     убирает ни одного из трёх пунктов, только формулирует их плотнее.
-     Правило стоит ДО медиазапроса: если поставить после, оно перебьёт
-     его по порядку в каскаде, и на телефоне не покажется ни один из
-     вариантов — от плашки останется одна ссылка. */
-  .cookie-short{display:none}
-
   @media (max-width:600px){
+    /* На телефоне плашка уезжает ВНИЗ.
+
+       Под шапкой она стоит из-за того, что поверх шапки перехватывала
+       нажатия по бургеру — единственному входу в разделы с телефона.
+       Внизу эта причина не действует: до бургера плашка не достаёт.
+
+       А наверху даже укороченная она закрывает заголовок первого
+       экрана: шапка 80px, плашка 130px, заголовок начинается со 115px.
+       Человек с телефона открывал сайт и первым делом читал текст
+       про cookie вместо того, ради чего пришёл.
+
+       Внизу она проходит НИЖЕ главной кнопки даже на iPhone SE — это
+       и есть условие, ради которого всё двигали. Меняете высоту
+       первого экрана — проверьте, что кнопка осталась выше плашки
+       на экране 375×667. Кнопку чата плашка накрывает, но только
+       до первого нажатия. */
     .cookie-bar{gap:.7rem;padding:.85rem 1rem;top:auto;bottom:.8rem;
       animation-name:cookieInUp}
     .cookie-text{font-size:.7rem;line-height:1.55}
     .cookie-actions{width:100%}
-    .cookie-btn{flex:1;padding:.65rem .8rem;font-size:.58rem;letter-spacing:.12em}
+    /* Кнопки в одну строку, а не столбиком: столбиком плашка вырастает
+       ещё на 50px и снова наезжает на заголовок. */
+    .cookie-btn{flex:1;padding:.65rem .5rem;font-size:.56rem;letter-spacing:.08em}
     .cookie-full{display:none}
     .cookie-short{display:inline}
   }
-  @keyframes cookieInUp{from{opacity:0;transform:translateY(16px)}}
   @media (prefers-reduced-motion: reduce){ .cookie-bar{animation:none} }
 </style>
 
@@ -5865,7 +6445,12 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
      data-video="">
   <button type="button" class="nudge-close" id="nudge-close" aria-label="Закрыть">×</button>
   <div class="nudge-ava">
-    <img id="nudge-img" src="" alt="" width="64" height="64">
+    <!-- Описание не пустое: это фото живого человека, от лица которого
+         идёт обращение. Пустой alt означает «картинка декоративная,
+         пропустить» — и тот, кто пользуется экранным диктором, услышал бы
+         реплику без единого слова о том, кто её говорит. -->
+    <img id="nudge-img" src="" alt="Гульнара Мелконян, основательница студии Vibe Digital 999"
+         width="64" height="64" loading="lazy" decoding="async">
     <!-- Файл лежит в public/logo-mark.png, то есть по адресу /logo-mark.png.
          Путь /assets/logo-mark.png отдавал 404, и вместо монограммы браузер
          рисовал значок битой картинки — прямо поверх фото. -->
@@ -6113,5 +6698,10 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 })();
 </script>
 
+<!-- Подсказка региона по IP. Ничего не переадресовывает и не подменяет текст
+     страницы: подставляет город в форму и предлагает перейти в свой раздел.
+     Не загрузился или выключен на сервере — сайт работает как работал.
+     Подробности и оговорки — в public/assets/js/geo.js -->
+<script src="/assets/js/geo.js" defer></script>
 </body>
 </html>

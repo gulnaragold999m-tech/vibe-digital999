@@ -1,0 +1,329 @@
+<!-- ═══════════════════════════════════════════════════════════
+     ФАЙЛ СОБРАН АВТОМАТИЧЕСКИ. Правки здесь пропадут.
+     Текст страницы:  src/pages/blog.html
+     Шапка и подвал:  src/partials/
+     Адрес и мета:    src/pages.js
+     Пересобрать:     npm run build
+     ═══════════════════════════════════════════════════════════ -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Блог: разбираем сайты, ботов и 152-ФЗ</title>
+  <!-- Метка сборки. Нужна, чтобы за секунду понять, какой файл сейчас
+       на сервере, и не гадать, залился новый или остался старый. -->
+  <meta name="build" content="2026-08-09-v8-multipage" />
+  <meta name="description" content="Разборы без воды: сколько стоит Telegram-бот и из чего складывается цена, что грозит сайту без документов по 152-ФЗ, конструктор против чистого кода." />
+  <meta name="robots" content="index, follow" />
+  <meta name="yandex-verification" content="75f670095b8ac749" />
+<script>window.__YMAP={"jsKey":"","staticKey":""};</script>
+  <!-- Канонический адрес. В многостраничнике это не формальность: одна и та
+       же страница открывается и с /uslugi/, и с /uslugi (сервер добавляет
+       слэш), и со ссылкой ?utm_source=... из рекламы. Без canonical поиск
+       считает их разными страницами и делит вес между ними. -->
+  <link rel="canonical" href="https://vibe-digital999.ru/blog/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:site_name" content="Vibe Digital 999" />
+  <meta property="og:url" content="https://vibe-digital999.ru/blog/" />
+  <meta property="og:title" content="Блог: разбираем сайты, ботов и 152-ФЗ" />
+  <meta property="og:description" content="Разборы без воды: сколько стоит Telegram-бот и из чего складывается цена, что грозит сайту без документов по 152-ФЗ, конструктор против чистого кода." />
+  <meta property="og:image" content="https://vibe-digital999.ru/assets/logo-g.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Шрифты свои, не гугловские: наружу не уходит ни один запрос.
+       Обновлять: см. assets/fonts/download-list.txt -->
+  <link rel="preload" href="/assets/fonts/manrope-cyrillic-xn7gYHE41ni1AdIRggOxSuXd.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/manrope-latin-xn7gYHE41ni1AdIRggexSg.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <!-- Значок вкладки. Раньше здесь стояли favicon.ico и apple-touch-icon.png,
+       которых в проекте нет: каждая страница просила два несуществующих
+       файла и получала 404. Теперь вектор плюс запасная картинка для
+       браузеров постарше. -->
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/logo-mark.png" sizes="256x256" />
+  <link rel="apple-touch-icon" href="/logo-mark.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#0a0a0a" />
+
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": "https://vibe-digital999.ru/blog/#webpage",
+  "url": "https://vibe-digital999.ru/blog/",
+  "name": "Блог: разбираем сайты, ботов и 152-ФЗ",
+  "description": "Разборы без воды: сколько стоит Telegram-бот и из чего складывается цена, что грозит сайту без документов по 152-ФЗ, конструктор против чистого кода.",
+  "inLanguage": "ru-RU",
+  "isPartOf": {
+    "@id": "https://vibe-digital999.ru/#website"
+  },
+  "about": {
+    "@id": "https://vibe-digital999.ru/#organization"
+  },
+  "author": {
+    "@id": "https://vibe-digital999.ru/o-nas/#founder"
+  },
+  "publisher": {
+    "@id": "https://vibe-digital999.ru/#organization"
+  },
+  "datePublished": "2026-08-09",
+  "dateModified": "2026-08-09"
+}</script>
+  <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Главная",
+      "item": "https://vibe-digital999.ru/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Блог",
+      "item": "https://vibe-digital999.ru/blog/"
+    }
+  ]
+}</script>
+</head>
+<body>
+<!-- Шапка. Ссылки ведут на настоящие страницы, а не на якоря: якорь
+     работает только внутри одной страницы, и на многостраничнике «Услуги»
+     с любой внутренней страницы вели бы в никуда. -->
+<div class="topbar">
+  <nav role="navigation" aria-label="Основное меню">
+    <a href="/" class="nav-logo">Vibe Digital 999</a>
+
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/uslugi/">Услуги</a></li>
+      <li><a href="/portfolio/">Портфолио</a></li>
+      <li><a href="/o-nas/">О студии</a></li>
+      <li><a href="/kontakty/">Контакты</a></li>
+      <li><a href="/blog/" aria-current="page">Блог</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <!-- Номер в шапке — кнопка, а не строчка текста. Он и раньше был
+           ссылкой tel:, но выглядел обычным текстом, и по нему не нажимали:
+           человек не догадывался, что можно. А на телефоне — там, где как раз
+           и звонят, — номер вообще прятался правилом display:none.
+           Теперь на широком экране кнопка с номером, на узком — круглая
+           кнопка с трубкой: номер целиком туда не влезает, а звонок нужен. -->
+      <a href="tel:+79992449999" class="nav-phone" data-goal="click_tel"
+         aria-label="Позвонить: +7 999 244 99 99">
+        <svg class="nav-phone-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        <span class="nav-phone-num">+7 999 244 99 99</span>
+      </a>
+      <a href="/kontakty/" class="nav-cta">Заказать</a>
+      <button type="button" class="nav-burger" aria-expanded="false"
+              aria-controls="nav-links" aria-label="Меню">
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<main class="page-main">
+
+<nav class="crumbs" aria-label="Вы находитесь здесь">
+  <ol>
+    <li><a href="/">Главная</a></li>
+    <li><span aria-current="page">Блог</span></li>
+  </ol>
+</nav>
+<header class="page-head">
+  <div class="section-eyebrow">Блог</div>
+  <h1 class="page-title">Разборы без воды</h1>
+  <p class="page-lead">Пишем о том, что чаще всего спрашивают до заказа: сколько это
+    стоит на самом деле, что грозит за формальности и чем один инструмент
+    отличается от другого. <strong>Без «х10 продаж» и без продажи в каждом абзаце</strong> —
+    если после статьи вы решите, что заказывать не нужно, статья сработала.</p>
+</header>
+
+<section class="page-section" aria-label="Статьи">
+  <div class="svc-grid case-grid">
+    <article class="svc-card case-card">
+      <div class="case-tag">Цены</div>
+      <h2 class="svc-name">Сколько стоит Telegram-бот и из чего складывается цена</h2>
+      <p class="svc-desc">Почему один бот стоит 5 тысяч, а другой 40, и в чём разница,
+        кроме жадности исполнителя. Что влияет на срок и на чём экономить нельзя.</p>
+      <a class="case-link" href="/blog/skolko-stoit-telegram-bot/">Читать →</a>
+    </article>
+
+    <article class="svc-card case-card">
+      <div class="case-tag">Закон</div>
+      <h2 class="svc-name">152-ФЗ для сайта с формой: что нужно и чем грозит</h2>
+      <p class="svc-desc">Форма с именем и телефоном делает вас оператором персональных
+        данных. Что должно быть на сайте, что подаётся в Роскомнадзор и сколько стоит
+        не сделать этого.</p>
+      <a class="case-link" href="/blog/152-fz-dlya-sajta/">Читать →</a>
+    </article>
+
+    <article class="svc-card case-card">
+      <div class="case-tag">Выбор</div>
+      <h2 class="svc-name">Конструктор или чистый код: что выбрать</h2>
+      <p class="svc-desc">Честное сравнение Tilda и WordPress со своим кодом: цена
+        владения, скорость, пределы, переезд. И случаи, когда конструктор — верное
+        решение.</p>
+      <a class="case-link" href="/blog/konstruktor-ili-chistyj-kod/">Читать →</a>
+    </article>
+
+    <article class="svc-card case-card">
+      <div class="case-tag">ИИ</div>
+      <h2 class="svc-name">Чем ИИ-агент отличается от обычного чат-бота</h2>
+      <p class="svc-desc">Что умеет каждый, сколько стоит содержание, где нейросеть
+        лишняя и как понять, что хватит сценарного бота за меньшие деньги.</p>
+      <a class="case-link" href="/blog/ii-agent-ili-chat-bot/">Читать →</a>
+    </article>
+  </div>
+</section>
+
+<section class="page-section" aria-label="О чём ещё написать">
+  <div class="section-eyebrow">Дальше</div>
+  <h2 class="section-title">О чём написать ещё</h2>
+  <div class="prose">
+    <p>Список тем растёт из вопросов, которые нам задают в переписке. Если вы искали
+      ответ и не нашли его здесь — <a href="/kontakty/">напишите</a>, и мы разберём
+      эту тему. Так статьи получаются про то, что действительно спрашивают,
+      а не про то, что удобно писать.</p>
+  </div>
+</section>
+
+<section class="page-section" aria-label="Смотрите также">
+  <h2 class="section-title">Смотрите также</h2>
+  <div class="related">
+    <a class="related-card" href="/uslugi/">
+      <span class="related-name">Услуги</span>
+      <span class="related-desc">Что делаем, сколько стоит, сколько занимает</span>
+    </a>
+    <a class="related-card" href="/portfolio/">
+      <span class="related-name">Портфолио</span>
+      <span class="related-desc">Работы с живыми ссылками и разбором решений</span>
+    </a>
+    <a class="related-card" href="/o-nas/">
+      <span class="related-name">О студии</span>
+      <span class="related-desc">Кто пишет и по каким правилам работает</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <div class="footer-brand">Vibe Digital 999</div>
+      <p class="footer-tagline">Чистый код, автоматизация и ИИ-агенты. Пишем так, чтобы переписывать не пришлось.</p>
+    </div>
+
+    <!-- Список услуг в подвале — не украшение. Это единственные ссылки,
+         которые есть на КАЖДОЙ странице сайта: и человек, и робот попадают
+         в любой раздел за один переход, откуда бы ни начали. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Услуги</h3>
+      <a class="footer-link" href="/uslugi/razrabotka-sajta/">Разработка сайтов</a>
+      <a class="footer-link" href="/uslugi/telegram-bot/">Боты Telegram и ВК</a>
+      <a class="footer-link" href="/uslugi/ai-agent/">ИИ-агенты</a>
+      <a class="footer-link" href="/uslugi/avtomatizaciya/">Автоматизация</a>
+      <a class="footer-link" href="/vibecoding/">Вайбкодинг</a>
+      <a class="footer-link" href="/uslugi/prilozheniya/">Приложения</a>
+      <a class="footer-link" href="/uslugi/seo-audit-152fz/">SEO-аудит</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Разделы</h3>
+      <a class="footer-link" href="/uslugi/">Все услуги</a>
+      <a class="footer-link" href="/pakety/">Пакеты по размеру бизнеса</a>
+      <a class="footer-link" href="/portfolio/">Портфолио</a>
+      <a class="footer-link" href="/blog/">Блог</a>
+      <a class="footer-link" href="/o-nas/">О студии</a>
+      <a class="footer-link" href="/kontakty/">Контакты</a>
+    </div>
+
+    <!-- Регионы отдельной колонкой, а не строкой в «Разделах».
+
+         Три региональные страницы — единственные, до которых иначе не
+         дойти ниоткуда, кроме главной: человек, пришедший из поиска сразу
+         на страницу услуги, о них не узнает. Здесь они есть на каждой
+         странице сайта.
+
+         Порядок не алфавитный. Первыми — регионы, по которым идёт реклама,
+         и первым из них КМВ: там мы физически находимся, там карточка на
+         Картах и возможность встретиться. Города КМВ ниже — это уточнение
+         внутри региона, а не четвёртое и пятое направление. -->
+    <div class="footer-col">
+      <h3 class="footer-head">Регионы</h3>
+      <a class="footer-link" href="/kmv/">Кавминводы</a>
+      <a class="footer-link" href="/krasnodar-krai/">Краснодарский край</a>
+      <a class="footer-link" href="/krasnoyarsk-krai/">Красноярский край</a>
+      <a class="footer-link" href="/pyatigorsk/">Пятигорск</a>
+      <a class="footer-link" href="/essentuki/">Ессентуки</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Связаться</h3>
+      <a class="footer-link" href="tel:+79992449999" data-goal="click_tel">+7 999 244 99 99</a>
+      <a class="footer-link" href="mailto:gulnaravibecoder999@yandex.ru" data-goal="click_email">gulnaravibecoder999@yandex.ru</a>
+      <a class="footer-link" href="https://wa.me/79992449999" target="_blank" rel="noopener" data-goal="click_wa">WhatsApp</a>
+      <a class="footer-link" href="https://t.me/GranatJarvis_bot" target="_blank" rel="noopener" data-goal="click_tg">Telegram</a>
+      <a class="footer-link" href="https://vk.ru/club240607590" target="_blank" rel="noopener" data-goal="click_vk">ВКонтакте</a>
+      <a class="footer-link" href="/kontakty/">Все контакты</a>
+      <a class="footer-link" href="/#pay">Оплатить по СБП</a>
+    </div>
+
+    <div class="footer-col">
+      <h3 class="footer-head">Реквизиты</h3>
+      <p class="footer-req">ИП Мелконян Гульнара Рифкатовна</p>
+      <p class="footer-req">ИНН 490600091128</p>
+      <p class="footer-req">ОГРНИП 326490000005218</p>
+      <p class="footer-req">Ставропольский край, г. Лермонтов, ул. Нагорная, д. 2/1</p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Vibe Digital 999</span>
+    <a class="footer-link" href="/privacy.html">Политика конфиденциальности</a>
+    <a class="footer-link" href="/privacy.html#consent">Согласие на обработку персональных данных</a>
+    <a class="footer-link" href="/privacy.html#cookies">Использование cookie</a>
+  </div>
+</footer>
+
+<!-- Плашка о куках. На одностраничнике она жила только на главной, и этого
+     хватало: другого входа на сайт не было. Теперь человек приходит из поиска
+     прямо на страницу услуги и главную может не открыть вовсе — значит,
+     уведомление должно быть и здесь. Выбор хранится в localStorage и общий
+     для всех страниц: ответил один раз — больше не спросим. -->
+<div class="cookie-bar" id="cookie-bar" role="dialog" aria-live="polite"
+     aria-label="Согласие на обработку данных" hidden>
+  <p class="cookie-text">
+    Яндекс.Метрика считает посещения сайта обезличенно. Запись экрана и карта кликов
+    включаются только с вашего согласия. Подробнее — в
+    <a href="/privacy.html#cookies">разделе о cookie</a>.
+  </p>
+  <div class="cookie-actions">
+    <button type="button" class="cookie-btn cookie-yes" id="cookie-yes">Принять</button>
+    <button type="button" class="cookie-btn cookie-no" id="cookie-no">Только необходимые</button>
+  </div>
+</div>
+
+<script src="/assets/js/site.js" defer></script>
+<!-- Подсказка региона по IP. Ничего не переадресовывает и не подменяет
+     в тексте страницы: подставляет город в форму и на главной предлагает
+     перейти в свой раздел. Не загрузился — сайт работает как работал. -->
+<script src="/assets/js/geo.js" defer></script>
+<!-- Ленивая карта. Без ключей в src/pages.js не делает ничего: в контактах
+     остаётся адрес и ссылка на Карты. Ключ есть — появляется картинка,
+     а настоящая карта включается, когда до блока долистали. -->
+<script src="/assets/js/ymap.js" defer></script>
+<!-- Пиксель для посетителей без JavaScript: считает заход обезличенно,
+     без cookie и без записи экрана. Заодно это то, что ищут роботы Яндекса
+     при проверке «установлен ли счётчик» — скрипт они не выполняют,
+     а картинку видят. -->
+<noscript><div><img src="https://mc.yandex.ru/watch/110416869" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+</body>
+</html>
