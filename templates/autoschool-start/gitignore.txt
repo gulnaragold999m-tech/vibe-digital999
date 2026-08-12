@@ -1,0 +1,31 @@
+# Зависимости
+node_modules/
+
+# Секреты — в репозиторий не попадают НИКОГДА
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Сборка
+dist/
+build/
+.next/
+.vite/
+
+# Логи
+*.log
+npm-debug.log*
+
+# Системное
+.DS_Store
+Thumbs.db
+
+# Редакторы
+.vscode/
+.idea/
+
+# Данные с персональными данными клиентов — на диск, не в git
+data/
+*.jsonl

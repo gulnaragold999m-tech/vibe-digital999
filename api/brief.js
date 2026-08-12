@@ -25,6 +25,7 @@
  */
 
 const { sendVkToOwner, vkConfigured } = require('./vk');
+const { sendMailToOwner, mailConfigured } = require('./mail');
 const { saveLead, nextLeadNumber, leadNotes } = require('./lead');
 
 const BASE_URL = (process.env.LLM_BASE_URL || 'https://inference.waw0.amvera.ru/v1').replace(/\/$/, '');
@@ -129,6 +130,15 @@ const SYSTEM = `
   Автоматизация одной связки — от 30 000 ₽
   SEO-аудит с проверкой по 152-ФЗ — 15 000 ₽ по акции, 3 дня
   Интеграция Яндекс Карт — от 15 000 ₽, от 3 дней
+
+ПРО СОПРОВОЖДЕНИЕ. Первый месяц после запуска бесплатный — свои ошибки
+чиним даром. Дальше по желанию, отдельной абонентской платой:
+  к пакету «Старт» — 5 000 ₽ в месяц, 1 час правок
+  к пакету «Поток» — 8 000 ₽ в месяц, 2 часа правок
+  к пакету «Система» — 15 000 ₽ в месяц, 3 часа правок
+Часы не переносятся на следующий месяц. Отвечаем в будни с 9:00 до 18:00.
+Круглосуточного дежурства НЕТ — не обещай его ни в каком виде. Процент
+бесперебойной работы сайта тоже не обещай: его даёт хостинг, а не мы.
 
 ПРО КАРТЫ. Отдельной линейки пакетов для карт НЕТ — это опция к «Старту»,
 «Потоку» и «Системе». Что входит по уровням:
@@ -289,8 +299,24 @@ function overLimit(ip) {
   return rec.n > LIMIT;
 }
 
-/* ── Бриф в Telegram, когда посетитель оставил контакт ── */
-const notified = new Set();
+/* ── Бриф в Telegram, когда посетитель оставил контакт ──────────────
+   Помним, кому и какой контакт уже отправляли, чтобы один разговор
+   не превратился в десять одинаковых брифов.
+
+   Раньше здесь был Set из одних ключей диалога, и он не забывал никогда.
+   Из-за этого терялись заявки: человек оставил телефон в понедельник,
+   вернулся в пятницу с новым заказом — и второй бриф уже не приходил.
+   В логах при этом пусто, потому что выход был молчаливый.
+
+   Теперь помним ещё контакт и время:
+     тот же контакт в пределах шести часов — молчим, это повтор;
+     другой контакт или другой день — шлём, это новая заявка.
+
+   Шесть часов взяты не случайно: столько же живёт история разговора
+   в боте ВК (DIALOG_TTL_MS в api/vk-bot.js). Дольше — уже другой
+   разговор, даже если человек тот же. */
+const notified = new Map();
+const NOTIFY_TTL_MS = 6 * 60 * 60 * 1000;
 
 function escapeHtml(text) {
   return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -335,7 +361,7 @@ const SUMMARY_SYSTEM = `
 Ниша: <чем занимается клиент>
 Задача: <что ему нужно сделать, своими словами, одно предложение>
 Сейчас не так: <что у него не работает, если говорил>
-Каналы: <Telegram, ВКонтакте, WhatsApp, сайт — что упоминалось>
+Каналы: <какие каналы связи клиент назвал сам; если не называл — «не названы». Не перечислять каналы, о которых он не говорил>
 Город: <если называл>
 Срок: <если называл>
 Бюджет: <если называл>
@@ -376,9 +402,26 @@ async function summarize(messages) {
 }
 
 async function notifyOwner(messages, contact, sessionKey) {
-  if (notified.has(sessionKey)) return;    // один бриф на диалог, без спама
-  notified.add(sessionKey);
-  if (notified.size > 2000) notified.clear();
+  const now = Date.now();
+  const seen = notified.get(sessionKey);
+
+  if (seen && seen.contact === contact && now - seen.at < NOTIFY_TTL_MS) {
+    /* Пишем в лог, а не молчим. Молчаливый пропуск неотличим от поломки:
+       заявки нет, в журнале пусто, и час уходит на поиски несуществующей
+       ошибки в доставке. */
+    console.log(`[brief] Повтор, бриф уже отправляли: ${contact} (${sessionKey})`);
+    return;
+  }
+
+  notified.set(sessionKey, { contact, at: now });
+
+  /* Выбрасываем протухшие записи, а не весь список разом: очистка целиком
+     означала бы, что для части живых разговоров бриф уйдёт по второму кругу. */
+  if (notified.size > 2000) {
+    for (const [key, rec] of notified) {
+      if (now - rec.at > NOTIFY_TTL_MS) notified.delete(key);
+    }
+  }
 
   const dialog = messages
     .map(m => (m.role === 'user' ? '👤 ' : '🤖 ') + m.content)
@@ -453,7 +496,9 @@ async function notifyOwner(messages, contact, sessionKey) {
   const token = process.env.BOT_TOKEN;
   const chatId = process.env.CHAT_ID;
 
-  const [tg, vk] = await Promise.all([
+  const subject = `Бриф из чата${num ? ' № ' + num : ''} — ${contact}`;
+
+  const [tg, vk, mail] = await Promise.all([
     (async () => {
       if (!token || !chatId) return { ok: false, error: 'BOT_TOKEN или CHAT_ID не заданы' };
       try {
@@ -469,15 +514,17 @@ async function notifyOwner(messages, contact, sessionKey) {
       }
     })(),
     vkConfigured() ? sendVkToOwner(plainText) : Promise.resolve({ ok: false, error: 'не подключён' }),
+    mailConfigured() ? sendMailToOwner(subject, plainText) : Promise.resolve({ ok: false, error: 'не подключена' }),
   ]);
 
-  if (tg.ok || vk.ok) {
+  if (tg.ok || vk.ok || mail.ok) {
     console.log(`[brief] Бриф отправлен: ${contact}`,
       `| Telegram: ${tg.ok ? 'доставлено' : tg.error}`,
-      `| ВК: ${vk.ok ? 'доставлено' : vk.error}`);
+      `| ВК: ${vk.ok ? 'доставлено' : vk.error}`,
+      `| Почта: ${mail.ok ? 'доставлено' : mail.error}`);
   } else {
     console.error(`[brief] ❌ Бриф НЕ доставлен ни одним каналом: ${contact}.`,
-      `Telegram: ${tg.error} | ВК: ${vk.error}. Диалог:`, dialog.slice(0, 500));
+      `Telegram: ${tg.error} | ВК: ${vk.error} | Почта: ${mail.error}. Диалог:`, dialog.slice(0, 500));
   }
 }
 
