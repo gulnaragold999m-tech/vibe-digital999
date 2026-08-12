@@ -1,0 +1,81 @@
+# Выкладка сайта на Amvera прямо из GitHub — чтобы не нужен был компьютер.
+#
+# Обычная выкладка требует ноутбука: там заведён remote на Amvera и лежат
+# доступы. С телефона так не сделать. Этот запуск делает то же самое,
+# но на стороне GitHub: берёт указанную ветку и толкает её в Amvera.
+#
+# ЗАПУСКАЕТСЯ ТОЛЬКО РУКАМИ. На push намеренно не повешено: случайный
+# коммит не должен уезжать на живой сайт. Чтобы выкатить — открыть
+# в GitHub вкладку Actions, выбрать этот запуск и нажать «Run workflow».
+#
+# ЧТО НУЖНО ОДИН РАЗ. В настройках репозитория (Settings → Secrets and
+# variables → Actions) завести два секрета:
+#
+#   AMVERA_USERNAME — логин ОТ AMVERA, не от GitHub. Смотреть в правом
+#                     верхнем углу кабинета Amvera.
+#   AMVERA_PASSWORD — пароль от Amvera.
+#
+# Обе ловушки проверены 12.08.2026 на соседнем проекте: два запуска
+# подряд упали именно из-за логина от GitHub и из-за имени приложения
+# заглавными. Подробности — в навыке mnogostranichnik-ru,
+# файл references/klientskiy-proekt.md.
+
+name: Выкатить сайт на Amvera
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Какую ветку выкатить'
+        required: true
+        # Живая ветка проекта. Меняется редко — сверяйтесь со STATUS.md,
+        # раздел «Ветки: что где лежит».
+        default: 'claude/multipage-website-okje3k'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Забрать ветку целиком
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          # Amvera принимает обычный git-push, а он требует всю историю.
+          # С урезанной копией push отклоняется как не-перемотка.
+          fetch-depth: 0
+
+      - name: Показать, что выкатываем
+        run: |
+          echo "Ветка:  ${{ inputs.branch }}"
+          echo "Коммит: $(git log -1 --format='%h %s')"
+          echo "Дата:   $(git log -1 --format='%ci')"
+
+      - name: Толкнуть в Amvera
+        env:
+          USER: ${{ secrets.AMVERA_USERNAME }}
+          PASS: ${{ secrets.AMVERA_PASSWORD }}
+        run: |
+          if [ -z "$USER" ] || [ -z "$PASS" ]; then
+            echo "::error::Не заданы секреты AMVERA_USERNAME и AMVERA_PASSWORD."
+            echo "Settings → Secrets and variables → Actions → New repository secret."
+            echo "Логин берётся В КАБИНЕТЕ AMVERA, не в GitHub."
+            exit 1
+          fi
+
+          # Имя приложения в адресе — внутреннее, маленькими латинскими.
+          # В панели оно подписано иначе; заглавные и кириллица дают
+          # ошибку «папка не найдена».
+          REPO="https://git.amvera.ru/granatgold999/vibe-digital"
+
+          # Логин и пароль передаём через заголовок, а не в адресе:
+          # адрес попадает в лог запуска, заголовок — нет.
+          AUTH=$(printf '%s:%s' "$USER" "$PASS" | base64 -w0)
+          git -c http.extraheader="Authorization: Basic $AUTH" \
+              push --force "$REPO" HEAD:master
+
+      - name: Что дальше
+        run: |
+          echo "Отправлено. Amvera ставит зависимости, запускает сборку"
+          echo "и поднимает сервер — одна-две минуты."
+          echo "Проверить: https://vibe-digital999.ru/"
