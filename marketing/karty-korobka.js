@@ -219,7 +219,7 @@ ${fontCss}
      занимала 64·sin15° ≈ 16 пикселей, и предмет читался плоской панелью,
      а не коробкой. Владелица сказала прямо — «книга не выходит».
      Теперь 118px при 24°: боковина ≈ 48px, ребро видно. */
-  .scena{--glub:118px}
+  .scena{--glub:110px;--pol:55px}   /* --pol — половина толщины */
 
   /* align-items:stretch, а не center: коробка занимает всю высоту сцены,
      и тень внизу оказывается прямо под дном. При center коробка висела
@@ -228,7 +228,7 @@ ${fontCss}
   .box3d{position:relative;perspective:1500px;perspective-origin:50% 38%;
     /* Отступ сверху — под верхнюю грань: она торчит над лицом на всю
        глубину коробки и без запаса налезала на строчку про акцию. */
-    flex:0 0 600px;display:flex;align-items:stretch;padding:46px 0 40px}
+    flex:0 0 600px;display:flex;align-items:stretch;padding:46px 0 52px}
 
   /* Тень на поверхности. Без неё коробка висит в пустоте: объём есть,
      а стоять ей не на чем — глаз это замечает раньше, чем разбирает
@@ -244,18 +244,30 @@ ${fontCss}
       color-mix(in srgb, var(--acc) 26%, transparent) 0%, transparent 70%);
     filter:blur(34px)}
 
-  .box{position:relative;z-index:1;transform-style:preserve-3d;flex:1;display:flex;
-    transform:rotateY(-24deg) rotateX(2deg)}
+  /* СБОРКА КОРОБКИ. Три грани одного тела, а не лист с отогнутыми
+     краями. Правило простое: каждая грань выдвигается на половину
+     толщины вперёд, и только потом поворачивается вокруг своего ребра.
 
-  /* Верхняя грань — отгибается назад от верхнего ребра лица. Видна
-     узкой полосой, потому что смотрим чуть сверху (perspective-origin
-     выше середины). Именно она превращает «панель с боковиной»
-     в закрытый объём. */
-  .top{position:absolute;left:0;bottom:100%;width:100%;height:var(--glub);
-    transform-origin:bottom center;transform:rotateX(-90deg);
-    background:linear-gradient(180deg,#12203C,#0A1426);
-    border:1px solid color-mix(in srgb, var(--acc) 22%, transparent);
-    border-radius:8px 8px 2px 2px}
+     Первая версия строилась иначе: корешок стоял СНАРУЖИ лица,
+     через right:100%, и отгибался от него, как раскрытая обложка.
+     На картинке это и выглядело вывернутой наизнанку книгой —
+     угол между гранями получался тупой, а не прямой.
+
+     Теперь: лицо на +55px, корешок пристыкован к левому ребру
+     через left:0 с поворотом вокруг левого края и уходит ВГЛУБЬ,
+     от +55 до -55. Верхняя грань так же — от верхнего ребра назад.
+     Угол между гранями ровно 90°, тело замкнуто.
+
+     Осторожно: этот файл — шаблонная строка JS. Обратные кавычки
+     в комментариях к CSS закрывают её и валят разбор. */
+  .box{position:relative;z-index:1;transform-style:preserve-3d;flex:1;display:flex;
+    transform:rotateY(-25deg) rotateX(5deg)}
+
+  .top{position:absolute;left:0;top:0;width:100%;height:var(--glub);
+    transform-origin:top center;
+    transform:translateZ(var(--pol)) rotateX(90deg);
+    background:linear-gradient(180deg,#1B2E52,#101C34);
+    border-radius:8px 8px 0 0}
 
   /* Корешок — боковая грань, отогнутая назад от левого ребра лица.
 
@@ -268,8 +280,9 @@ ${fontCss}
      сдвигом — корешок ложился поперёк передней грани и перечёркивал
      цену. На глаз это видно сразу, но только если посмотреть картинку,
      а не поверить, что «CSS правильный». */
-  .spine{position:absolute;top:0;right:100%;width:var(--glub);height:100%;
-    transform-origin:right center;transform:rotateY(90deg);
+  .spine{position:absolute;top:0;left:0;width:var(--glub);height:100%;
+    transform-origin:left center;
+    transform:translateZ(var(--pol)) rotateY(-90deg);
     /* Боковина темнее лица: плоскость уходит от света, и без этого
        перепада грани сливаются в одну картонку. Слева по ребру —
        светлая полоса, это сгиб. */
@@ -277,10 +290,12 @@ ${fontCss}
        и книга сливалась в одну чёрную массу: две грани одного тона
        читаются как один плоский прямоугольник. Светлая боковина
        и тёмное лицо разводят плоскости мгновенно. */
-    background:linear-gradient(90deg,#16294A 0%,#1E355C 55%,#25406C 100%);
-    border:1px solid color-mix(in srgb, var(--acc) 30%, transparent);
+    /* Светлее лица — иначе две грани одного тона читаются как один
+       плоский прямоугольник. Ни рамки, ни внутренней тени у стыка:
+       рамка давала светящуюся щель между гранями, тень — провал.
+       Тело должно быть монолитным, стык обозначает только блик. */
+    background:linear-gradient(90deg,#25406C 0%,#1E355C 45%,#16294A 100%);
     border-radius:8px 0 0 8px;
-    box-shadow:inset -14px 0 30px rgba(0,0,0,.4);
     display:flex;align-items:center;justify-content:center}
   /* Корешок повёрнут наружу, то есть к зрителю он обращён ИЗНАНКОЙ,
      и текст на нём выходит зеркальным. Первая версия так и вышла:
@@ -289,7 +304,12 @@ ${fontCss}
      буквы встают как надо. Проверять такое можно только глазами
      на увеличенном куске картинки: на общем плане надпись мелкая
      и выглядит правдоподобно. */
-  .spine span{writing-mode:vertical-rl;text-align:center;
+  /* К зрителю корешок обращён изнанкой, поэтому текст на нём зеркалится.
+     Поворот содержимого на 180° вокруг вертикальной оси это гасит.
+     Пометка на будущее: меняешь знак поворота грани — перепроверяй
+     надпись на увеличенном куске, зеркало появляется и исчезает
+     вместе со знаком. */
+  .spine span{writing-mode:vertical-rl;text-align:center;transform:rotateY(180deg);
     font-size:30px;font-weight:800;letter-spacing:.1em;color:#F2F7FF;
     text-shadow:0 0 18px color-mix(in srgb, var(--acc) 55%, transparent)}
 
@@ -299,6 +319,7 @@ ${fontCss}
      Тень уведена влево-вниз: свет падает справа сверху, значит книга
      отбрасывает тень в противоположный угол. */
   .face{position:relative;flex:1;padding:34px 32px 30px;border-radius:8px;
+    transform:translateZ(var(--pol));
     background:
       radial-gradient(ellipse 90% 70% at 42% 34%,
         color-mix(in srgb, var(--acc) 9%, transparent) 0%,
@@ -314,15 +335,13 @@ ${fontCss}
   /* БЛИК НА СГИБЕ. Тонкая светлая полоса ровно по стыку лица и корешка.
      Приём стоит две строчки, а объём даёт сразу: глаз читает ребро
      как физический сгиб, поймавший свет. */
-  .face::after{content:'';position:absolute;top:2px;bottom:2px;left:0;width:2px;
-    border-radius:2px;
+  .face::after{content:'';position:absolute;top:6px;bottom:6px;left:0;width:2px;
     background:linear-gradient(180deg,
       transparent 0%,
-      rgba(255,255,255,.72) 12%,
-      color-mix(in srgb, var(--acc) 90%, white) 50%,
-      rgba(255,255,255,.72) 88%,
+      rgba(255,255,255,.34) 14%,
+      rgba(255,255,255,.55) 50%,
+      rgba(255,255,255,.34) 86%,
       transparent 100%);
-    box-shadow:0 0 16px color-mix(in srgb, var(--acc) 70%, transparent);
     pointer-events:none}
 
   /* Мягкая засветка от верхнего левого угла — след того же источника. */
