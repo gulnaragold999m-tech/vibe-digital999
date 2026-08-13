@@ -291,6 +291,11 @@ ${fontCss}
   .book::before{content:var(--korshok);
     position:absolute;right:100%;top:0;
     width:var(--tolshchina);height:100%;
+    /* Перекрытие в пиксель: при дробном масштабе между гранью
+       и обложкой оставался субпиксельный просвет. Виден он был
+       только на бирюзовой карточке — светлый отсвет подсвечивал
+       щель, на розовой она терялась в тени. */
+    margin-right:-1px;
     transform-origin:right center;
     transform:skewY(-12deg);
 
@@ -304,10 +309,13 @@ ${fontCss}
 
   /* БЛИК НА СГИБЕ. Тонкая полоса ровно по ребру между обложкой
      и корешком — от неё угол читается сгибом, а не стыком двух картонок. */
-  .book::after{content:'';position:absolute;left:0;top:0;width:2px;height:100%;
+  /* Блик на сгибе. Приглушён: с ярким свечением он читался не ребром,
+     а светящейся ЩЕЛЬЮ между гранями — и только на бирюзовой карточке,
+     потому что бирюзовый отсвет ярче розового. Геометрия у карточек
+     одинаковая до пикселя, расходилось именно восприятие. */
+  .book::after{content:'';position:absolute;left:0;top:0;width:1px;height:100%;
     background:linear-gradient(to bottom,
-      rgba(255,255,255,.28), rgba(255,255,255,.06));
-    box-shadow:0 0 8px color-mix(in srgb, var(--acc) 34%, transparent);
+      rgba(255,255,255,.20), rgba(255,255,255,.05));
     pointer-events:none}
 
   .f-eye{font-size:15px;font-weight:700;letter-spacing:.16em;
@@ -463,10 +471,17 @@ fs.mkdirSync(OUT, { recursive: true });
 
     const check = await page.evaluate(() => {
       const s = document.querySelector('.sheet');
-      const f = document.querySelector('.book').getBoundingClientRect();
+      const b = document.querySelector('.book');
+      const f = b.getBoundingClientRect();
+      const st = getComputedStyle(b, '::before');
       return {
         perepolnenie: Math.round(s.scrollHeight - s.clientHeight),
         nizKorobki: Math.round(f.bottom),
+        /* Геометрия книги — печатается, чтобы карточки нельзя было
+           развести незаметно: разъедутся числа, а не только картинка. */
+        levo: Math.round(f.left), pravo: Math.round(f.right),
+        shirina: Math.round(f.width), verh: Math.round(f.top),
+        korshok: st.width + ' / ' + st.transform + ' / ' + st.fontSize,
       };
     });
 
@@ -476,7 +491,9 @@ fs.mkdirSync(OUT, { recursive: true });
       console.error(`  ✗ tovar-${k.id}: не помещается (за краем ${Math.max(check.perepolnenie, check.nizKorobki - H)}px)`);
       bed++;
     } else {
-      console.log(`  tovar-${k.id.padEnd(10)} → marketing/out/tovar-${k.id}.png   низ коробки ${check.nizKorobki}px из ${H}`);
+      console.log(`  tovar-${k.id.padEnd(10)} → marketing/out/tovar-${k.id}.png`);
+      console.log(`    книга: слева ${check.levo}, справа ${check.pravo}, ширина ${check.shirina}, верх ${check.verh}, низ ${check.nizKorobki}`);
+      console.log(`    корешок: ${check.korshok}`);
     }
     await ctx.close();
   }
