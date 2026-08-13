@@ -9,7 +9,8 @@
     "prestart": "node build.js || true",
     "start": "node server.js",
     "ceny": "node -e \"const p=require('./src/prices');console.log('\\nУСЛУГИ\\n'+p.prajsDlyaBota()+'\\n\\nПАКЕТЫ\\n'+p.paketyDlyaBota()+'\\n\\nСОПРОВОЖДЕНИЕ\\n'+p.soprovozhdenieDlyaBota()+'\\n')\"",
-    "karty": "node marketing/karty-price.js"
+    "karty": "node marketing/karty-price.js",
+    "karty-kartinki": "node marketing/karty-cards.js"
   },
   "dependencies": {
     "compression": "^1.8.1",
