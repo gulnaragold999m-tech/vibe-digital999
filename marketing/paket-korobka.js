@@ -283,30 +283,32 @@ ${fontCss}
     white-space:nowrap;font-size:26px;font-weight:800;letter-spacing:.24em;
     color:rgba(255,255,255,.5)}
 
-  /* ЗАДНЯЯ И ПРАВАЯ ГРАНИ. Зрителю их не видно, но без них по задним
-     рёбрам просвечивает фон: соседние грани сходятся в линию,
-     и на субпиксельной сетке между ними остаются точки-просветы.
-     На увеличении это читается пунктиром вдоль ребра — именно его
-     легко принять за дыру на стыке. Замкнутое тело не просвечивает
-     нигде и при любом угле. */
-  .box-back{width:var(--shir);height:var(--vys);left:0;top:0;
-    transform:translateZ(calc(-1 * var(--pol)));
-    background:#05070B}
-  .box-right{width:var(--glub);height:var(--vys);right:0;top:0;
-    transform-origin:right center;
-    transform:translateZ(var(--pol)) rotateY(90deg);
-    background:#070A10}
+  /* ЗАДНЕЙ И ПРАВОЙ ГРАНЕЙ ЗДЕСЬ НЕТ, И ЭТО НАМЕРЕННО.
+
+     Пробовал добавить — ради пунктирного просвета по заднему ребру.
+     Пунктир не ушёл, а силуэт сломался: задняя панель вылезла справа
+     из-за коробки отдельным прямоугольником. Три грани при этом угле
+     дают правильный контур, четвёртая и пятая только мешают.
+
+     Правило: правка, которая не решила задачу, откатывается целиком,
+     а не остаётся «на всякий случай». Иначе через неделю никто
+     не вспомнит, зачем эти грани, и будут чинить последствия. */
 
   /* Верхняя крышка */
   .box-top{width:var(--shir);height:var(--glub);left:0;top:0;
     transform-origin:top center;
     transform:translateZ(var(--pol)) rotateX(90deg);
-    /* Крышка ловит свет сверху, поэтому светлее остальных граней.
-       Радиальное пятно — свет от букв, падающий на пластик. */
-    background:
-      radial-gradient(ellipse 44% 120% at 50% 50%,
-        color-mix(in srgb, var(--acc) 26%, transparent) 0%, transparent 70%),
-      linear-gradient(180deg,#1C2536 0%,#0D121C 100%);
+    /* КРЫШКА — ТЁМНОЕ ЗЕРКАЛО, а не «просто светлее».
+
+       Резкие остановки градиента (45% → 46% и 52% → 53%) дают чёткую
+       световую полосу поперёк грани — отражение софтбокса. Плавный
+       градиент такой полосы не даёт: он читается серой заливкой,
+       и грань выглядит матовой бумагой, а не глянцевым пластиком.
+       Приём в том, что переход занимает ОДИН процент, а не двадцать. */
+    background:linear-gradient(115deg,
+      #05070A 0%, #090D14 45%, #222D42 46%, #2D3C59 52%, #090D14 53%, #05070A 100%);
+    box-shadow:inset 0 0 20px rgba(255,255,255,.05),
+               inset 1px 1px 0 rgba(255,255,255,.2);
     display:flex;align-items:center;justify-content:center}
   /* Крышка после rotateX(90deg) обращена к зрителю обратной стороной
      плоскости: содержимое на ней переворачивается по вертикали, и «V»
@@ -315,7 +317,11 @@ ${fontCss}
      книги, — проверять на увеличенном куске. */
   /* Крышку видно под острым углом, поэтому знак на ней сплющивается.
      Размер и свечение подняты, чтобы он читался в кадре. */
+  /* Логотип смешивается со светлением, а не кладётся сверху заплаткой:
+     полоса отражения проходит сквозь буквы, и знак с крышкой читаются
+     одним предметом. */
   .box-top svg{width:224px;height:224px;transform:rotateX(180deg);
+    mix-blend-mode:screen;opacity:.9;
     filter:drop-shadow(0 0 8px #fff)
            drop-shadow(0 0 20px color-mix(in srgb, var(--acc) 95%, transparent))
            drop-shadow(0 0 42px color-mix(in srgb, var(--acc2) 70%, transparent))}
@@ -410,8 +416,6 @@ ${fontCss}
     <div class="plata">${PLATA(p.id)}</div>
     <div class="box-scene">
     <div class="box">
-      <div class="gran box-back"></div>
-      <div class="gran box-right"></div>
       <div class="gran box-bottom"></div>
       <div class="gran box-left"><span>ПАКЕТ ${p.nazvanie.replace(/[«»]/g, '')}</span></div>
       <div class="gran box-top">${LOGO(p.id)}</div>
