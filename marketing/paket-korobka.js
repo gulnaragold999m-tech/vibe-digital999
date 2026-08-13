@@ -274,7 +274,6 @@ ${fontCss}
     background:
       linear-gradient(90deg, rgba(255,255,255,.06), transparent 60%),
       linear-gradient(135deg,#0B101B 0%,#131B2B 40%,#06080E 70%,#111A2C 100%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
     display:flex;align-items:center;justify-content:center}
   /* Бок повёрнут наружу, к зрителю обращён изнанкой — надпись
      зеркалится. Гасится разворотом на 180° вокруг вертикальной оси.
@@ -283,6 +282,20 @@ ${fontCss}
   .box-left span{writing-mode:vertical-lr;transform:rotateY(180deg);
     white-space:nowrap;font-size:26px;font-weight:800;letter-spacing:.24em;
     color:rgba(255,255,255,.5)}
+
+  /* ЗАДНЯЯ И ПРАВАЯ ГРАНИ. Зрителю их не видно, но без них по задним
+     рёбрам просвечивает фон: соседние грани сходятся в линию,
+     и на субпиксельной сетке между ними остаются точки-просветы.
+     На увеличении это читается пунктиром вдоль ребра — именно его
+     легко принять за дыру на стыке. Замкнутое тело не просвечивает
+     нигде и при любом угле. */
+  .box-back{width:var(--shir);height:var(--vys);left:0;top:0;
+    transform:translateZ(calc(-1 * var(--pol)));
+    background:#05070B}
+  .box-right{width:var(--glub);height:var(--vys);right:0;top:0;
+    transform-origin:right center;
+    transform:translateZ(var(--pol)) rotateY(90deg);
+    background:#070A10}
 
   /* Верхняя крышка */
   .box-top{width:var(--shir);height:var(--glub);left:0;top:0;
@@ -397,6 +410,8 @@ ${fontCss}
     <div class="plata">${PLATA(p.id)}</div>
     <div class="box-scene">
     <div class="box">
+      <div class="gran box-back"></div>
+      <div class="gran box-right"></div>
       <div class="gran box-bottom"></div>
       <div class="gran box-left"><span>ПАКЕТ ${p.nazvanie.replace(/[«»]/g, '')}</span></div>
       <div class="gran box-top">${LOGO(p.id)}</div>
