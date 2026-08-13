@@ -167,9 +167,6 @@ ${fontCss}
   :root{
     --ink:#020813; --white:#E8F0FF; --mist:#8A9BC4;
     --acc:${k.color}; --acc2:${k.color2};
-    /* Надпись на торце. Через переменную, потому что content
-       у псевдоэлемента иначе не собрать из данных. */
-    --korshok:"${k.title} · ${k.cena}";
   }
 
   body{width:${W}px;height:${H}px;background:var(--ink);color:var(--white);
@@ -254,7 +251,7 @@ ${fontCss}
 
   .book{position:relative;z-index:1;flex:1;
     padding:34px 32px 30px;
-    border-radius:4px 12px 12px 4px;
+    border-radius:0 12px 12px 0;
     transform-style:preserve-3d;
     transform:rotateY(-28deg) rotateX(7deg) rotateZ(-2deg);
 
@@ -274,27 +271,36 @@ ${fontCss}
 
     display:flex;flex-direction:column}
 
-  /* КОРЕШОК. Пристыкован к левому ребру и уходит вглубь: поворот вокруг
-     собственного левого края на 90°. Ни рамки, ни внутренней тени —
-     они и давали светящуюся щель между гранями. */
-  .book::before{content:var(--korshok);
-    position:absolute;left:0;top:0;width:var(--tolshchina);height:100%;
+  /* КОРЕШОК. Пристыкован к левому ребру и уходит вглубь: жёсткий
+     разворот на 90° вокруг собственного левого края. Ни рамки,
+     ни внутренней тени, ни скругления — всё это давало щель на сгибе.
+     Скругление на левых углах книги тоже снято: сгиб должен быть
+     ребром, а не двумя закруглениями, которые не совпадают. */
+  .book::before{content:'';position:absolute;left:0;top:0;
+    width:var(--tolshchina);height:100%;
     transform-origin:left center;
-    /* Читать справа налево: сдвиг на свою ширину, зеркало, поворот.
-       Зеркало здесь не украшение — к зрителю торец обращён изнанкой,
-       и без него надпись читается вывернутыми буквами. Сдвиг возвращает
-       грань на место после зеркала, поэтому геометрия не едет:
-       корешок по-прежнему уходит вглубь ровно на свою толщину. */
-    transform:rotateY(-90deg) scaleX(-1) translateX(-100%);
-    background:linear-gradient(270deg,#07090D 0%,#121820 62%,#1B2739 100%);
-    border-radius:4px 0 0 4px;
+    transform:rotateY(-90deg);
+    background:linear-gradient(270deg,#07090D 0%,#121820 62%,#1B2739 100%)}
 
-    /* Надпись на торце: строка кладётся вертикально и центрируется.
-       writing-mode вместо rotateZ — так буквы не выходят за узкий торец
-       и не требуют подгонки сдвигом. */
-    writing-mode:vertical-rl;text-align:center;white-space:nowrap;
+  /* НАДПИСЬ НА ТОРЦЕ — отдельным блоком, а не содержимым псевдоэлемента.
+     Причина: у ::before одна трансформация на всё, и поворот надписи
+     пришлось бы вешать на ту же строку, что держит геометрию грани, —
+     любая правка текста ехала бы вместе с телом книги. Отдельный блок
+     разводит эти две задачи.
+
+     Внутри span повёрнут на 90° — читается сверху вниз, как на корешке
+     печатной книги. rotateY(180deg) гасит зеркало: к зрителю торец
+     обращён изнанкой. Меняешь одно — проверяй второе на увеличенном
+     куске, на общем плане не разобрать. */
+  .spine-text{position:absolute;left:0;top:0;
+    width:var(--tolshchina);height:100%;
+    transform-origin:left center;
+    transform:rotateY(-90deg);
     display:flex;align-items:center;justify-content:center;
-    color:rgba(255,255,255,.82);font-size:26px;font-weight:800;
+    overflow:hidden;pointer-events:none}
+  .spine-text span{white-space:nowrap;
+    transform:rotateY(180deg) rotate(90deg);
+    color:rgba(255,255,255,.85);font-size:26px;font-weight:800;
     letter-spacing:.12em;
     text-shadow:0 0 16px color-mix(in srgb, var(--acc) 50%, transparent)}
 
@@ -388,6 +394,7 @@ ${fontCss}
     <div class="scena">
       <div class="book-container">
         <div class="book">
+          <div class="spine-text"><span>${k.title} · ${k.cena}</span></div>
             <div class="f-eye">${k.eyebrow}</div>
             <div class="f-title">${k.title}</div>
             <div class="f-cena"><b>${k.cena}</b><span>${k.srokPrefix} ${k.srok}</span></div>
