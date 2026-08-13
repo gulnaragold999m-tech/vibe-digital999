@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Карточка услуги коробкой — рабочий пример</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  /* ── Настройки, которые меняют под проект ──────────────────
+     --acc      акцентный неон карточки
+     --tolshch  толщина книги; держать около 14% её ширины,
+                иначе коробка читается плоской панелью
+     --skos     наклон обложки
+     --skos-gr  ДОПОЛНИТЕЛЬНЫЙ наклон грани, тем же знаком */
+  :root{
+    --ink:#020813; --white:#E8F0FF; --mist:#8A9BC4;
+    --acc:#00F0FF;
+    --tolshch:45px;
+    --skos:-6deg;
+    --skos-gr:-12deg;
+  }
+
+  body{min-height:100vh;background:var(--ink);color:var(--white);
+    font-family:'Manrope','Segoe UI',system-ui,sans-serif;
+    display:flex;align-items:center;justify-content:center;padding:80px 60px}
+
+  /* Свечение за книгой — объём фона без картинки. */
+  body::before{content:'';position:fixed;top:-10%;left:50%;
+    transform:translateX(-50%);width:900px;height:700px;border-radius:50%;
+    background:radial-gradient(ellipse at center,
+      color-mix(in srgb, var(--acc) 26%, transparent) 0%, transparent 70%);
+    filter:blur(80px);pointer-events:none}
+
+  .scene{position:relative;padding-left:var(--tolshch)}
+
+  /* Тень на «полу»: отдельным пятном под книгой. Своей box-shadow книге
+     мало — она наклоняется вместе с обложкой, а лежать должна на полу. */
+  .scene::after{content:'';position:absolute;z-index:0;
+    left:-6%;right:6%;bottom:-26px;height:48px;border-radius:50%;
+    background:radial-gradient(ellipse at 45% 50%,
+      rgba(0,0,0,.9) 0%, rgba(0,0,0,.45) 45%, transparent 74%);
+    filter:blur(22px)}
+
+  /* ── КНИГА ─────────────────────────────────────────────────
+     Плоский скос вместо честного 3D. Почему — в SKILL.md,
+     раздел «Почему не rotateY». */
+  .book{position:relative;z-index:1;
+    width:320px;height:460px;padding:26px 24px 22px;
+    transform:skewY(var(--skos));
+    border-radius:0 12px 12px 0;
+    background:
+      radial-gradient(ellipse 90% 70% at 42% 34%,
+        color-mix(in srgb, var(--acc) 9%, transparent) 0%, transparent 62%),
+      radial-gradient(ellipse 120% 90% at 45% 40%,
+        #16243F 0%, #0B1428 48%, #050C1A 100%);
+    box-shadow:
+      -10px 20px 40px rgba(0,0,0,.6),
+      -25px 40px 60px rgba(0,0,0,.4),
+      0 0 70px color-mix(in srgb, var(--acc) 12%, transparent);
+    display:flex;flex-direction:column}
+
+  /* КОРЕШОК. Наклон складывается с наклоном обложки, а не гасит его:
+     встречный знак обнуляет наклон грани, и стык расходится. */
+  .book::before{content:"Сайт-лендинг · от 35 000 ₽";
+    position:absolute;right:100%;top:0;
+    width:var(--tolshch);height:100%;
+    margin-right:-1px;                    /* закрывает субпиксельный просвет */
+    transform-origin:right center;
+    transform:skewY(var(--skos-gr));
+    background:linear-gradient(90deg,#090D14 0%,#161F2B 100%);
+    border-radius:4px 0 0 4px;
+    display:flex;align-items:center;justify-content:center;
+    writing-mode:vertical-lr;white-space:nowrap;
+    color:rgba(255,255,255,.8);font-size:12px;font-weight:700;
+    letter-spacing:.14em}
+
+  /* БЛИК НА СГИБЕ. Тонкий и без ореола: со свечением читается
+     не ребром, а светящейся щелью. */
+  .book::after{content:'';position:absolute;left:0;top:0;width:1px;height:100%;
+    background:linear-gradient(to bottom,
+      rgba(255,255,255,.2), rgba(255,255,255,.05));
+    pointer-events:none}
+
+  /* ── Содержимое обложки ────────────────────────────────── */
+  .eyebrow{font-size:9px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--acc)}
+  .title{margin-top:8px;font-size:28px;line-height:1;font-weight:800;
+    letter-spacing:-.02em}
+
+  .price{margin-top:12px;display:inline-flex;align-self:flex-start;
+    align-items:center;gap:8px;padding:7px 12px;border-radius:12px;
+    border:2px solid color-mix(in srgb, var(--acc) 60%, transparent);
+    background:color-mix(in srgb, var(--acc) 12%, transparent);
+    box-shadow:0 0 24px color-mix(in srgb, var(--acc) 24%, transparent)}
+  .price b{font-size:19px;font-weight:800;color:var(--acc);white-space:nowrap}
+  .price span{font-size:11px;color:var(--mist);white-space:nowrap}
+
+  .table{margin-top:16px;flex:1;border-radius:8px;padding:10px;
+    display:flex;flex-direction:column;
+    background:rgba(2,8,19,.7);
+    border:1px solid color-mix(in srgb, var(--white) 10%, transparent)}
+  .table .bar{display:flex;align-items:center;gap:5px;
+    font-size:9px;color:var(--mist);margin-bottom:8px}
+  .table .bar u{width:5px;height:5px;border-radius:50%;
+    background:color-mix(in srgb, var(--white) 22%, transparent)}
+  .rows{flex:1;display:flex;flex-direction:column;gap:6px}
+  .row{flex:1;display:flex;align-items:center;gap:8px;padding:6px 9px;
+    border-radius:6px;font-size:10px;
+    background:color-mix(in srgb, var(--acc) 9%, transparent);
+    border:1px solid color-mix(in srgb, var(--acc) 22%, transparent)}
+  .row em{flex:0 0 auto;width:15px;height:15px;border-radius:5px;
+    display:flex;align-items:center;justify-content:center;font-style:normal;
+    font-size:9px;font-weight:800;color:var(--ink);background:var(--acc)}
+  .row span{flex:1}
+  /* Значение справа — акцентным неоном со свечением. */
+  .row b{font-size:10px;color:var(--acc);
+    text-shadow:0 0 8px color-mix(in srgb, var(--acc) 45%, transparent)}
+
+  .cta{margin-top:14px;padding:10px 12px;border-radius:9px;
+    border:2px solid var(--acc);display:flex;align-items:center;
+    justify-content:space-between;
+    box-shadow:0 0 22px color-mix(in srgb, var(--acc) 24%, transparent)}
+  .cta b{font-size:12px;font-weight:800;letter-spacing:.08em;
+    text-transform:uppercase}
+  .cta span{font-size:10px;color:var(--acc)}
+</style>
+</head>
+<body>
+  <div class="scene">
+    <div class="book">
+      <div class="eyebrow">Сайты · Кавминводы</div>
+      <div class="title">Сайт-лендинг</div>
+
+      <div class="price"><b>от 35 000 ₽</b><span>запуск от 7 дней</span></div>
+
+      <div class="table">
+        <div class="bar"><u></u><u></u><u></u>Что получаете при сдаче</div>
+        <div class="rows">
+          <div class="row"><em>✓</em><span>Согласие на обработку данных</span><b>есть</b></div>
+          <div class="row"><em>✓</em><span>Заявка уходит в Telegram</span><b>да</b></div>
+          <div class="row"><em>✓</em><span>Исходники и доступы</span><b>вам</b></div>
+          <div class="row"><em>✓</em><span>Абонентская плата за сайт</span><b>нет</b></div>
+        </div>
+      </div>
+
+      <div class="cta"><b>Оставить заявку</b><span>vibe-digital999.ru</span></div>
+    </div>
+  </div>
+</body>
+</html>
