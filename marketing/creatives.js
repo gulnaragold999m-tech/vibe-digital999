@@ -194,8 +194,13 @@ const MOCKS = {
     <div class="mock-win">
       <div class="mock-bar"><i></i><i></i><i></i><span>Отчёт по сайту</span></div>
       <div class="mock-body audit">
-        <div class="au bad"><em>!</em><span>Форма собирает данные без согласия</span><b>до 300 000 ₽</b></div>
-        <div class="au bad"><em>!</em><span>Нет политики конфиденциальности</span><b>до 60 000 ₽</b></div>
+        <!-- Штрафы — ровно те, что в таблице на /uslugi/seo-audit-152fz/
+             и на главной. 13.08.2026 здесь стояли 300 000 и 60 000: первое
+             из другой части статьи, второе просто устарело. Расхождение
+             с собственным сайтом в рекламе аудита по 152-ФЗ — это первое,
+             на что укажет клиент. -->
+        <div class="au bad"><em>!</em><span>В форме нет галочки согласия</span><b>до 700 000 ₽</b></div>
+        <div class="au bad"><em>!</em><span>Нет политики конфиденциальности</span><b>до 100 000 ₽</b></div>
         <div class="au ok"><em>✓</em><span>Скорость загрузки в норме</span></div>
         <div class="au ok"><em>✓</em><span>robots.txt и sitemap.xml на месте</span></div>
       </div>

@@ -488,6 +488,65 @@ function validate() {
   console.log('   Правится в src/pages.js.\n');
 }
 
+/* ── Проверка цен ────────────────────────────────────────────────
+   Цена живёт в трёх местах: в прайсе бота (`api/brief.js`), в блоке
+   прайса на главной и в квиз-калькуляторе там же. Три копии одного
+   числа — и они разъезжаются.
+
+   13.08.2026 разъехались молча: квиз обещал лендинг «от 25 000 ₽»,
+   прайс на той же странице — «от 35 000 ₽», бот в ВК — тоже 35 000.
+   Человек проходил квиз и получал цифру, которой нет больше нигде.
+   Заметила владелица, а не проверка, — значит проверки не хватало.
+
+   Ловим самое дорогое: нижнюю границу калькулятора, которой нет
+   в прайсе бота. Верхнюю не проверяем — это конец вилки, отдельной
+   цены за ним не стоит. */
+function validatePrices() {
+  let brief, index;
+  try {
+    brief = read(__dirname, 'api', 'brief.js');
+    index = read(OUT, 'index.html');
+  } catch {
+    return;                            // нет файла — молчим, это не наша беда
+  }
+
+  const botPrices = new Set(
+    (brief.match(/(\d[\d  ]*\d)\s*₽/g) || [])
+      .map((m) => Number(m.replace(/[^\d]/g, '')))
+      .filter(Boolean),
+  );
+
+  const base = index.match(/const BASE = \{[\s\S]*?\};/);
+  if (!base) {
+    console.log('⚠ Проверка цен: калькулятор на главной не найден.');
+    return;
+  }
+
+  const problems = [];
+  for (const line of base[0].split('\n')) {
+    const kind = line.match(/^\s*(\w+):/);
+    const min = line.match(/min:\s*(\d+)/);
+    if (!kind || !min) continue;
+    const value = Number(min[1]);
+    if (value === 0) continue;         // «считаем по брифу» — цены нет
+    if (!botPrices.has(value)) {
+      problems.push(
+        `калькулятор, «${kind[1]}»: нижняя граница ${value.toLocaleString('ru-RU')} ₽ ` +
+        'не встречается в прайсе бота api/brief.js',
+      );
+    }
+  }
+
+  if (!problems.length) {
+    console.log('Проверка цен: калькулятор совпадает с прайсом бота.');
+    return;
+  }
+  console.log(`\n⚠ Проверка цен — расхождений: ${problems.length}`);
+  problems.forEach((p) => console.log('   •', p));
+  console.log('   Цена меняется В ТРЁХ МЕСТАХ: api/brief.js, блок прайса');
+  console.log('   на главной и BASE в квизе — там же, в public/index.html.\n');
+}
+
 /* ── Запуск ──────────────────────────────────────────────────── */
 function main() {
   let built = 0;
@@ -520,6 +579,7 @@ function main() {
 
   console.log(`\nСобрано страниц: ${built}. Карта сайта и llms.txt обновлены.`);
   validate();
+  validatePrices();
 }
 
 main();
