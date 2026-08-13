@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>3D-коробка на неоновой плате — рабочий пример</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  /* ── Настройки под проект ──────────────────────────────────
+     --acc / --acc2  неон карточки
+     --shir/--vys/--glub  габариты коробки
+     --pol           ПОЛОВИНА глубины, от неё собираются грани
+     --shov          высота линии сгиба от верхнего ребра        */
+  :root{
+    --ink:#04060C; --white:#E8F0FF; --mist:#8A9BC4;
+    --acc:#8B5CF6; --acc2:#3B82F6;
+    --shir:300px; --vys:400px; --glub:110px; --pol:55px;
+    --shov:46px;
+  }
+
+  body{min-height:100vh;background:var(--ink);color:var(--white);
+    font-family:'Manrope','Segoe UI',system-ui,sans-serif;
+    display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+  /* ── СЦЕНА ─────────────────────────────────────────────────
+     perspective-origin выше середины — иначе крышку не видно. */
+  .box-scene{position:relative;width:100%;height:100vh;
+    perspective:2000px;perspective-origin:50% 8%;
+    display:flex;align-items:center;justify-content:center}
+
+  /* ── ПЛАТА ─────────────────────────────────────────────────
+     Кладётся в горизонт поворотом по X. Края растворяются маской,
+     иначе прямоугольник платы обрубается по границе кадра. */
+  .circuit-floor{position:absolute;z-index:0;
+    width:1080px;height:780px;left:50%;top:64%;
+    transform:translate(-50%,-50%) rotateX(75deg);
+    -webkit-mask-image:radial-gradient(circle at 50% 50%, #000 38%, transparent 78%);
+    mask-image:radial-gradient(circle at 50% 50%, #000 38%, transparent 78%)}
+  .circuit-floor svg{width:100%;height:100%;
+    filter:drop-shadow(0 0 12px color-mix(in srgb, var(--acc) 55%, transparent))}
+
+  /* ── КАРКАС ────────────────────────────────────────────────
+     Поворачивается целиком. Грани внутри только выдвигаются
+     на половину глубины и поворачиваются вокруг своего ребра. */
+  .main-box{position:relative;z-index:1;
+    width:var(--shir);height:var(--vys);
+    transform-style:preserve-3d;
+    transform:rotateX(12deg) rotateY(-28deg)}
+
+  .box-face{position:absolute;
+    background:linear-gradient(155deg,#161A22 0%,#0C1017 55%,#070A10 100%)}
+
+  /* ШОВ ОТКИДНОГО КОЛПАКА. Одна переменная высоты на лицо и бок:
+     двумя числами линии разъедутся, и колпак развалится
+     на ступеньку. Тёмная прорезь плюс светлый блик под ней. */
+  .shov{
+    background-image:linear-gradient(180deg,
+      transparent 0 calc(var(--shov) - 2px),
+      rgba(0,0,0,.7)        calc(var(--shov) - 2px) var(--shov),
+      rgba(255,255,255,.12) var(--shov) calc(var(--shov) + 2px),
+      transparent calc(var(--shov) + 2px))}
+
+  /* 1. ЛИЦО */
+  .face-front{width:var(--shir);height:var(--vys);left:0;top:0;
+    transform:translate3d(0,0,var(--pol));
+    padding:calc(var(--shov) + 22px) 22px 20px;
+    display:flex;flex-direction:column;
+    box-shadow:inset 1px 1px 0 rgba(255,255,255,.2)}
+
+  /* 2. ЛЕВЫЙ БОК.
+     ВНИМАНИЕ: translateZ обязателен и стоит ДО поворота. Без него
+     грань повиснет на полглубины в стороне от лица; если поменять
+     порядок — сдвиг пойдёт по уже повёрнутой оси и грань улетит вбок. */
+  .face-left{width:var(--glub);height:var(--vys);left:0;top:0;
+    transform-origin:left center;
+    transform:translateZ(var(--pol)) rotateY(-90deg);
+    background-image:linear-gradient(90deg, rgba(255,255,255,.05), transparent 60%),
+      linear-gradient(180deg,#12161E 0%,#0A0E14 100%);
+    display:flex;align-items:center;justify-content:center}
+  /* Бок обращён к зрителю изнанкой: без rotateY(180deg) буквы
+     зеркалятся. rotate(180deg) здесь НЕ помогает — он переворачивает
+     строку, но зеркало оставляет. */
+  .face-left span{writing-mode:vertical-lr;transform:rotateY(180deg);
+    white-space:nowrap;font-size:13px;font-weight:800;letter-spacing:.24em;
+    color:rgba(255,255,255,.5)}
+
+  /* 3. ВЕРХНЯЯ КРЫШКА */
+  .face-top{width:var(--shir);height:var(--glub);left:0;top:0;
+    transform-origin:center top;
+    transform:translateZ(var(--pol)) rotateX(90deg);
+    background-image:linear-gradient(180deg, rgba(255,255,255,.12), transparent 55%),
+      linear-gradient(160deg,#1B212C 0%,#10151D 60%,#0A0E14 100%);
+    display:flex;align-items:center;justify-content:center}
+  /* Крышка после поворота видна с обратной стороны плоскости:
+     содержимое переворачивается по вертикали, и «V» читается как «Λ». */
+  .face-top svg{width:104px;height:104px;transform:rotateX(180deg);
+    filter:drop-shadow(0 0 12px color-mix(in srgb, var(--acc) 85%, transparent))}
+
+  /* 4. ПОДИУМ — это НИЖНЯЯ ГРАНЬ коробки, а не отдельный прямоугольник
+     на полу: гранью он лежит ровно под дном при любом развороте.
+     Шире дна, иначе коробка его полностью закрывает. */
+  .face-bottom{width:calc(var(--shir) + 90px);height:calc(var(--glub) + 90px);
+    left:-45px;top:100%;
+    transform-origin:top center;
+    transform:translateZ(var(--pol)) rotateX(-90deg) translateY(-45px);
+    background:color-mix(in srgb, var(--acc) 10%, transparent);
+    border:2px solid color-mix(in srgb, var(--acc) 85%, transparent);
+    border-radius:16px;
+    box-shadow:0 0 20px color-mix(in srgb, var(--acc) 85%, transparent),
+               0 0 60px color-mix(in srgb, var(--acc2) 55%, transparent),
+               inset 0 0 24px color-mix(in srgb, var(--acc2) 60%, transparent)}
+
+  /* ── Содержимое лица ───────────────────────────────────── */
+  .marka{font-size:10px;font-weight:800;letter-spacing:.3em;
+    color:rgba(255,255,255,.62)}
+  .glavnoe{margin:auto 0;display:flex;flex-direction:column;gap:12px}
+  h1{font-size:26px;line-height:1.04;font-weight:800;
+    text-shadow:0 0 10px var(--acc), 0 0 20px var(--acc2)}
+  .cena{display:inline-flex;align-self:flex-start;align-items:baseline;gap:8px;
+    padding:7px 12px;border-radius:10px;
+    border:2px solid color-mix(in srgb, var(--acc) 62%, transparent);
+    background:color-mix(in srgb, var(--acc) 14%, transparent);
+    box-shadow:0 0 18px color-mix(in srgb, var(--acc) 30%, transparent)}
+  .cena b{font-size:18px;font-weight:800}
+  .cena span{font-size:11px;color:var(--mist)}
+  .niz{font-size:11px;line-height:1.4;color:rgba(255,255,255,.62)}
+</style>
+</head>
+<body>
+  <div class="box-scene">
+
+    <!-- Плата. Дорожки прямыми с прямыми углами и площадками
+         на концах — так рисуют разводку, и так она узнаётся. -->
+    <div class="circuit-floor">
+      <svg viewBox="0 0 1400 1000" preserveAspectRatio="xMidYMid slice" fill="none">
+        <defs>
+          <linearGradient id="pl" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#22D3EE"/>
+            <stop offset="100%" stop-color="#A855F7"/>
+          </linearGradient>
+        </defs>
+        <rect x="80" y="80" width="1240" height="840" rx="24"
+              stroke="url(#pl)" stroke-width="3" opacity=".5"/>
+        <path d="M110 500 H280 V280 H580 V160" stroke="url(#pl)" stroke-width="5"/>
+        <path d="M110 600 H340 V720 H660 V840" stroke="url(#pl)" stroke-width="5"/>
+        <path d="M1290 480 H1100 V280 H840 V170" stroke="url(#pl)" stroke-width="5"/>
+        <path d="M1290 620 H1050 V760 H780 V860" stroke="url(#pl)" stroke-width="5"/>
+        <path d="M280 280 V110 H720" stroke="url(#pl)" stroke-width="5"/>
+        <path d="M1100 280 V130 H800" stroke="url(#pl)" stroke-width="5"/>
+        <g stroke="url(#pl)" stroke-width="4" fill="none">
+          <circle cx="280" cy="280" r="10"/><circle cx="580" cy="160" r="10"/>
+          <circle cx="340" cy="720" r="10"/><circle cx="660" cy="840" r="10"/>
+          <circle cx="1100" cy="280" r="10"/><circle cx="840" cy="170" r="10"/>
+          <circle cx="1050" cy="760" r="10"/><circle cx="780" cy="860" r="10"/>
+        </g>
+        <!-- Импульсы. В статичной картинке анимации не видно, поэтому
+             они расставлены как остановленный кадр. -->
+        <g fill="#EAFBFF">
+          <circle cx="280" cy="420" r="7"/><circle cx="500" cy="160" r="7"/>
+          <circle cx="340" cy="800" r="7"/><circle cx="1100" cy="200" r="7"/>
+          <circle cx="1050" cy="700" r="7"/><circle cx="800" cy="170" r="7"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="main-box">
+      <div class="box-face face-bottom"></div>
+      <div class="box-face face-left shov"><span>ПАКЕТ Старт</span></div>
+      <div class="box-face face-top">
+        <svg viewBox="0 0 130 120" fill="none">
+          <defs>
+            <linearGradient id="vd" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#22D3EE"/>
+              <stop offset="55%" stop-color="#6366F1"/>
+              <stop offset="100%" stop-color="#A855F7"/>
+            </linearGradient>
+          </defs>
+          <circle cx="65" cy="60" r="54" stroke="url(#vd)" stroke-width="2.5" opacity=".75"/>
+          <path d="M26 30 L52 90 L78 30" stroke="url(#vd)" stroke-width="12"
+                stroke-linejoin="miter"/>
+          <path d="M68 30 L68 90 M68 30 H80 A30 30 0 0 1 80 90 H68"
+                stroke="url(#vd)" stroke-width="12" stroke-linejoin="miter"/>
+        </svg>
+      </div>
+      <div class="box-face face-front shov">
+        <div class="marka">ВАЙБ ДИДЖИТАЛ 999</div>
+        <div class="glavnoe">
+          <h1>WEB-РАЗРАБОТКА</h1>
+          <div class="cena"><b>от 50 000 ₽</b><span>от 10 дней</span></div>
+        </div>
+        <div class="niz">Лендинг «Старт» / Лид-бот</div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
