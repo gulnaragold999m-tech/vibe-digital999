@@ -15,6 +15,42 @@ rm -f .git/claude-journal-reminded 2>/dev/null || true
 
 BRANCH=$(git branch --show-current 2>/dev/null || echo 'неизвестна')
 
+# Свежесть трёх файлов памяти хук считает САМ.
+#
+# ЗАЧЕМ. Раньше в памятке стояла просьба «проверь, не обновляли ли правила
+# в другой ветке». Просьбу можно не выполнить, и её не выполняли: 12.08.2026
+# соседний чат читал журнал своей ветки, а он кончался 10 августа, и доложил
+# владелице, что работа за 11-е не записана. Записана — в другой ветке.
+# Просьба заменена на факт: хук сравнивает файл в этой ветке со всеми
+# ветками origin и печатает, где лежит свежий.
+timeout 20 git fetch --quiet origin >/dev/null 2>&1 || true
+
+svezhee() {  # $1 — имя файла; печатает строку предупреждения или ничего
+  local file="$1" ref ts best_ref='' best_ts=0
+  [ -f "$file" ] || return 0
+  while read -r ref; do
+    ts=$(git log -1 --format='%ct' "$ref" -- "$file" 2>/dev/null || true)
+    [ -z "$ts" ] && continue
+    if [ "$ts" -gt "$best_ts" ]; then best_ts="$ts"; best_ref="$ref"; fi
+  done < <(git for-each-ref --format='%(refname:short)' refs/remotes/origin 2>/dev/null | grep -v 'HEAD$' || true)
+  [ -z "$best_ref" ] && return 0
+  # Сравниваем по содержимому, а не по дате: одинаковый файл в двух ветках
+  # не повод для тревоги, даже если коммиты разного возраста.
+  git show "$best_ref:$file" 2>/dev/null | cmp -s - "$file" && return 0
+  local kogda
+  kogda=$(git log -1 --date=format:'%d.%m %H:%M' --format='%cd' "$best_ref" -- "$file" 2>/dev/null || echo '?')
+  printf '   %s — свежее в %s (%s). Прочитать: git show %s:%s\n' \
+    "$file" "$best_ref" "$kogda" "$best_ref" "$file"
+}
+
+USTARELO=$( { svezhee CLAUDE.md; svezhee STATUS.md; svezhee TASKS.md; } 2>/dev/null || true)
+if [ -n "$USTARELO" ]; then
+  PUNKT2=$(printf 'В ТВОЕЙ ВЕТКЕ УСТАРЕВШАЯ ПАМЯТЬ. Свежее лежит в другой ветке:\n\n%s\n   Работай по свежей версии, свою последней не считай.' "$USTARELO")
+else
+  PUNKT2='Все три файла памяти в твоей ветке — самые свежие из всех веток.
+   Проверил хук, перепроверять не нужно.'
+fi
+
 # Живую ветку не вписываем сюда числом: она меняется. Берём строкой
 # из STATUS.md — обновили там, обновилось и здесь.
 # Берём ровно одно предложение — до первой точки. Строка в STATUS.md
@@ -31,9 +67,7 @@ MEMO=$(cat <<TXT
    карта веток), TASKS.md (журнал по дням, где остановились).
    Не спрашивай владелицу про устройство проекта — всё записано там.
 
-2. Правила могли обновить в другой ветке. Проверь у себя:
-   git fetch origin && git log --all -1 --format='%h %d' -- CLAUDE.md
-   Нашлась свежее — работай по ней, свою не считай последней.
+2. ${PUNKT2}
 
 3. ${LIVE}
    main на сайт не выкатывать: там вторая, лишняя система сборки.
