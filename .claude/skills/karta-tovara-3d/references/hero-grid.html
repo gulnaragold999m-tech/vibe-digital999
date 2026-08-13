@@ -75,41 +75,54 @@
   /* ── ВИТРИНА: ТРИ КОРОБКИ ──────────────────────────────── */
   /* overflow:visible и здесь, и на ячейке: неоновые подиумы выходят
      за габариты коробок, левый край колонки срезал бы крайний. */
-  .boxes-showcase{display:grid;grid-template-columns:repeat(3,1fr);
+  .boxes-showcase{position:relative;perspective:1400px;
+    display:grid;grid-template-columns:repeat(3,1fr);
     gap:2rem;align-items:end;overflow:visible}
 
   /* Ячейка витрины. overflow:visible обязателен: подиум и свечение
      выходят за габариты коробки, и при overflow:hidden их срезало бы
      по краю ячейки — коробка осталась бы без света под дном. */
-  .box-cell{display:flex;flex-direction:column;align-items:center;gap:1.1rem;
+  .box-cell{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:1.1rem;
     overflow:visible}
   .box-scene{position:relative;width:100%;height:calc(var(--vys) + 90px);
     perspective:2000px;perspective-origin:50% 8%;
     display:flex;align-items:center;justify-content:center;
     overflow:visible}
 
-  /* ПЛАТА ПОД КОРОБКОЙ. Своя в каждой ячейке и своим цветом: одна общая
-     на всю витрину не легла бы под три коробки одновременно — они стоят
-     на разной высоте от края ячейки.
+  /* ОДНА ПЛАТА НА ВСЮ ВИТРИНУ, а не три отдельные.
 
-     Дорожки нарисованы ВСТРОЕННЫМ svg, а не картинкой в data-URI:
-     встроенный умеет читать переменную --neon и краситься под пакет,
-     а data-URI получил бы один цвет на всех. */
+     Так и должно быть по смыслу: пакеты стоят на общей плате, и ток
+     идёт МЕЖДУ ними — это передача данных, а не три изолированных
+     подставки. Сайт разработчиков, связи важнее декора.
+
+     Язык взят с фона главной: там «живой граф связей», где по линиям
+     между узлами пробегают искры. Здесь то же самое, только сеть
+     не случайная, а разводка платы. Палитра оттуда же — циан,
+     сапфир, светлый лёд. */
   .circuit-floor{position:absolute;z-index:0;
-    left:50%;bottom:4px;width:210%;height:150px;
+    left:50%;bottom:112px;width:142%;height:460px;
     transform-origin:center bottom;
-    /* ПРАВИЛО ДЛЯ ВСЕХ ШИРИН, найдено на мобильной версии:
-       82° вместо 75 — плата лежит горизонтально и уходит вглубь,
-       а не торчит вверх; сдвиг назад по Z до поворота — дальний край
-       не задирается и не пересекает тело коробки; translateY даёт
-       зазор между дном и платой, чтобы полигоны не врезались.
-       Порядок в строке важен: сдвиги ДО поворота. */
+    /* Сдвиги ДО поворота: после поворота они пошли бы по повёрнутой оси
+       и увели бы плату вбок. Третий раз за день эта же ловушка. */
     transform:translateX(-50%) translateZ(-140px) translateY(15px) rotateX(82deg);
-    -webkit-mask-image:radial-gradient(ellipse at 50% 60%, #000 30%, transparent 75%);
-    mask-image:radial-gradient(ellipse at 50% 60%, #000 30%, transparent 75%);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 52%, #000 44%, transparent 86%);
+    mask-image:radial-gradient(ellipse at 50% 52%, #000 44%, transparent 86%);
     pointer-events:none}
   .circuit-floor svg{width:100%;height:100%;
-    filter:drop-shadow(0 0 8px color-mix(in srgb, var(--neon) 65%, transparent))}
+    filter:drop-shadow(0 0 14px rgba(45,156,255,.75))}
+
+  /* ТОК ПО ДОРОЖКАМ. Искра — короткий штрих, который едет по всей длине
+     линии: пунктир из одного короткого сегмента и длинного пробела,
+     и сдвиг этого пунктира анимацией. Это единственный способ пустить
+     свет вдоль произвольной кривой без скриптов. */
+  .tok{stroke-dasharray:26 340;animation:tok 3.4s linear infinite}
+  .tok-2{animation-delay:-1.1s;animation-duration:4.1s}
+  .tok-3{animation-delay:-2.2s;animation-duration:3.7s}
+  .tok-4{animation-delay:-.6s;animation-duration:4.6s}
+  @keyframes tok{
+    from{stroke-dashoffset:366}
+    to{stroke-dashoffset:0}
+  }
 
   .main-box{z-index:1}
 
@@ -218,7 +231,15 @@
        набраны в rem и читаются и так. */
     /* Плата на телефоне уже экрана, но НЕ выключается: без дорожек
        коробка теряет связь с окружением, остаётся пустая рамка. */
-    .circuit-floor{width:150%;height:130px}
+    /* На телефоне коробки идут столбиком, и общая плата под ними
+       лечь не может — она стала бы полоской в пару пикселей. Кладём
+       её ЗА столбик плоско: разводка читается фоном, ток по ней идёт
+       тот же. Гнёзда при этом остаются под каждой коробкой своими
+       неоновыми рамками нижней грани. */
+    .circuit-floor{bottom:auto;top:0;height:100%;width:150%;
+      transform:translateX(-50%);opacity:.5;
+      -webkit-mask-image:radial-gradient(ellipse at 50% 50%, #000 30%, transparent 80%);
+      mask-image:radial-gradient(ellipse at 50% 50%, #000 30%, transparent 80%)}
 
     .f-marka{font-size:9px;letter-spacing:3px}
     .f-title{font-size:21px}
@@ -231,6 +252,7 @@
   /* Уважаем настройку «уменьшить движение»: свечения и размытия
      на слабом телефоне дороги, а пользы от них там немного. */
   @media (prefers-reduced-motion:reduce){
+    .tok{animation:none;stroke-dasharray:none;opacity:.35}
     .face-bottom{box-shadow:0 0 12px color-mix(in srgb, var(--neon) 60%, transparent)}
     .oreol{filter:none}
   }
@@ -257,28 +279,53 @@
     </div>
 
     <div class="boxes-showcase">
+      <div class="circuit-floor">
+        <svg viewBox="0 0 1200 400" fill="none" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="plata" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#00F0FF"/>
+              <stop offset="50%" stop-color="#2D9CFF"/>
+              <stop offset="100%" stop-color="#8B5CF6"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Гнёзда: под каждой коробкой своя площадка -->
+          <g stroke="url(#plata)" stroke-width="4" opacity=".7">
+            <rect x="110" y="120" width="180" height="120" rx="10"/>
+            <rect x="510" y="120" width="180" height="120" rx="10"/>
+            <rect x="910" y="120" width="180" height="120" rx="10"/>
+          </g>
+
+          <!-- Разводка: гнёзда соединены между собой и уходят за кадр -->
+          <g stroke="url(#plata)" stroke-width="5" opacity=".95">
+            <path id="d1" d="M290 180 H510"/>
+            <path id="d2" d="M690 180 H910"/>
+            <path id="d3" d="M200 240 V330 H600 V330 H1000 V240"/>
+            <path id="d4" d="M200 120 V50 H600 V50 H1000 V120"/>
+            <path d="M0 300 H110 V240"/>
+            <path d="M1200 300 H1090 V240"/>
+            <path d="M0 90 H60 V180 H110"/>
+            <path d="M1200 90 H1140 V180 H1090"/>
+          </g>
+
+          <g stroke="url(#plata)" stroke-width="4" fill="none" opacity=".9">
+            <circle cx="200" cy="330" r="9"/><circle cx="600" cy="330" r="9"/>
+            <circle cx="1000" cy="330" r="9"/><circle cx="600" cy="50" r="9"/>
+          </g>
+
+          <!-- Ток. Те же линии поверх, но пунктиром, который едет. -->
+          <g stroke="#EAFBFF" stroke-width="7" stroke-linecap="round">
+            <path class="tok"        d="M290 180 H510"/>
+            <path class="tok tok-2"  d="M690 180 H910"/>
+            <path class="tok tok-3"  d="M200 240 V330 H600 V330 H1000 V240"/>
+            <path class="tok tok-4"  d="M200 120 V50 H600 V50 H1000 V120"/>
+          </g>
+        </svg>
+      </div>
+
 
       <div class="box-cell" style="--neon:#8B5CF6;--neon2:#3B82F6">
         <div class="box-scene">
-          <div class="circuit-floor">
-            <svg viewBox="0 0 600 420" fill="none" stroke="var(--neon)">
-              <path d="M40 250 H150 V130 H300 V60" stroke-width="4"/>
-              <path d="M40 320 H190 V370 H330 V410" stroke-width="4"/>
-              <path d="M560 240 H450 V130 H330 V60" stroke-width="4"/>
-              <path d="M560 330 H420 V380 H330 V410" stroke-width="4"/>
-              <path d="M150 130 V40 H260" stroke-width="4"/>
-              <path d="M450 130 V50 H360" stroke-width="4"/>
-              <g stroke-width="4">
-                <circle cx="150" cy="130" r="8"/><circle cx="300" cy="60" r="8"/>
-                <circle cx="190" cy="370" r="8"/><circle cx="450" cy="130" r="8"/>
-                <circle cx="420" cy="380" r="8"/><circle cx="330" cy="60" r="8"/>
-              </g>
-              <g fill="#EAFBFF" stroke="none">
-                <circle cx="150" cy="200" r="6"/><circle cx="450" cy="200" r="6"/>
-                <circle cx="260" cy="40" r="6"/><circle cx="420" cy="330" r="6"/>
-              </g>
-            </svg>
-          </div>
           <div class="main-box">
             <div class="box-face face-bottom"></div>
             <div class="box-face face-left shov"><span>ПАКЕТ Старт</span></div>
@@ -308,25 +355,6 @@
 
       <div class="box-cell" style="--neon:#22D3EE;--neon2:#2D9CFF">
         <div class="box-scene">
-          <div class="circuit-floor">
-            <svg viewBox="0 0 600 420" fill="none" stroke="var(--neon)">
-              <path d="M40 250 H150 V130 H300 V60" stroke-width="4"/>
-              <path d="M40 320 H190 V370 H330 V410" stroke-width="4"/>
-              <path d="M560 240 H450 V130 H330 V60" stroke-width="4"/>
-              <path d="M560 330 H420 V380 H330 V410" stroke-width="4"/>
-              <path d="M150 130 V40 H260" stroke-width="4"/>
-              <path d="M450 130 V50 H360" stroke-width="4"/>
-              <g stroke-width="4">
-                <circle cx="150" cy="130" r="8"/><circle cx="300" cy="60" r="8"/>
-                <circle cx="190" cy="370" r="8"/><circle cx="450" cy="130" r="8"/>
-                <circle cx="420" cy="380" r="8"/><circle cx="330" cy="60" r="8"/>
-              </g>
-              <g fill="#EAFBFF" stroke="none">
-                <circle cx="150" cy="200" r="6"/><circle cx="450" cy="200" r="6"/>
-                <circle cx="260" cy="40" r="6"/><circle cx="420" cy="330" r="6"/>
-              </g>
-            </svg>
-          </div>
           <div class="main-box">
             <div class="box-face face-bottom"></div>
             <div class="box-face face-left shov"><span>ПАКЕТ Поток</span></div>
@@ -356,25 +384,6 @@
 
       <div class="box-cell" style="--neon:#FF4D7D;--neon2:#A855F7">
         <div class="box-scene">
-          <div class="circuit-floor">
-            <svg viewBox="0 0 600 420" fill="none" stroke="var(--neon)">
-              <path d="M40 250 H150 V130 H300 V60" stroke-width="4"/>
-              <path d="M40 320 H190 V370 H330 V410" stroke-width="4"/>
-              <path d="M560 240 H450 V130 H330 V60" stroke-width="4"/>
-              <path d="M560 330 H420 V380 H330 V410" stroke-width="4"/>
-              <path d="M150 130 V40 H260" stroke-width="4"/>
-              <path d="M450 130 V50 H360" stroke-width="4"/>
-              <g stroke-width="4">
-                <circle cx="150" cy="130" r="8"/><circle cx="300" cy="60" r="8"/>
-                <circle cx="190" cy="370" r="8"/><circle cx="450" cy="130" r="8"/>
-                <circle cx="420" cy="380" r="8"/><circle cx="330" cy="60" r="8"/>
-              </g>
-              <g fill="#EAFBFF" stroke="none">
-                <circle cx="150" cy="200" r="6"/><circle cx="450" cy="200" r="6"/>
-                <circle cx="260" cy="40" r="6"/><circle cx="420" cy="330" r="6"/>
-              </g>
-            </svg>
-          </div>
           <div class="main-box">
             <div class="box-face face-bottom"></div>
             <div class="box-face face-left shov"><span>ПАКЕТ Система</span></div>
