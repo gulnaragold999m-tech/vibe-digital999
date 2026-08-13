@@ -98,12 +98,15 @@
   .circuit-floor{position:absolute;z-index:0;
     left:50%;bottom:4px;width:210%;height:150px;
     transform-origin:center bottom;
-    /* Сдвиг НАЗАД до поворота: иначе дальний край платы задирается
-       и ложится поверх коробки, перечёркивая строку состава.
-       Угол ближе к плоскому — плата меньше поднимается по экрану. */
-    transform:translateX(-50%) translateZ(-70px) rotateX(80deg);
-    -webkit-mask-image:radial-gradient(ellipse at 50% 62%, #000 26%, transparent 74%);
-    mask-image:radial-gradient(ellipse at 50% 62%, #000 26%, transparent 74%);
+    /* ПРАВИЛО ДЛЯ ВСЕХ ШИРИН, найдено на мобильной версии:
+       82° вместо 75 — плата лежит горизонтально и уходит вглубь,
+       а не торчит вверх; сдвиг назад по Z до поворота — дальний край
+       не задирается и не пересекает тело коробки; translateY даёт
+       зазор между дном и платой, чтобы полигоны не врезались.
+       Порядок в строке важен: сдвиги ДО поворота. */
+    transform:translateX(-50%) translateZ(-140px) translateY(15px) rotateX(82deg);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 60%, #000 30%, transparent 75%);
+    mask-image:radial-gradient(ellipse at 50% 60%, #000 30%, transparent 75%);
     pointer-events:none}
   .circuit-floor svg{width:100%;height:100%;
     filter:drop-shadow(0 0 8px color-mix(in srgb, var(--neon) 65%, transparent))}
