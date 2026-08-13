@@ -1,0 +1,40 @@
+{# ============================================================
+   ЭТАЛОННЫЙ БЛОК СЧЁТЧИКА — granat-kmv.ru, счётчик 110961373
+
+   На сайте счётчик УЖЕ СТОИТ. Этот файл нужен только в одном
+   случае: если код счётчика скопирован в каждый шаблон руками.
+   Тогда его выносят сюда и подключают одной строкой в <head>:
+
+       {% include 'partials/metrika.html' %}
+
+   Так правка делается в одном месте и не расходится по страницам.
+   Если счётчик уже стоит в общем base.html — этот файл не нужен,
+   ничего не трогать.
+   ============================================================ #}
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+  (function (m, e, t, r, i, k, a) {
+    m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+    m[i].l = 1 * new Date();
+    for (var j = 0; j < e.scripts.length; j++) { if (e.scripts[j].src === r) { return; } }
+    k = e.createElement(t); a = e.getElementsByTagName(t)[0];
+    k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
+  })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+  // Вебвизор включается только при уже данном согласии на куки.
+  // ВНИМАНИЕ: имя ключа взять из существующего кода баннера на сайте,
+  // не выдумывать новое — иначе согласие перестанет учитываться.
+  var ymConsent = false;
+  try { ymConsent = localStorage.getItem('cookie_consent') === 'yes'; } catch (e) {}
+
+  ym(110961373, 'init', {
+    clickmap: true,
+    trackLinks: true,
+    accurateTrackBounce: true,
+    webvisor: ymConsent,
+    trackHash: false
+  });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/110961373" style="position:absolute;left:-9999px" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
