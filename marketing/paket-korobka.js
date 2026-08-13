@@ -51,7 +51,7 @@ const OUT = path.join(__dirname, 'out');
 
 /* Пропорции коробки взяты из задания владелицы — 280×380×100 — и
    пересчитаны под наш холст с тем же отношением сторон. */
-const SHIR = 560, VYS = 760, GLUB = 200;
+const SHIR = 560, VYS = 740, GLUB = 260;
 
 /* Заголовок на лице и цвета — единственное, что задаётся здесь.
    Название пакета, состав, срок и цена берутся из src/prices.js. */
@@ -61,24 +61,91 @@ const PAKETY = {
   sistema: { zagolovok: 'СИСТЕМА ПОД КЛЮЧ', acc: '#FF4D7D', acc2: '#A855F7' },
 };
 
-/* Монограмма на крышке. Рисуется линиями, а не шрифтом: футуристичного
-   шрифта у нас в проекте нет, а тащить чужой файл — это лицензия
-   и лишние килобайты ради двух букв. Геометрия читается «хай-теком»
-   лучше, чем любой текстовый глиф в нашем Manrope. */
-const MONOGRAMMA = `
-  <svg viewBox="0 0 120 120" fill="none"
-       stroke="rgba(255,255,255,.92)" stroke-width="3"
-       stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="60" cy="60" r="46" stroke-width="2" opacity=".85"/>
-    <path d="M34 44 L47 76 L60 44"/>
-    <path d="M70 44 L70 76 L79 76 A16 16 0 0 0 79 44 Z"/>
+/* ЛОГОТИП VD — по фирменному знаку, который прислала владелица:
+   толстая «V» и сцепленная с ней «D», градиент от голубого
+   к фиолетовому, свечение по контуру.
+
+   Рисуется линиями в SVG, а не шрифтом: футуристичного шрифта
+   в проекте нет, а тащить чужой файл ради двух букв — это лицензия
+   и лишние килобайты. Знак геометрический, поэтому линии дают
+   то же, что дал бы шрифт. */
+const LOGO = (id) => `
+  <svg viewBox="0 0 130 120" fill="none">
+    <defs>
+      <linearGradient id="vd${id}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#22D3EE"/>
+        <stop offset="55%" stop-color="#6366F1"/>
+        <stop offset="100%" stop-color="#A855F7"/>
+      </linearGradient>
+    </defs>
+    <circle cx="65" cy="60" r="54" stroke="url(#vd${id})" stroke-width="2.5" opacity=".75"/>
+    <path d="M26 30 L52 90 L78 30" stroke="url(#vd${id})" stroke-width="12"
+          stroke-linejoin="miter" stroke-linecap="butt"/>
+    <path d="M68 30 L68 90 M68 30 H80 A30 30 0 0 1 80 90 H68"
+          stroke="url(#vd${id})" stroke-width="12"
+          stroke-linejoin="miter" stroke-linecap="butt"/>
   </svg>`;
+
+/* ПЛАТА. Дорожки нарисованы прямыми с прямыми углами и площадками
+   на концах — так рисуют разводку на настоящей плате, и так она
+   читается с первого взгляда. Симметрия намеренно неполная:
+   идеально ровная сетка выглядит обоями, а не платой. */
+const PLATA = (id) => {
+  const doroshki = [
+    'M120 540 H300 V300 H620 V180',
+    'M120 640 H360 V760 H700 V880',
+    'M1380 520 H1180 V300 H900 V190',
+    'M1380 660 H1120 V800 H820 V900',
+    'M300 300 V120 H760',
+    'M1180 300 V140 H860',
+    'M360 760 V960 H620',
+    'M1120 800 V980 H900',
+    'M620 180 H900',
+    'M700 880 H820',
+  ];
+  const ploshchadki = [
+    [300, 300], [620, 180], [360, 760], [700, 880],
+    [1180, 300], [900, 190], [1120, 800], [820, 900],
+    [760, 120], [860, 140], [620, 960], [900, 980],
+  ];
+  return `
+  <svg viewBox="0 0 1500 1100" fill="none">
+    <defs>
+      <linearGradient id="pl${id}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="var(--acc)"/>
+        <stop offset="100%" stop-color="var(--acc2)"/>
+      </linearGradient>
+      <radialGradient id="pm${id}" cx="50%" cy="50%">
+        <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+        <stop offset="55%" stop-color="#fff" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+      </radialGradient>
+      <mask id="mk${id}">
+        <rect width="1500" height="1100" fill="url(#pm${id})"/>
+      </mask>
+    </defs>
+    <g mask="url(#mk${id})">
+      <rect x="90" y="90" width="1320" height="920" rx="26"
+            stroke="url(#pl${id})" stroke-width="3" opacity=".55"/>
+      <rect x="150" y="150" width="1200" height="800" rx="18"
+            stroke="url(#pl${id})" stroke-width="2" opacity=".3"/>
+      ${doroshki.map((d) => `<path d="${d}" stroke="url(#pl${id})" stroke-width="6"
+            stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>`).join('\n      ')}
+      ${ploshchadki.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="11"
+            fill="none" stroke="url(#pl${id})" stroke-width="5"/>`).join('\n      ')}
+    </g>
+  </svg>`;
+};
 
 const html = (p) => {
   const nastr = PAKETY[p.id];
-  const sostav = p.sostav
-    .map((id) => PRICES.usluga(id).nazvanie.replace(/ \(.*\)$/, ''))
-    .join('  /  ');
+  const chasti = p.sostav.map((id) => PRICES.usluga(id).nazvanie.replace(/ \(.*\)$/, ''));
+  const sostav = chasti.join('  /  ');
+
+  /* Чипы справа — состав пакета плюс две строки, которые есть
+     в договоре. Не «Архитектура / Безопасность / Масштаб» из чужого
+     макета: те слова ничего не обещают и ни к чему не привязаны. */
+  const chipy = [...chasti, 'Исходники ваши', 'Договор и ИП'];
 
   return `<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
 <style>
@@ -113,8 +180,25 @@ ${fontCss}
     background-size:60px 60px;
     mask-image:radial-gradient(ellipse at 50% 48%, #000 22%, transparent 76%)}
 
-  .box-scene{position:relative;perspective:1500px;perspective-origin:50% 42%;
-    width:var(--shir);height:var(--vys)}
+  /* Сцена. perspective-origin выше середины — иначе крышку не видно. */
+  .scena{position:relative;width:100%;height:100%;
+    perspective:2000px;perspective-origin:50% 8%;
+    display:flex;align-items:center;justify-content:center}
+
+  /* ПЛАТА, на которой стоит коробка. Главное, чего не хватало против
+     референса: без неё предмет висит в пустоте. Дорожки нарисованы
+     линиями, а не картинкой, — их видно резко на любом размере
+     и они красятся цветом пакета. */
+  .plata{position:absolute;z-index:0;
+    width:1560px;height:1160px;left:50%;top:72%;
+    transform:translate(-50%,-50%) rotateX(76deg);
+    transform-style:preserve-3d}
+  .plata svg{width:100%;height:100%;
+    filter:drop-shadow(0 0 14px color-mix(in srgb, var(--acc) 55%, transparent))}
+
+  .box-scene{position:relative;z-index:1;
+    width:var(--shir);height:var(--vys);
+    transform-style:preserve-3d}
 
   /* След на «полу» — отдельным пятном, а не тенью коробки: тень
      поворачивается вместе с телом, а лежать должна на плоскости. */
@@ -125,11 +209,13 @@ ${fontCss}
       color-mix(in srgb, var(--acc2) 18%, transparent) 40%,
       transparent 72%);
     filter:blur(46px)}
+  /* Контактная тень — узкая и плотная прямо под дном: без неё коробка
+     не стоит на плате, а висит над ней. */
   .box-scene::before{content:'';position:absolute;z-index:0;
-    left:-14%;right:-4%;bottom:-96px;height:96px;border-radius:50%;
+    left:-6%;right:2%;bottom:-34px;height:64px;border-radius:50%;
     background:radial-gradient(ellipse at 46% 50%,
-      rgba(0,0,0,.92) 0%, rgba(0,0,0,.5) 44%, transparent 74%);
-    filter:blur(30px)}
+      rgba(0,0,0,.95) 0%, rgba(0,0,0,.6) 40%, transparent 72%);
+    filter:blur(20px)}
 
   /* КАРКАС. Поворачивается целиком, грани внутри не двигаются
      сами по себе — только выдвигаются на половину глубины. */
@@ -183,8 +269,11 @@ ${fontCss}
      читается как «Λ». Разворот на 180° вокруг горизонтальной оси
      это гасит. Тот же класс ошибок, что зеркальный текст на торце
      книги, — проверять на увеличенном куске. */
-  .box-top svg{width:118px;height:118px;transform:rotateX(180deg);
-    filter:drop-shadow(0 0 12px color-mix(in srgb, var(--acc) 60%, transparent))}
+  /* Крышку видно под острым углом, поэтому знак на ней сплющивается.
+     Размер и свечение подняты, чтобы он читался в кадре. */
+  .box-top svg{width:224px;height:224px;transform:rotateX(180deg);
+    filter:drop-shadow(0 0 18px color-mix(in srgb, var(--acc) 85%, transparent))
+           drop-shadow(0 0 34px color-mix(in srgb, var(--acc2) 60%, transparent))}
 
   /* Блики на рёбрах: тонкие светлые полосы по стыкам граней.
      Именно они читаются как глянцевый пластик. */
@@ -205,8 +294,11 @@ ${fontCss}
     pointer-events:none}
 
   /* ── Содержимое лицевой грани ─────────────────────────── */
+  /* Полоса крышки: на референсе у коробки виден шов, и надпись студии
+     стоит НА крышке, а не на лице. Повторяем швом поперёк лица. */
   .marka{font-size:19px;font-weight:800;letter-spacing:.3em;
-    color:rgba(255,255,255,.62)}
+    color:rgba(255,255,255,.62);padding-bottom:26px;
+    border-bottom:1px solid rgba(255,255,255,.13)}
 
   .glavnoe{margin:auto 0;display:flex;flex-direction:column;gap:26px}
 
@@ -224,11 +316,37 @@ ${fontCss}
   .cena span{font-size:20px;color:var(--mist)}
 
   .niz{font-size:21px;line-height:1.4;color:rgba(255,255,255,.62)}
+
+  /* Неоновая плашка с адресом — лежит на плате перед коробкой,
+     поэтому наклонена вместе с ней. */
+  .adres{position:absolute;z-index:2;left:50%;top:88.5%;
+    transform:translate(-50%,-50%) rotateX(64deg) rotateZ(-5deg);
+    padding:18px 46px;border-radius:14px;white-space:nowrap;
+    font-size:34px;font-weight:800;letter-spacing:.06em;
+    color:#EAF6FF;
+    border:2px solid color-mix(in srgb, var(--acc) 75%, transparent);
+    background:color-mix(in srgb, var(--acc) 12%, transparent);
+    box-shadow:0 0 34px color-mix(in srgb, var(--acc) 55%, transparent),
+               inset 0 0 22px color-mix(in srgb, var(--acc) 26%, transparent);
+    text-shadow:0 0 14px color-mix(in srgb, var(--acc) 80%, transparent)}
+
+  /* Чипы справа — как на референсе, но словами из состава пакета,
+     а не «Архитектура / Безопасность / Масштаб» из чужого макета. */
+  .chipy{position:absolute;z-index:2;right:64px;top:50%;
+    transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:20px;align-items:flex-end}
+  .chipy div{padding:13px 26px;border-radius:12px;white-space:nowrap;
+    font-size:23px;font-weight:700;color:#E9F4FF;
+    border:2px solid color-mix(in srgb, var(--acc) 62%, transparent);
+    background:color-mix(in srgb, var(--acc) 10%, transparent);
+    box-shadow:0 0 22px color-mix(in srgb, var(--acc) 32%, transparent)}
 </style></head><body>
-  <div class="box-scene">
+  <div class="scena">
+    <div class="plata">${PLATA(p.id)}</div>
+    <div class="box-scene">
     <div class="box">
       <div class="gran box-left"><span>ПАКЕТ ${p.nazvanie.replace(/[«»]/g, '')}</span></div>
-      <div class="gran box-top">${MONOGRAMMA}</div>
+      <div class="gran box-top">${LOGO(p.id)}</div>
       <div class="gran box-front">
         <div class="marka">ВАЙБ ДИДЖИТАЛ 999</div>
         <div class="glavnoe">
@@ -241,6 +359,12 @@ ${fontCss}
         <div class="niz">${sostav}</div>
       </div>
     </div>
+    </div>
+
+    <div class="chipy">
+      ${chipy.map((c) => `<div>${c}</div>`).join('\n      ')}
+    </div>
+    <div class="adres">vibe-digital999.ru</div>
   </div>
 </body></html>`;
 };
