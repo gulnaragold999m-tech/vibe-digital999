@@ -30,6 +30,7 @@
 const fs = require('fs');
 const path = require('path');
 const { PAGES, SITE, BUILD, VERIFY, MAPS } = require('./src/pages');
+const PRICES = require('./src/prices');
 const { cityDatalist } = require('./src/cities');
 
 const SRC = path.join(__dirname, 'src');
@@ -247,8 +248,25 @@ function ldJson(obj) {
 }
 
 /* ── Сборка одной страницы ───────────────────────────────────── */
+/* Подстановка цен и сроков из единого прайса.
+
+   В тексте страницы пишется {{цена:lending-start}} и {{срок:lending-start}},
+   а число приезжает из src/prices.js. Так цена на странице не может
+   разойтись с ботом и рекламой: она у них одна.
+
+   Неизвестный id роняет сборку намеренно — молча подставленная пустота
+   выглядела бы на странице как «Цена: ». */
+function podstavitCeny(html) {
+  return html.replace(/\{\{(цена|срок):([a-z0-9-]+)\}\}/g, (_, chto, id) => {
+    const u = PRICES.usluga(id);      // бросит понятную ошибку, если id чужой
+    return chto === 'цена'
+      ? (u.ot ? 'От ' : '') + PRICES.rub(u.cena)
+      : u.srok.charAt(0).toUpperCase() + u.srok.slice(1);
+  });
+}
+
 function buildPage(page) {
-  const body = read(SRC, 'pages', page.file);
+  const body = podstavitCeny(read(SRC, 'pages', page.file));
 
   const schemas = [
     webPageSchema(page),
@@ -489,62 +507,68 @@ function validate() {
 }
 
 /* ── Проверка цен ────────────────────────────────────────────────
-   Цена живёт в трёх местах: в прайсе бота (`api/brief.js`), в блоке
-   прайса на главной и в квиз-калькуляторе там же. Три копии одного
-   числа — и они разъезжаются.
+   Цена теперь живёт в одном месте — src/prices.js, — и оттуда сама
+   уезжает к боту, на макеты, в поисковую разметку и в страницы услуг
+   через {{цена:id}}.
 
-   13.08.2026 разъехались молча: квиз обещал лендинг «от 25 000 ₽»,
-   прайс на той же странице — «от 35 000 ₽», бот в ВК — тоже 35 000.
-   Человек проходил квиз и получал цифру, которой нет больше нигде.
-   Заметила владелица, а не проверка, — значит проверки не хватало.
+   Кроме одного файла: public/index.html собран вручную и сборкой
+   не переписывается. Значит, разойтись может только он — его и проверяем.
 
-   Ловим самое дорогое: нижнюю границу калькулятора, которой нет
-   в прайсе бота. Верхнюю не проверяем — это конец вилки, отдельной
-   цены за ним не стоит. */
+   Смотрим два места, где число стоит однозначно:
+     • разметка Offer для поисковиков — "price": "35000";
+     • нижние границы квиз-калькулятора — объект BASE.
+
+   Верхние границы вилки не проверяем: за концом вилки отдельной цены
+   не стоит.
+
+   13.08.2026 именно калькулятор и разошёлся: обещал лендинг «от 25 000 ₽»
+   при 35 000 ₽ в прайсе на той же странице. Заметила владелица. */
 function validatePrices() {
-  let brief, index;
+  let index;
   try {
-    brief = read(__dirname, 'api', 'brief.js');
     index = read(OUT, 'index.html');
   } catch {
-    return;                            // нет файла — молчим, это не наша беда
-  }
-
-  const botPrices = new Set(
-    (brief.match(/(\d[\d  ]*\d)\s*₽/g) || [])
-      .map((m) => Number(m.replace(/[^\d]/g, '')))
-      .filter(Boolean),
-  );
-
-  const base = index.match(/const BASE = \{[\s\S]*?\};/);
-  if (!base) {
-    console.log('⚠ Проверка цен: калькулятор на главной не найден.');
     return;
   }
 
+  const vPrajse = new Set(PRICES.USLUGI.map((u) => u.cena));
+  PRICES.PAKETY.forEach((p) => vPrajse.add(PRICES.cenaPaketa(p)));
+  PRICES.PAKETY.forEach((p) => vPrajse.add(p.soprovozhdenie));
+  PRICES.USLUGI.forEach((u) => u.akciya && vPrajse.add(u.akciya.bylo));
+
   const problems = [];
-  for (const line of base[0].split('\n')) {
-    const kind = line.match(/^\s*(\w+):/);
-    const min = line.match(/min:\s*(\d+)/);
-    if (!kind || !min) continue;
-    const value = Number(min[1]);
-    if (value === 0) continue;         // «считаем по брифу» — цены нет
-    if (!botPrices.has(value)) {
-      problems.push(
-        `калькулятор, «${kind[1]}»: нижняя граница ${value.toLocaleString('ru-RU')} ₽ ` +
-        'не встречается в прайсе бота api/brief.js',
-      );
+
+  for (const m of index.matchAll(/"price":\s*"(\d+)"/g)) {
+    const v = Number(m[1]);
+    if (!vPrajse.has(v)) {
+      problems.push(`разметка Offer на главной: ${PRICES.rub(v)} нет в прайсе`);
+    }
+  }
+
+  const base = index.match(/const BASE = \{[\s\S]*?\};/);
+  if (!base) {
+    problems.push('квиз-калькулятор на главной не найден');
+  } else {
+    for (const line of base[0].split('\n')) {
+      const kind = line.match(/^\s*(\w+):/);
+      const min = line.match(/min:\s*(\d+)/);
+      if (!kind || !min) continue;
+      const v = Number(min[1]);
+      if (v === 0) continue;           // «считаем по брифу» — цены нет
+      if (!vPrajse.has(v)) {
+        problems.push(`квиз, «${kind[1]}»: нижняя граница ${PRICES.rub(v)} — такой цены в прайсе нет`);
+      }
     }
   }
 
   if (!problems.length) {
-    console.log('Проверка цен: калькулятор совпадает с прайсом бота.');
+    console.log('Проверка цен: главная совпадает с прайсом src/prices.js.');
     return;
   }
   console.log(`\n⚠ Проверка цен — расхождений: ${problems.length}`);
   problems.forEach((p) => console.log('   •', p));
-  console.log('   Цена меняется В ТРЁХ МЕСТАХ: api/brief.js, блок прайса');
-  console.log('   на главной и BASE в квизе — там же, в public/index.html.\n');
+  console.log('   Цена меняется ТОЛЬКО в src/prices.js. Главная собрана');
+  console.log('   вручную, поэтому её правят руками — но по тем же числам.\n');
 }
 
 /* ── Запуск ──────────────────────────────────────────────────── */

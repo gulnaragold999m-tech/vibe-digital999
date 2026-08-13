@@ -32,6 +32,11 @@ try {
 const fs = require('fs');
 const path = require('path');
 
+/* Цены и сроки — из единого прайса src/prices.js, руками сюда
+   не вписываются. Раньше вписывались, и разъезжались с сайтом:
+   11.08 цены, 13.08 сроки во всех четырёх макетах. */
+const PRICES = require(path.join(__dirname, '..', 'src', 'prices'));
+
 const W = 1080, H = 1350;
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(__dirname, 'out');
@@ -84,8 +89,8 @@ const ITEMS = [
     color: '#00F0FF',
     eyebrow: 'Сайты · Кавминводы и по всей России',
     title: 'Сайт-лендинг',
-    price: 'от 35 000 ₽',
-    term: 'запуск от 7 дней',
+    usluga: 'lending-start',
+    termPrefix: 'запуск',
     ticks: [
       'Исходники и доступы передаём вам',
       'Договор, ИП, закрывающие документы',
@@ -98,8 +103,8 @@ const ITEMS = [
     color: '#2D9CFF',
     eyebrow: 'Telegram-боты · Кавминводы и по всей России',
     title: 'Бот для заявок',
-    price: 'от 15 000 ₽',
-    term: 'срок от 7 дней',
+    usluga: 'lid-bot',
+    termPrefix: 'срок',
     ticks: [
       'Принимает заявки круглосуточно',
       'Отвечает на типовые вопросы',
@@ -112,8 +117,8 @@ const ITEMS = [
     color: '#A855F7',
     eyebrow: 'ИИ-агенты · Кавминводы и по всей России',
     title: 'ИИ-агент<br>для бизнеса',
-    price: 'от 60 000 ₽',
-    term: 'запуск от 14 дней',
+    usluga: 'agent',
+    termPrefix: 'запуск',
     ticks: [
       'Отвечает вашими словами, по вашему прайсу',
       'Квалифицирует заявку до вашего звонка',
@@ -126,8 +131,8 @@ const ITEMS = [
     color: '#FF4D7D',
     eyebrow: 'Аудит сайта · Кавминводы и по всей России',
     title: 'SEO-аудит<br>и 152-ФЗ',
-    price: '15 000 ₽',
-    term: 'отчёт за 3 дня',
+    usluga: 'audit',
+    termPrefix: 'отчёт за',
     ticks: [
       'Почему сайт не в поиске — по пунктам',
       'Проверка форм на закон о персональных данных',
@@ -136,6 +141,17 @@ const ITEMS = [
     mock: 'audit',
   },
 ];
+
+/* Цена и срок дописываются в ITEMS из прайса — до того, как их кто-то
+   успеет прочитать. `termPrefix` у каждого макета свой («запуск»,
+   «срок», «отчёт за»), а число одно и то же. Слово «от» внутри срока
+   уже есть в прайсе, второй раз его не ставим. */
+for (const it of ITEMS) {
+  const u = PRICES.usluga(it.usluga);
+  it.price = PRICES.cena(it.usluga);
+  it.term = [it.termPrefix, PRICES.srok(it.usluga)].filter(Boolean).join(' ');
+  it.stranica = u.stranica || '';
+}
 
 /* ── Картинки в центре. Каждая показывает результат услуги,
       а не абстракцию: так человек понимает, что покупает. ── */

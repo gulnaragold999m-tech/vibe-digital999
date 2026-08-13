@@ -25,6 +25,12 @@
  *   noindex     закрыть от поиска (служебные страницы)
  */
 
+/* Цены в разметке Offer берутся из единого прайса, а не пишутся числом.
+   Поменяли цену в src/prices.js — она сама уехала и в поисковую разметку,
+   и к боту, и на макеты. Раньше здесь стояло число, и его забывали. */
+const { usluga } = require('./prices');
+const CENA = (id) => String(usluga(id).cena);
+
 const PAGES = [
   {
     url: '/',
@@ -72,7 +78,7 @@ const PAGES = [
   {
     url: '/uslugi/razrabotka-sajta/',
     service: 'Сайт/Лендинг',
-    offer: { name: 'Разработка сайта на заказ', price: '35000' },
+    offer: { name: 'Разработка сайта на заказ', price: CENA('lending-start') },
     file: 'razrabotka-sajta.html',
     title: 'Разработка сайтов на заказ — от 35 000 ₽',
     description: 'Заказать сайт или лендинг под ключ на чистом коде: без Tilda и WordPress. Свой дизайн, адаптив, базовое SEO, исходники отдаём. От 35 000 ₽, срок от 7 дней.',
@@ -86,7 +92,7 @@ const PAGES = [
   {
     url: '/uslugi/telegram-bot/',
     service: 'Telegram- или VK-бот',
-    offer: { name: 'Разработка Telegram- и VK-бота', price: '15000' },
+    offer: { name: 'Разработка Telegram- и VK-бота', price: CENA('lid-bot') },
     file: 'telegram-bot.html',
     title: 'Бот-менеджер для Telegram и ВКонтакте — от 15 000 ₽',
     description: 'Заказать бота для бизнеса в Telegram и ВКонтакте: доводит разговор до контакта и присылает готовую заявку за секунды. Заявка уходит сразу в несколько каналов.',
@@ -100,7 +106,7 @@ const PAGES = [
   {
     url: '/uslugi/ai-agent/',
     service: 'ИИ-Агент',
-    offer: { name: 'ИИ-агент для бизнеса', price: '60000' },
+    offer: { name: 'ИИ-агент для бизнеса', price: CENA('agent') },
     file: 'ai-agent.html',
     title: 'ИИ-агент для бизнеса с базой знаний — от 60 000 ₽',
     description: 'Разработка ИИ-агента на Anthropic и OpenAI: консультирует круглосуточно и квалифицирует заявки по вашей базе знаний. От 60 000 ₽, запуск от 14 дней.',
@@ -114,7 +120,7 @@ const PAGES = [
   {
     url: '/uslugi/avtomatizaciya/',
     service: 'Автоматизация',
-    offer: { name: 'Автоматизация бизнес-процессов', price: '30000' },
+    offer: { name: 'Автоматизация бизнес-процессов', price: CENA('avtomatizaciya') },
     file: 'avtomatizaciya.html',
     title: 'Автоматизация бизнес-процессов под ключ',
     description: 'Связываем сайт, CRM, таблицы и мессенджеры через n8n и Make, чтобы рутина шла сама. Считаем, сколько часов в месяц это освобождает. От 30 000 ₽.',
@@ -128,7 +134,7 @@ const PAGES = [
   {
     url: '/vibecoding/',
     service: 'Вайбкодинг',
-    offer: { name: 'Вайбкодинг — анимированный сайт', price: '65000' },
+    offer: { name: 'Вайбкодинг — анимированный сайт', price: CENA('lending-prodazhi') },
     file: 'vibecoding.html',
     title: 'Вайбкодинг — анимированные сайты от 65 000 ₽',
     description: 'Что такое вайбкодинг и чем анимированный сайт отличается от шаблона на конструкторе. Своя графика, движение 60 кадров, вес страницы под контролем. От 65 000 ₽.',
@@ -142,7 +148,7 @@ const PAGES = [
   {
     url: '/uslugi/prilozheniya/',
     service: 'Приложение',
-    offer: { name: 'Разработка приложения или PWA', price: '150000' },
+    offer: { name: 'Разработка приложения или PWA', price: CENA('prilozhenie') },
     file: 'prilozheniya.html',
     title: 'Разработка приложений и PWA — от 150 000 ₽',
     description: 'Приложение для клиентов или сотрудников: PWA ставится из браузера без магазинов приложений. Личный кабинет, расписание, уведомления. От 150 000 ₽.',
@@ -156,7 +162,7 @@ const PAGES = [
   {
     url: '/uslugi/seo-audit-152fz/',
     service: 'SEO-аудит + проверка по 152-ФЗ',
-    offer: { name: 'SEO-аудит сайта с проверкой по 152-ФЗ', price: '15000' },
+    offer: { name: 'SEO-аудит сайта с проверкой по 152-ФЗ', price: CENA('audit') },
     file: 'seo-audit-152fz.html',
     title: 'SEO-аудит сайта и проверка по 152-ФЗ — 15 000 ₽',
     description: 'Разбираем, почему сайт не в поиске и не даёт заявок: техника, семантика, структура, тексты. Плюс проверка форм по закону о персональных данных. 15 000 ₽, 3 дня.',
