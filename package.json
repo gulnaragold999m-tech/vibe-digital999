@@ -10,7 +10,8 @@
     "start": "node server.js",
     "ceny": "node -e \"const p=require('./src/prices');console.log('\\nУСЛУГИ\\n'+p.prajsDlyaBota()+'\\n\\nПАКЕТЫ\\n'+p.paketyDlyaBota()+'\\n\\nСОПРОВОЖДЕНИЕ\\n'+p.soprovozhdenieDlyaBota()+'\\n')\"",
     "karty": "node marketing/karty-price.js",
-    "karty-kartinki": "node marketing/karty-cards.js"
+    "karty-kartinki": "node marketing/karty-cards.js",
+    "karty-korobka": "node marketing/karty-korobka.js"
   },
   "dependencies": {
     "compression": "^1.8.1",
