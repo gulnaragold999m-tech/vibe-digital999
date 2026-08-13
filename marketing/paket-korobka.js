@@ -238,8 +238,11 @@ ${fontCss}
     transform-style:preserve-3d;
     transform:rotateX(12deg) rotateY(-30deg)}
 
+  /* ГЛЯНЕЦ. Четыре остановки вместо двух: тёмное — светлое — тёмное —
+     светлое. Так пластик ловит отражение неоновой подсветки пола,
+     а не выглядит равномерной серой заливкой. */
   .gran{position:absolute;
-    background:linear-gradient(155deg,#161A22 0%,#0C1017 55%,#070A10 100%)}
+    background:linear-gradient(135deg,#090D16 0%,#111724 40%,#05070B 70%,#161F33 100%)}
 
   /* ШОВ ОТКИДНОГО КОЛПАКА. Тёмная прорезь и светлый блик под ней —
      так читается стык двух панелей. Рисуется фоновым градиентом,
@@ -256,31 +259,22 @@ ${fontCss}
     padding:calc(var(--shov) + 34px) 44px 44px;display:flex;flex-direction:column;
     /* Глянец: широкая мягкая полоса через грань. */
     background:
-      linear-gradient(180deg,
-        transparent 0 calc(var(--shov) - 2px),
-        rgba(0,0,0,.62) calc(var(--shov) - 2px) var(--shov),
-        rgba(255,255,255,.12) var(--shov) calc(var(--shov) + 2px),
-        transparent calc(var(--shov) + 2px)),
-      linear-gradient(112deg,
-        rgba(255,255,255,.10) 0%,
-        rgba(255,255,255,.02) 22%,
-        transparent 46%),
       radial-gradient(ellipse 110% 70% at 46% 30%,
-        color-mix(in srgb, var(--acc) 12%, transparent) 0%, transparent 62%),
-      linear-gradient(155deg,#171B24 0%,#0C1017 55%,#06090E 100%)}
+        color-mix(in srgb, var(--acc) 10%, transparent) 0%, transparent 62%),
+      linear-gradient(135deg,#090D16 0%,#111724 40%,#05070B 70%,#161F33 100%);
+    /* Блик по верхнему и левому ребру плюс мягкий свет сверху —
+       от этого грань читается монолитом, а не наклейкой. */
+    box-shadow:inset 1px 1px 0 rgba(255,255,255,.15),
+               inset 0 20px 30px rgba(255,255,255,.05)}
 
   /* Левый бок */
   .box-left{width:var(--glub);height:var(--vys);left:0;top:0;
     transform-origin:left center;
     transform:translateZ(var(--pol)) rotateY(-90deg);
     background:
-      linear-gradient(180deg,
-        transparent 0 calc(var(--shov) - 2px),
-        rgba(0,0,0,.62) calc(var(--shov) - 2px) var(--shov),
-        rgba(255,255,255,.12) var(--shov) calc(var(--shov) + 2px),
-        transparent calc(var(--shov) + 2px)),
-      linear-gradient(90deg, rgba(255,255,255,.05), transparent 60%),
-      linear-gradient(180deg,#12161E 0%,#0A0E14 100%);
+      linear-gradient(90deg, rgba(255,255,255,.06), transparent 60%),
+      linear-gradient(135deg,#0B101B 0%,#131B2B 40%,#06080E 70%,#111A2C 100%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
     display:flex;align-items:center;justify-content:center}
   /* Бок повёрнут наружу, к зрителю обращён изнанкой — надпись
      зеркалится. Гасится разворотом на 180° вокруг вертикальной оси.
@@ -294,9 +288,12 @@ ${fontCss}
   .box-top{width:var(--shir);height:var(--glub);left:0;top:0;
     transform-origin:top center;
     transform:translateZ(var(--pol)) rotateX(90deg);
+    /* Крышка ловит свет сверху, поэтому светлее остальных граней.
+       Радиальное пятно — свет от букв, падающий на пластик. */
     background:
-      linear-gradient(180deg, rgba(255,255,255,.12), transparent 55%),
-      linear-gradient(160deg,#1B212C 0%,#10151D 60%,#0A0E14 100%);
+      radial-gradient(ellipse 44% 120% at 50% 50%,
+        color-mix(in srgb, var(--acc) 26%, transparent) 0%, transparent 70%),
+      linear-gradient(180deg,#1C2536 0%,#0D121C 100%);
     display:flex;align-items:center;justify-content:center}
   /* Крышка после rotateX(90deg) обращена к зрителю обратной стороной
      плоскости: содержимое на ней переворачивается по вертикали, и «V»
@@ -306,8 +303,9 @@ ${fontCss}
   /* Крышку видно под острым углом, поэтому знак на ней сплющивается.
      Размер и свечение подняты, чтобы он читался в кадре. */
   .box-top svg{width:224px;height:224px;transform:rotateX(180deg);
-    filter:drop-shadow(0 0 18px color-mix(in srgb, var(--acc) 85%, transparent))
-           drop-shadow(0 0 34px color-mix(in srgb, var(--acc2) 60%, transparent))}
+    filter:drop-shadow(0 0 8px #fff)
+           drop-shadow(0 0 20px color-mix(in srgb, var(--acc) 95%, transparent))
+           drop-shadow(0 0 42px color-mix(in srgb, var(--acc2) 70%, transparent))}
 
   /* НЕОНОВЫЙ ПОДИУМ — это нижняя грань коробки, а не отдельный
      прямоугольник на полу. Так он лежит ровно под дном при любом
@@ -327,17 +325,19 @@ ${fontCss}
                0 0 120px color-mix(in srgb, var(--acc2) 55%, transparent),
                inset 0 0 44px color-mix(in srgb, var(--acc2) 60%, transparent)}
 
-  /* Блики на рёбрах: тонкие светлые полосы по стыкам граней.
-     Именно они читаются как глянцевый пластик. */
-  .box-front::before{content:'';position:absolute;left:0;top:0;
-    width:2px;height:100%;
-    background:linear-gradient(180deg,
-      rgba(255,255,255,.55), rgba(255,255,255,.10));
-    pointer-events:none}
-  .box-front::after{content:'';position:absolute;left:0;top:0;
-    width:100%;height:2px;
-    background:linear-gradient(90deg,
-      rgba(255,255,255,.55), rgba(255,255,255,.12) 60%, transparent);
+  /* ШОВ — вдавленная прорезь, а не белая черта. Три слоя:
+     чёрная щель, тонкая подсветка ребра под ней и внутренняя тень,
+     от которой колпак нависает над корпусом. Отсвет в пазу берётся
+     цветом карточки — как будто неон снизу отражается в щели.
+
+     Высота одна на лице и на боку: грани идут от общего верхнего
+     ребра, поэтому линия опоясывает коробку без ступеньки. */
+  .box-front::before,
+  .box-left::before{content:'';position:absolute;left:0;right:0;
+    top:var(--shov);height:3px;background:#000;
+    box-shadow:0 2px 0 rgba(255,255,255,.14),
+               0 4px 10px color-mix(in srgb, var(--acc) 30%, transparent),
+               0 -6px 12px rgba(0,0,0,.55);
     pointer-events:none}
   .box-top::after{content:'';position:absolute;left:0;bottom:0;
     width:100%;height:2px;
@@ -348,8 +348,9 @@ ${fontCss}
   /* ── Содержимое лицевой грани ─────────────────────────── */
   /* Полоса крышки: на референсе у коробки виден шов, и надпись студии
      стоит НА крышке, а не на лице. Повторяем швом поперёк лица. */
-  .marka{font-size:19px;font-weight:800;letter-spacing:.3em;
-    color:rgba(255,255,255,.62)}
+  /* Гравировка: тонкое начертание, широкий трекинг, приглушённая. */
+  .marka{font-size:20px;font-weight:300;letter-spacing:6px;
+    color:#fff;opacity:.6}
 
   .glavnoe{margin:auto 0;display:flex;flex-direction:column;gap:26px}
 
