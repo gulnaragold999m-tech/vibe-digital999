@@ -167,6 +167,10 @@ ${fontCss}
   :root{
     --ink:#020813; --white:#E8F0FF; --mist:#8A9BC4;
     --acc:${k.color}; --acc2:${k.color2};
+    /* Цвет тревоги для строк нарушений. Отдельной переменной, а не
+       через --acc: нарушение должно оставаться красным и на карточке
+       другого цвета. На аудите совпадает с фирменным розовым. */
+    --trevoga:#FF4D7D;
     --korshok:"${k.title} · ${k.cena}";
   }
 
@@ -348,17 +352,22 @@ ${fontCss}
     display:flex;align-items:center;justify-content:center;font-style:normal;
     font-size:14px;font-weight:800;color:var(--ink);background:var(--acc)}
   .okno .row span{flex:1}
-  .okno .row b{color:var(--acc);font-size:17px}
+  /* Значения справа светятся цветом услуги. Раньше у нарушений стоял
+     бледный #FF7D9E: рядом с ярким бирюзовым на соседней карточке он
+     читался белёсым, и карточки выглядели собранными по-разному. */
+  .okno .row b{color:var(--acc);font-size:17px;
+    text-shadow:0 0 10px color-mix(in srgb, var(--acc) 45%, transparent)}
 
   /* Строка нарушения. Цифра штрафа рядом с формулировкой — единственное
      место на карточке, где мы пугаем, и пугаем законом, а не собой.
      Цифры сверены с калькулятором на главной: ч. 2 ст. 13.11 КоАП —
      до 700 000 ₽, ч. 3 — до 100 000 ₽. На макете владелицы стояли
      300 000 и 60 000: первое из другой части статьи, второе устарело. */
-  .okno .row.bad{background:rgba(255,77,125,.11);
-    border-color:rgba(255,77,125,.42)}
-  .okno .row.bad em{background:#FF4D7D;color:#fff}
-  .okno .row.bad b{color:#FF7D9E}
+  .okno .row.bad{background:color-mix(in srgb, var(--trevoga) 11%, transparent);
+    border-color:color-mix(in srgb, var(--trevoga) 42%, transparent)}
+  .okno .row.bad em{background:var(--trevoga);color:#fff}
+  .okno .row.bad b{color:var(--trevoga);
+    text-shadow:0 0 10px color-mix(in srgb, var(--trevoga) 50%, transparent)}
 
   .ticks{margin-top:auto;padding-top:22px;display:flex;flex-direction:column;gap:11px}
   .ticks div{display:flex;gap:12px;font-size:20px;line-height:1.25}
