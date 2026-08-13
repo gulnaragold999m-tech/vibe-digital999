@@ -171,11 +171,48 @@ ${fontCss}
   .plashka span{font-size:30px;color:var(--mist)}
 
   /* ── Сцена с коробкой ──────────────────────────────────── */
-  .scena{margin-top:44px;flex:1;display:flex;gap:40px;align-items:stretch}
+  .scena{margin-top:44px;flex:1;display:flex;gap:34px;align-items:stretch}
 
-  .box3d{perspective:2400px;flex:0 0 620px;display:flex}
-  .box{position:relative;transform-style:preserve-3d;flex:1;display:flex;
-    transform:rotateY(-15deg) rotateX(1.5deg)}
+  /* ГЛУБИНА КОРОБКИ — одно число, от него считаются боковая и верхняя
+     грани. Первая версия была 64px при развороте 15°: боковина в кадре
+     занимала 64·sin15° ≈ 16 пикселей, и предмет читался плоской панелью,
+     а не коробкой. Владелица сказала прямо — «книга не выходит».
+     Теперь 118px при 24°: боковина ≈ 48px, ребро видно. */
+  .scena{--glub:118px}
+
+  /* align-items:stretch, а не center: коробка занимает всю высоту сцены,
+     и тень внизу оказывается прямо под дном. При center коробка висела
+     посередине, а тень оставалась у нижнего края контейнера — в полусотне
+     пикселей под ней, и предмет всё равно не стоял. */
+  .box3d{position:relative;perspective:1800px;perspective-origin:50% 38%;
+    flex:0 0 600px;display:flex;align-items:stretch;padding-bottom:58px}
+
+  /* Тень на поверхности. Без неё коробка висит в пустоте: объём есть,
+     а стоять ей не на чем — глаз это замечает раньше, чем разбирает
+     грани. Две тени: чёрная под дном и цветной отсвет пошире. */
+  .box3d::after{content:'';position:absolute;z-index:0;
+    left:2%;right:6%;bottom:14px;height:54px;border-radius:50%;
+    background:radial-gradient(ellipse at 50% 50%,
+      rgba(0,0,0,.85) 0%, rgba(0,0,0,.45) 45%, transparent 72%);
+    filter:blur(20px)}
+  .box3d::before{content:'';position:absolute;z-index:0;
+    left:-4%;right:-2%;bottom:0;height:88px;border-radius:50%;
+    background:radial-gradient(ellipse at 50% 50%,
+      color-mix(in srgb, var(--acc) 26%, transparent) 0%, transparent 70%);
+    filter:blur(34px)}
+
+  .box{position:relative;z-index:1;transform-style:preserve-3d;flex:1;display:flex;
+    transform:rotateY(-24deg) rotateX(2deg)}
+
+  /* Верхняя грань — отгибается назад от верхнего ребра лица. Видна
+     узкой полосой, потому что смотрим чуть сверху (perspective-origin
+     выше середины). Именно она превращает «панель с боковиной»
+     в закрытый объём. */
+  .top{position:absolute;left:0;bottom:100%;width:100%;height:var(--glub);
+    transform-origin:bottom center;transform:rotateX(-90deg);
+    background:linear-gradient(180deg,#12203C,#0A1426);
+    border:1px solid color-mix(in srgb, var(--acc) 22%, transparent);
+    border-radius:8px 8px 2px 2px}
 
   /* Корешок — боковая грань, отогнутая назад от левого ребра лица.
 
@@ -188,11 +225,15 @@ ${fontCss}
      сдвигом — корешок ложился поперёк передней грани и перечёркивал
      цену. На глаз это видно сразу, но только если посмотреть картинку,
      а не поверить, что «CSS правильный». */
-  .spine{position:absolute;top:0;right:100%;width:64px;height:100%;
-    transform-origin:right center;transform:rotateY(-90deg);
-    background:linear-gradient(180deg,#0A1426,#050C18);
-    border:1px solid color-mix(in srgb, var(--acc) 26%, transparent);
-    border-radius:6px 0 0 6px;
+  .spine{position:absolute;top:0;right:100%;width:var(--glub);height:100%;
+    transform-origin:right center;transform:rotateY(90deg);
+    /* Боковина темнее лица: плоскость уходит от света, и без этого
+       перепада грани сливаются в одну картонку. Слева по ребру —
+       светлая полоса, это сгиб. */
+    background:linear-gradient(90deg,#040A16 0%,#0A1426 62%,#101E38 100%);
+    border:1px solid color-mix(in srgb, var(--acc) 22%, transparent);
+    border-radius:8px 0 0 8px;
+    box-shadow:inset -18px 0 34px rgba(0,0,0,.55);
     display:flex;align-items:center;justify-content:center}
   /* Корешок повёрнут наружу, то есть к зрителю он обращён ИЗНАНКОЙ,
      и текст на нём выходит зеркальным. Первая версия так и вышла:
@@ -201,7 +242,7 @@ ${fontCss}
      буквы встают как надо. Проверять такое можно только глазами
      на увеличенном куске картинки: на общем плане надпись мелкая
      и выглядит правдоподобно. */
-  .spine span{writing-mode:vertical-rl;transform:rotateY(180deg);
+  .spine span{writing-mode:vertical-rl;
     font-size:22px;font-weight:700;letter-spacing:.12em;
     color:color-mix(in srgb, var(--white) 72%, transparent)}
 
@@ -289,6 +330,7 @@ ${fontCss}
     <div class="scena">
       <div class="box3d">
         <div class="box">
+          <div class="top"></div>
           <div class="spine"><span>${k.title} · ${k.cena}</span></div>
           <div class="face">
             <div class="f-eye">${k.eyebrow}</div>
