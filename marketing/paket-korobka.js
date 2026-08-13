@@ -307,8 +307,8 @@ ${fontCss}
        Приём в том, что переход занимает ОДИН процент, а не двадцать. */
     background:linear-gradient(115deg,
       #05070A 0%, #090D14 45%, #222D42 46%, #2D3C59 52%, #090D14 53%, #05070A 100%);
-    box-shadow:inset 0 0 20px rgba(255,255,255,.05),
-               inset 1px 1px 0 rgba(255,255,255,.2);
+    box-shadow:inset 0 0 20px rgba(255,255,255,.03),
+               inset 1px 1px 0 rgba(255,255,255,.15);
     display:flex;align-items:center;justify-content:center}
   /* Крышка после rotateX(90deg) обращена к зрителю обратной стороной
      плоскости: содержимое на ней переворачивается по вертикали, и «V»
@@ -321,10 +321,26 @@ ${fontCss}
      полоса отражения проходит сквозь буквы, и знак с крышкой читаются
      одним предметом. */
   .box-top svg{width:224px;height:224px;transform:rotateX(180deg);
-    mix-blend-mode:screen;opacity:.9;
-    filter:drop-shadow(0 0 8px #fff)
-           drop-shadow(0 0 20px color-mix(in srgb, var(--acc) 95%, transparent))
-           drop-shadow(0 0 42px color-mix(in srgb, var(--acc2) 70%, transparent))}
+    mix-blend-mode:screen;opacity:.95;
+    filter:drop-shadow(0 0 4px #fff)
+           drop-shadow(0 0 12px var(--acc))
+           drop-shadow(0 0 2px rgba(255,255,255,.9))}
+
+  /* ОРЕОЛ — отдельным слоем ПОД знаком, а не в фоне грани. В фоне он
+     размыл бы полосу отражения: зеркало и рассеянный свет должны
+     лежать друг на друге, а не смешиваться в один серый слой.
+     Читается как отсвет неонового знака на глянцевом пластике. */
+  .oreol{position:absolute;left:50%;top:50%;
+    width:300px;height:170px;transform:translate(-50%,-50%);
+    border-radius:50%;pointer-events:none;
+    /* Ореол приглушён намеренно: на первой попытке он был ярче знака,
+       и буквы в нём тонули. Отсвет должен читаться под знаком,
+       а не вместо него. */
+    background:radial-gradient(ellipse at center,
+      color-mix(in srgb, var(--acc) 30%, transparent) 0%,
+      color-mix(in srgb, var(--acc2) 14%, transparent) 48%,
+      transparent 74%);
+    filter:blur(26px)}
 
   /* НЕОНОВЫЙ ПОДИУМ — это нижняя грань коробки, а не отдельный
      прямоугольник на полу. Так он лежит ровно под дном при любом
@@ -418,7 +434,7 @@ ${fontCss}
     <div class="box">
       <div class="gran box-bottom"></div>
       <div class="gran box-left"><span>ПАКЕТ ${p.nazvanie.replace(/[«»]/g, '')}</span></div>
-      <div class="gran box-top">${LOGO(p.id)}</div>
+      <div class="gran box-top"><span class="oreol"></span>${LOGO(p.id)}</div>
       <div class="gran box-front">
         <div class="marka">ВАЙБ ДИДЖИТАЛ 999</div>
         <div class="glavnoe">
