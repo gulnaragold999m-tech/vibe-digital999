@@ -88,6 +88,28 @@
     display:flex;align-items:center;justify-content:center;
     overflow:visible}
 
+  /* ПЛАТА ПОД КОРОБКОЙ. Своя в каждой ячейке и своим цветом: одна общая
+     на всю витрину не легла бы под три коробки одновременно — они стоят
+     на разной высоте от края ячейки.
+
+     Дорожки нарисованы ВСТРОЕННЫМ svg, а не картинкой в data-URI:
+     встроенный умеет читать переменную --neon и краситься под пакет,
+     а data-URI получил бы один цвет на всех. */
+  .circuit-floor{position:absolute;z-index:0;
+    left:50%;bottom:4px;width:210%;height:150px;
+    transform-origin:center bottom;
+    /* Сдвиг НАЗАД до поворота: иначе дальний край платы задирается
+       и ложится поверх коробки, перечёркивая строку состава.
+       Угол ближе к плоскому — плата меньше поднимается по экрану. */
+    transform:translateX(-50%) translateZ(-70px) rotateX(80deg);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 62%, #000 26%, transparent 74%);
+    mask-image:radial-gradient(ellipse at 50% 62%, #000 26%, transparent 74%);
+    pointer-events:none}
+  .circuit-floor svg{width:100%;height:100%;
+    filter:drop-shadow(0 0 8px color-mix(in srgb, var(--neon) 65%, transparent))}
+
+  .main-box{z-index:1}
+
   .box-podpis{text-align:center}
   .box-podpis b{display:block;font-size:1.05rem;font-weight:800}
   .box-podpis span{display:block;margin-top:.25rem;font-size:.85rem;
@@ -191,6 +213,10 @@
        неё. Поднимаем вручную, иначе «ВАЙБ ДИДЖИТАЛ 999» и строка
        состава превращаются в серую рябь. Подписи ПОД коробкой
        набраны в rem и читаются и так. */
+    /* Плата на телефоне уже экрана, но НЕ выключается: без дорожек
+       коробка теряет связь с окружением, остаётся пустая рамка. */
+    .circuit-floor{width:150%;height:130px}
+
     .f-marka{font-size:9px;letter-spacing:3px}
     .f-title{font-size:21px}
     .f-cena b{font-size:15px}
@@ -231,6 +257,25 @@
 
       <div class="box-cell" style="--neon:#8B5CF6;--neon2:#3B82F6">
         <div class="box-scene">
+          <div class="circuit-floor">
+            <svg viewBox="0 0 600 420" fill="none" stroke="var(--neon)">
+              <path d="M40 250 H150 V130 H300 V60" stroke-width="4"/>
+              <path d="M40 320 H190 V370 H330 V410" stroke-width="4"/>
+              <path d="M560 240 H450 V130 H330 V60" stroke-width="4"/>
+              <path d="M560 330 H420 V380 H330 V410" stroke-width="4"/>
+              <path d="M150 130 V40 H260" stroke-width="4"/>
+              <path d="M450 130 V50 H360" stroke-width="4"/>
+              <g stroke-width="4">
+                <circle cx="150" cy="130" r="8"/><circle cx="300" cy="60" r="8"/>
+                <circle cx="190" cy="370" r="8"/><circle cx="450" cy="130" r="8"/>
+                <circle cx="420" cy="380" r="8"/><circle cx="330" cy="60" r="8"/>
+              </g>
+              <g fill="#EAFBFF" stroke="none">
+                <circle cx="150" cy="200" r="6"/><circle cx="450" cy="200" r="6"/>
+                <circle cx="260" cy="40" r="6"/><circle cx="420" cy="330" r="6"/>
+              </g>
+            </svg>
+          </div>
           <div class="main-box">
             <div class="box-face face-bottom"></div>
             <div class="box-face face-left shov"><span>ПАКЕТ Старт</span></div>
@@ -260,6 +305,25 @@
 
       <div class="box-cell" style="--neon:#22D3EE;--neon2:#2D9CFF">
         <div class="box-scene">
+          <div class="circuit-floor">
+            <svg viewBox="0 0 600 420" fill="none" stroke="var(--neon)">
+              <path d="M40 250 H150 V130 H300 V60" stroke-width="4"/>
+              <path d="M40 320 H190 V370 H330 V410" stroke-width="4"/>
+              <path d="M560 240 H450 V130 H330 V60" stroke-width="4"/>
+              <path d="M560 330 H420 V380 H330 V410" stroke-width="4"/>
+              <path d="M150 130 V40 H260" stroke-width="4"/>
+              <path d="M450 130 V50 H360" stroke-width="4"/>
+              <g stroke-width="4">
+                <circle cx="150" cy="130" r="8"/><circle cx="300" cy="60" r="8"/>
+                <circle cx="190" cy="370" r="8"/><circle cx="450" cy="130" r="8"/>
+                <circle cx="420" cy="380" r="8"/><circle cx="330" cy="60" r="8"/>
+              </g>
+              <g fill="#EAFBFF" stroke="none">
+                <circle cx="150" cy="200" r="6"/><circle cx="450" cy="200" r="6"/>
+                <circle cx="260" cy="40" r="6"/><circle cx="420" cy="330" r="6"/>
+              </g>
+            </svg>
+          </div>
           <div class="main-box">
             <div class="box-face face-bottom"></div>
             <div class="box-face face-left shov"><span>ПАКЕТ Поток</span></div>
@@ -289,6 +353,25 @@
 
       <div class="box-cell" style="--neon:#FF4D7D;--neon2:#A855F7">
         <div class="box-scene">
+          <div class="circuit-floor">
+            <svg viewBox="0 0 600 420" fill="none" stroke="var(--neon)">
+              <path d="M40 250 H150 V130 H300 V60" stroke-width="4"/>
+              <path d="M40 320 H190 V370 H330 V410" stroke-width="4"/>
+              <path d="M560 240 H450 V130 H330 V60" stroke-width="4"/>
+              <path d="M560 330 H420 V380 H330 V410" stroke-width="4"/>
+              <path d="M150 130 V40 H260" stroke-width="4"/>
+              <path d="M450 130 V50 H360" stroke-width="4"/>
+              <g stroke-width="4">
+                <circle cx="150" cy="130" r="8"/><circle cx="300" cy="60" r="8"/>
+                <circle cx="190" cy="370" r="8"/><circle cx="450" cy="130" r="8"/>
+                <circle cx="420" cy="380" r="8"/><circle cx="330" cy="60" r="8"/>
+              </g>
+              <g fill="#EAFBFF" stroke="none">
+                <circle cx="150" cy="200" r="6"/><circle cx="450" cy="200" r="6"/>
+                <circle cx="260" cy="40" r="6"/><circle cx="420" cy="330" r="6"/>
+              </g>
+            </svg>
+          </div>
           <div class="main-box">
             <div class="box-face face-bottom"></div>
             <div class="box-face face-left shov"><span>ПАКЕТ Система</span></div>
