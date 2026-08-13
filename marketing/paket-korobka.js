@@ -103,6 +103,15 @@ const PLATA = (id) => {
     'M620 180 H900',
     'M700 880 H820',
   ];
+  /* ИМПУЛЬСЫ — яркие точки на дорожках. В задании просили бегущий ток
+     анимацией; в статичной картинке анимации не видно, скриншот берёт
+     один кадр. Поэтому импульсы расставлены как остановленный кадр:
+     несколько точек в разных местах разводки. Нужна настоящая беготня —
+     это другой формат вывода, видео или GIF, и другая задача. */
+  const impulsy = [
+    [300, 420], [520, 180], [360, 860], [700, 940],
+    [1180, 220], [1050, 800], [820, 190], [1260, 660],
+  ];
   const ploshchadki = [
     [300, 300], [620, 180], [360, 760], [700, 880],
     [1180, 300], [900, 190], [1120, 800], [820, 900],
@@ -133,6 +142,8 @@ const PLATA = (id) => {
             stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>`).join('\n      ')}
       ${ploshchadki.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="11"
             fill="none" stroke="url(#pl${id})" stroke-width="5"/>`).join('\n      ')}
+      ${impulsy.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9" fill="#EAFBFF"/>
+      <circle cx="${x}" cy="${y}" r="20" fill="url(#pl${id})" opacity=".45"/>`).join('\n      ')}
     </g>
   </svg>`;
 };
@@ -159,6 +170,10 @@ ${fontCss}
     --acc:${nastr.acc}; --acc2:${nastr.acc2};
     --shir:${SHIR}px; --vys:${VYS}px; --glub:${GLUB}px;
     --pol:${GLUB / 2}px;              /* половина глубины */
+    /* Высота шва от верхнего ребра. Одна переменная на лицо и бок —
+       иначе линии на соседних гранях встанут на разной высоте
+       и колпак развалится. */
+    --shov:84px;
   }
 
   body{width:${W}px;height:${H}px;background:var(--ink);color:var(--white);
@@ -226,12 +241,26 @@ ${fontCss}
   .gran{position:absolute;
     background:linear-gradient(155deg,#161A22 0%,#0C1017 55%,#070A10 100%)}
 
+  /* ШОВ ОТКИДНОГО КОЛПАКА. Тёмная прорезь и светлый блик под ней —
+     так читается стык двух панелей. Рисуется фоновым градиентом,
+     а не элементом: у граней уже заняты оба псевдоэлемента бликами
+     на рёбрах, а фоновый слой ещё и не мешает раскладке текста.
+
+     Высота одна и та же на лице и на боку — грани начинаются от одного
+     верхнего ребра, поэтому линия опоясывает коробку без ступеньки. */
   /* Лицо */
   .box-front{width:var(--shir);height:var(--vys);left:0;top:0;
     transform:translateZ(var(--pol));
-    padding:52px 44px 44px;display:flex;flex-direction:column;
+    /* Отступ сверху = шов плюс воздух: надпись студии стоит НА колпаке,
+       под линией сгиба, а не поперёк неё. */
+    padding:calc(var(--shov) + 34px) 44px 44px;display:flex;flex-direction:column;
     /* Глянец: широкая мягкая полоса через грань. */
     background:
+      linear-gradient(180deg,
+        transparent 0 calc(var(--shov) - 2px),
+        rgba(0,0,0,.62) calc(var(--shov) - 2px) var(--shov),
+        rgba(255,255,255,.12) var(--shov) calc(var(--shov) + 2px),
+        transparent calc(var(--shov) + 2px)),
       linear-gradient(112deg,
         rgba(255,255,255,.10) 0%,
         rgba(255,255,255,.02) 22%,
@@ -245,6 +274,11 @@ ${fontCss}
     transform-origin:left center;
     transform:translateZ(var(--pol)) rotateY(-90deg);
     background:
+      linear-gradient(180deg,
+        transparent 0 calc(var(--shov) - 2px),
+        rgba(0,0,0,.62) calc(var(--shov) - 2px) var(--shov),
+        rgba(255,255,255,.12) var(--shov) calc(var(--shov) + 2px),
+        transparent calc(var(--shov) + 2px)),
       linear-gradient(90deg, rgba(255,255,255,.05), transparent 60%),
       linear-gradient(180deg,#12161E 0%,#0A0E14 100%);
     display:flex;align-items:center;justify-content:center}
@@ -275,6 +309,24 @@ ${fontCss}
     filter:drop-shadow(0 0 18px color-mix(in srgb, var(--acc) 85%, transparent))
            drop-shadow(0 0 34px color-mix(in srgb, var(--acc2) 60%, transparent))}
 
+  /* НЕОНОВЫЙ ПОДИУМ — это нижняя грань коробки, а не отдельный
+     прямоугольник на полу. Так он лежит ровно под дном при любом
+     развороте: отдельный элемент пришлось бы совмещать вручную,
+     и он разъезжался бы при каждой правке угла. */
+  /* Рамка ШИРЕ дна на 70px с каждой стороны: ровно по дну её не видно —
+     коробка её закрывает. Вынос вперёд даёт сдвиг translateY ДО поворота:
+     после rotateX он превращается в сдвиг по плоскости пола. */
+  .box-bottom{width:calc(var(--shir) + 140px);height:calc(var(--glub) + 140px);
+    left:-70px;top:100%;
+    transform-origin:top center;
+    transform:translateZ(var(--pol)) rotateX(-90deg) translateY(-70px);
+    background:color-mix(in srgb, var(--acc) 10%, transparent);
+    border:3px solid color-mix(in srgb, var(--acc) 85%, transparent);
+    border-radius:20px;
+    box-shadow:0 0 60px color-mix(in srgb, var(--acc) 85%, transparent),
+               0 0 120px color-mix(in srgb, var(--acc2) 55%, transparent),
+               inset 0 0 44px color-mix(in srgb, var(--acc2) 60%, transparent)}
+
   /* Блики на рёбрах: тонкие светлые полосы по стыкам граней.
      Именно они читаются как глянцевый пластик. */
   .box-front::before{content:'';position:absolute;left:0;top:0;
@@ -297,8 +349,7 @@ ${fontCss}
   /* Полоса крышки: на референсе у коробки виден шов, и надпись студии
      стоит НА крышке, а не на лице. Повторяем швом поперёк лица. */
   .marka{font-size:19px;font-weight:800;letter-spacing:.3em;
-    color:rgba(255,255,255,.62);padding-bottom:26px;
-    border-bottom:1px solid rgba(255,255,255,.13)}
+    color:rgba(255,255,255,.62)}
 
   .glavnoe{margin:auto 0;display:flex;flex-direction:column;gap:26px}
 
@@ -345,6 +396,7 @@ ${fontCss}
     <div class="plata">${PLATA(p.id)}</div>
     <div class="box-scene">
     <div class="box">
+      <div class="gran box-bottom"></div>
       <div class="gran box-left"><span>ПАКЕТ ${p.nazvanie.replace(/[«»]/g, '')}</span></div>
       <div class="gran box-top">${LOGO(p.id)}</div>
       <div class="gran box-front">
