@@ -185,6 +185,18 @@
     .hero-section{padding:3rem 1.25rem}
     .boxes-showcase{grid-template-columns:1fr;gap:2.6rem}
     .box-scene{height:calc(var(--vys) + 100px)}
+
+    /* Мелкий текст НА коробке набран в пикселях и от роста коробки
+       не растёт — на телефоне он становится ещё мельче относительно
+       неё. Поднимаем вручную, иначе «ВАЙБ ДИДЖИТАЛ 999» и строка
+       состава превращаются в серую рябь. Подписи ПОД коробкой
+       набраны в rem и читаются и так. */
+    .f-marka{font-size:9px;letter-spacing:3px}
+    .f-title{font-size:21px}
+    .f-cena b{font-size:15px}
+    .f-cena span{font-size:11px}
+    .f-niz{font-size:11px}
+    .face-left span{font-size:11px}
   }
 
   /* Уважаем настройку «уменьшить движение»: свечения и размытия
