@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Первый экран: оффер и три коробки — рабочий пример</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --ink:#04060C; --white:#E8F0FF; --mist:#8A9BC4;
+    /* Габариты коробки. Всё остальное считается от них, поэтому
+       масштабировать сетку — значит поменять эти три числа. */
+    --shir:190px; --vys:260px; --glub:66px; --pol:33px; --shov:30px;
+  }
+
+  body{background:var(--ink);color:var(--white);
+    font-family:'Manrope','Segoe UI',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased}
+
+  /* ── ЭКРАН ─────────────────────────────────────────────── */
+  .hero-section{position:relative;min-height:100vh;
+    display:flex;align-items:center;
+    padding:5rem 4rem;overflow:hidden;
+    background:
+      radial-gradient(ellipse 70% 55% at 68% 42%,
+        rgba(99,102,241,.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 12% 20%,
+        rgba(34,211,238,.10) 0%, transparent 70%),
+      var(--ink)}
+
+  /* Сетка микросхемы на фоне — та же тема, что на коробках. */
+  .hero-section::before{content:'';position:absolute;inset:0;opacity:.25;
+    background-image:
+      linear-gradient(rgba(99,102,241,.14) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,.14) 1px, transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(ellipse at 60% 45%, #000 15%, transparent 72%);
+    mask-image:radial-gradient(ellipse at 60% 45%, #000 15%, transparent 72%);
+    pointer-events:none}
+
+  /* ── МАКРО-СЕТКА ───────────────────────────────────────── */
+  .hero-grid{position:relative;z-index:1;width:100%;max-width:1440px;
+    margin:0 auto;
+    display:grid;grid-template-columns:1.2fr 2fr;gap:4rem;
+    align-items:center}
+
+  /* ── ОФФЕР ─────────────────────────────────────────────── */
+  .offer .eyebrow{font-size:.8rem;font-weight:700;letter-spacing:.22em;
+    text-transform:uppercase;color:#8B5CF6}
+  .offer h1{margin-top:1.1rem;font-size:clamp(2.2rem,3.4vw,3.4rem);
+    line-height:1.05;font-weight:800;letter-spacing:-.02em}
+  .offer h1 em{font-style:normal;
+    background:linear-gradient(100deg,#22D3EE,#8B5CF6);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .offer p{margin-top:1.4rem;font-size:1.05rem;line-height:1.55;
+    color:var(--mist);max-width:34ch}
+
+  .offer ul{margin-top:1.6rem;display:flex;flex-direction:column;gap:.7rem;
+    list-style:none}
+  .offer li{display:flex;gap:.7rem;align-items:flex-start;
+    font-size:.98rem;line-height:1.35}
+  .offer li b{color:#22D3EE;font-weight:800}
+
+  .offer .cta{margin-top:2.2rem;display:flex;gap:1rem;flex-wrap:wrap;
+    align-items:center}
+  .offer .cta a{display:inline-flex;align-items:center;
+    padding:.95rem 1.7rem;border-radius:.75rem;
+    font-size:1rem;font-weight:700;text-decoration:none;color:#fff;
+    background:linear-gradient(100deg,#6366F1,#8B5CF6);
+    box-shadow:0 0 28px rgba(139,92,246,.45)}
+  .offer .cta a.tihaya{background:none;color:var(--mist);
+    border:1px solid rgba(255,255,255,.16);box-shadow:none}
+
+  /* ── ВИТРИНА: ТРИ КОРОБКИ ──────────────────────────────── */
+  .boxes-showcase{display:grid;grid-template-columns:repeat(3,1fr);
+    gap:2.5rem;align-items:end}
+
+  /* Ячейка витрины. overflow:visible обязателен: подиум и свечение
+     выходят за габариты коробки, и при overflow:hidden их срезало бы
+     по краю ячейки — коробка осталась бы без света под дном. */
+  .box-cell{display:flex;flex-direction:column;align-items:center;gap:1.1rem;
+    overflow:visible}
+  .box-scene{position:relative;width:100%;height:calc(var(--vys) + 90px);
+    perspective:2000px;perspective-origin:50% 8%;
+    display:flex;align-items:center;justify-content:center;
+    overflow:visible}
+
+  .box-podpis{text-align:center}
+  .box-podpis b{display:block;font-size:1.05rem;font-weight:800}
+  .box-podpis span{display:block;margin-top:.25rem;font-size:.85rem;
+    color:var(--mist)}
+
+  /* ── КОРОБКА (код не менялся, только габариты меньше) ──── */
+  .main-box{position:relative;width:var(--shir);height:var(--vys);
+    transform-style:preserve-3d;
+    transform:rotateX(12deg) rotateY(-28deg)}
+
+  .box-face{position:absolute;
+    background:linear-gradient(135deg,#090D16 0%,#111724 40%,#05070B 70%,#161F33 100%)}
+
+  .shov{background-image:linear-gradient(180deg,
+      transparent 0 calc(var(--shov) - 2px),
+      rgba(0,0,0,.7)        calc(var(--shov) - 2px) var(--shov),
+      rgba(255,255,255,.12) var(--shov) calc(var(--shov) + 2px),
+      transparent calc(var(--shov) + 2px))}
+
+  .face-front{width:var(--shir);height:var(--vys);left:0;top:0;
+    transform:translate3d(0,0,var(--pol));
+    padding:calc(var(--shov) + 14px) 14px 14px;
+    display:flex;flex-direction:column;
+    box-shadow:inset 1px 1px 0 rgba(255,255,255,.15),
+               inset 0 20px 30px rgba(255,255,255,.05)}
+
+  .face-left{width:var(--glub);height:var(--vys);left:0;top:0;
+    transform-origin:left center;
+    transform:translateZ(var(--pol)) rotateY(-90deg);
+    background:
+      linear-gradient(90deg, rgba(255,255,255,.06), transparent 60%),
+      linear-gradient(135deg,#0B101B 0%,#131B2B 40%,#06080E 70%,#111A2C 100%);
+    display:flex;align-items:center;justify-content:center}
+  .face-left span{writing-mode:vertical-lr;transform:rotateY(180deg);
+    white-space:nowrap;font-size:9px;font-weight:800;letter-spacing:.2em;
+    color:rgba(255,255,255,.45)}
+
+  .face-top{width:var(--shir);height:var(--glub);left:0;top:0;
+    transform-origin:center top;
+    transform:translateZ(var(--pol)) rotateX(90deg);
+    background:linear-gradient(115deg,
+      #05070A 0%, #090D14 45%, #222D42 46%, #2D3C59 52%, #090D14 53%, #05070A 100%);
+    box-shadow:inset 0 0 20px rgba(255,255,255,.03),
+               inset 1px 1px 0 rgba(255,255,255,.15);
+    display:flex;align-items:center;justify-content:center}
+  .face-top svg{width:58px;height:58px;transform:rotateX(180deg);
+    mix-blend-mode:screen;opacity:.95;
+    filter:drop-shadow(0 0 4px #fff) drop-shadow(0 0 12px var(--neon))}
+  .oreol{position:absolute;left:50%;top:50%;width:90px;height:50px;
+    transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+    background:radial-gradient(ellipse at center,
+      color-mix(in srgb, var(--neon) 30%, transparent) 0%, transparent 74%);
+    filter:blur(9px)}
+
+  .face-bottom{width:calc(var(--shir) + 54px);height:calc(var(--glub) + 54px);
+    left:-27px;top:100%;
+    transform-origin:top center;
+    transform:translateZ(var(--pol)) rotateX(-90deg) translateY(-27px);
+    background:color-mix(in srgb, var(--neon) 10%, transparent);
+    border:2px solid color-mix(in srgb, var(--neon) 85%, transparent);
+    border-radius:12px;
+    box-shadow:0 0 20px color-mix(in srgb, var(--neon) 85%, transparent),
+               0 0 54px color-mix(in srgb, var(--neon2) 55%, transparent)}
+
+  .f-marka{font-size:7px;font-weight:300;letter-spacing:2.4px;
+    color:#fff;opacity:.6}
+  .f-glavnoe{margin:auto 0;display:flex;flex-direction:column;gap:7px}
+  .f-title{font-size:17px;line-height:1.04;font-weight:800;
+    text-shadow:0 0 10px var(--neon), 0 0 20px var(--neon2)}
+  .f-cena{display:inline-flex;align-self:flex-start;align-items:baseline;gap:6px;
+    padding:5px 9px;border-radius:8px;
+    border:2px solid color-mix(in srgb, var(--neon) 62%, transparent);
+    background:color-mix(in srgb, var(--neon) 14%, transparent);
+    box-shadow:0 0 14px color-mix(in srgb, var(--neon) 30%, transparent)}
+  .f-cena b{font-size:12px;font-weight:800;white-space:nowrap}
+  .f-cena span{font-size:8px;color:var(--mist);white-space:nowrap}
+  .f-niz{font-size:8px;line-height:1.35;color:rgba(255,255,255,.6)}
+
+  /* ── АДАПТИВНОСТЬ ──────────────────────────────────────── */
+
+  /* Планшет: одна колонка, текст наверх. */
+  @media (max-width:1100px){
+    .hero-section{padding:4rem 2rem}
+    .hero-grid{grid-template-columns:1fr;gap:3rem}
+    .offer p{max-width:none}
+    .boxes-showcase{gap:1.6rem}
+  }
+
+  /* Телефон: коробки в столбик. Габариты уменьшены переменными —
+     сама коробка при этом не переписывается. */
+  @media (max-width:768px){
+    :root{--shir:210px; --vys:290px; --glub:74px; --pol:37px; --shov:34px}
+    .hero-section{padding:3rem 1.25rem}
+    .boxes-showcase{grid-template-columns:1fr;gap:2.6rem}
+    .box-scene{height:calc(var(--vys) + 100px)}
+  }
+
+  /* Уважаем настройку «уменьшить движение»: свечения и размытия
+     на слабом телефоне дороги, а пользы от них там немного. */
+  @media (prefers-reduced-motion:reduce){
+    .face-bottom{box-shadow:0 0 12px color-mix(in srgb, var(--neon) 60%, transparent)}
+    .oreol{filter:none}
+  }
+</style>
+</head>
+<body>
+<section class="hero-section">
+  <div class="hero-grid">
+
+    <div class="offer">
+      <div class="eyebrow">Вайб Диджитал 999 · Кавминводы и по всей России</div>
+      <h1>Сайт и бот, которые <em>приводят заявки</em></h1>
+      <p>Собираем на чистом коде, без конструкторов и абонентской платы.
+         Исходники и доступы отдаём вам.</p>
+      <ul>
+        <li><b>✓</b><span>Договор, ИП, закрывающие документы</span></li>
+        <li><b>✓</b><span>Заявка приходит в Telegram за секунды</span></li>
+        <li><b>✓</b><span>Форма по 152-ФЗ: согласие и политика</span></li>
+      </ul>
+      <div class="cta">
+        <a href="#zayavka">Получить расчёт проекта</a>
+        <a class="tihaya" href="#pakety">Посмотреть пакеты</a>
+      </div>
+    </div>
+
+    <div class="boxes-showcase">
+
+      <div class="box-cell" style="--neon:#8B5CF6;--neon2:#3B82F6">
+        <div class="box-scene">
+          <div class="main-box">
+            <div class="box-face face-bottom"></div>
+            <div class="box-face face-left shov"><span>ПАКЕТ Старт</span></div>
+            <div class="box-face face-top">
+              <span class="oreol"></span>
+              <svg viewBox="0 0 130 120" fill="none">
+                <defs><linearGradient id="v1" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#22D3EE"/><stop offset="55%" stop-color="#6366F1"/>
+                  <stop offset="100%" stop-color="#A855F7"/></linearGradient></defs>
+                <circle cx="65" cy="60" r="54" stroke="url(#v1)" stroke-width="2.5" opacity=".75"/>
+                <path d="M26 30 L52 90 L78 30" stroke="url(#v1)" stroke-width="12"/>
+                <path d="M68 30 L68 90 M68 30 H80 A30 30 0 0 1 80 90 H68" stroke="url(#v1)" stroke-width="12"/>
+              </svg>
+            </div>
+            <div class="box-face face-front shov">
+              <div class="f-marka">ВАЙБ ДИДЖИТАЛ 999</div>
+              <div class="f-glavnoe">
+                <div class="f-title">WEB-<br>РАЗРАБОТКА</div>
+                <div class="f-cena"><b>от 50 000 ₽</b><span>от 10 дней</span></div>
+              </div>
+              <div class="f-niz">Лендинг «Старт» / Лид-бот</div>
+            </div>
+          </div>
+        </div>
+        <div class="box-podpis"><b>Пакет «Старт»</b><span>Команда до 15 человек</span></div>
+      </div>
+
+      <div class="box-cell" style="--neon:#22D3EE;--neon2:#2D9CFF">
+        <div class="box-scene">
+          <div class="main-box">
+            <div class="box-face face-bottom"></div>
+            <div class="box-face face-left shov"><span>ПАКЕТ Поток</span></div>
+            <div class="box-face face-top">
+              <span class="oreol"></span>
+              <svg viewBox="0 0 130 120" fill="none">
+                <defs><linearGradient id="v2" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#22D3EE"/><stop offset="55%" stop-color="#6366F1"/>
+                  <stop offset="100%" stop-color="#A855F7"/></linearGradient></defs>
+                <circle cx="65" cy="60" r="54" stroke="url(#v2)" stroke-width="2.5" opacity=".75"/>
+                <path d="M26 30 L52 90 L78 30" stroke="url(#v2)" stroke-width="12"/>
+                <path d="M68 30 L68 90 M68 30 H80 A30 30 0 0 1 80 90 H68" stroke="url(#v2)" stroke-width="12"/>
+              </svg>
+            </div>
+            <div class="box-face face-front shov">
+              <div class="f-marka">ВАЙБ ДИДЖИТАЛ 999</div>
+              <div class="f-glavnoe">
+                <div class="f-title">ВОРОНКА<br>ПРОДАЖ</div>
+                <div class="f-cena"><b>от 100 000 ₽</b><span>от трёх недель</span></div>
+              </div>
+              <div class="f-niz">Лендинг «Продажи» / Бот для записи</div>
+            </div>
+          </div>
+        </div>
+        <div class="box-podpis"><b>Пакет «Поток»</b><span>Команда до 100 человек</span></div>
+      </div>
+
+      <div class="box-cell" style="--neon:#FF4D7D;--neon2:#A855F7">
+        <div class="box-scene">
+          <div class="main-box">
+            <div class="box-face face-bottom"></div>
+            <div class="box-face face-left shov"><span>ПАКЕТ Система</span></div>
+            <div class="box-face face-top">
+              <span class="oreol"></span>
+              <svg viewBox="0 0 130 120" fill="none">
+                <defs><linearGradient id="v3" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#22D3EE"/><stop offset="55%" stop-color="#6366F1"/>
+                  <stop offset="100%" stop-color="#A855F7"/></linearGradient></defs>
+                <circle cx="65" cy="60" r="54" stroke="url(#v3)" stroke-width="2.5" opacity=".75"/>
+                <path d="M26 30 L52 90 L78 30" stroke="url(#v3)" stroke-width="12"/>
+                <path d="M68 30 L68 90 M68 30 H80 A30 30 0 0 1 80 90 H68" stroke="url(#v3)" stroke-width="12"/>
+              </svg>
+            </div>
+            <div class="box-face face-front shov">
+              <div class="f-marka">ВАЙБ ДИДЖИТАЛ 999</div>
+              <div class="f-glavnoe">
+                <div class="f-title">СИСТЕМА<br>ПОД КЛЮЧ</div>
+                <div class="f-cena"><b>от 150 000 ₽</b><span>от пяти недель</span></div>
+              </div>
+              <div class="f-niz">Сайт 5–10 страниц / ИИ-агент</div>
+            </div>
+          </div>
+        </div>
+        <div class="box-podpis"><b>Пакет «Система»</b><span>Компания до 250 человек</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+</body>
+</html>
