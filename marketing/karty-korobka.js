@@ -117,6 +117,40 @@ const KARTOCHKI = [
       ],
     },
   },
+  {
+    id: 'audit',
+    usluga: 'audit',
+    color: '#FF4D7D',
+    color2: '#A855F7',
+    eyebrow: 'Аудит сайта · Кавминводы и по всей России',
+    title: 'SEO-аудит и 152-ФЗ',
+    srokPrefix: 'отчёт за',
+    ticks: [
+      'Почему сайт не в поиске — по пунктам',
+      'Проверка форм на закон о персональных данных',
+      'Список правок, а не список замечаний',
+    ],
+    vygody: [
+      { znak: 'shchit', text: 'Проверка форм<br>по 152-ФЗ' },
+      { znak: 'glaz', text: 'Почему сайт<br>не в поиске' },
+      { znak: 'papka', text: 'Список правок,<br>а не замечаний' },
+      { znak: 'kod', text: 'Скорость, robots.txt,<br>карта сайта' },
+      { znak: 'soobshchenie', text: 'Разбор результатов<br>голосом' },
+      { znak: 'chasy', text: 'Успеть до запуска<br>рекламы' },
+    ],
+    /* Штрафы сверены с калькулятором на главной, `public/index.html`.
+       Формулировки нарушений оттуда же. На макете, который прислала
+       владелица, стояли 300 000 ₽ и 60 000 ₽ — обе цифры неверные. */
+    okno: {
+      zagolovok: 'Отчёт по вашему сайту',
+      stroki: [
+        { tip: 'bad', text: 'В форме нет галочки согласия', hvost: 'до 700 000 ₽' },
+        { tip: 'bad', text: 'Нет политики конфиденциальности', hvost: 'до 100 000 ₽' },
+        { text: 'Скорость загрузки в норме', hvost: 'ок' },
+        { text: 'robots.txt и sitemap.xml на месте', hvost: 'ок' },
+      ],
+    },
+  },
 ];
 
 const svg = (d, color) =>
@@ -170,6 +204,13 @@ ${fontCss}
   .plashka i{width:2px;height:38px;background:color-mix(in srgb, var(--white) 22%, transparent)}
   .plashka span{font-size:30px;color:var(--mist)}
 
+  /* Акция подписывается отдельной строкой, а не втискивается в плашку:
+     «15 000 ₽ вместо 20 000 ₽» в одной рамке читается как две цены
+     за одно и то же. Текст собирается из поля akciya в src/prices.js —
+     руками сюда старую цену не вписать. */
+  .akciya{margin-top:14px;font-size:26px;color:var(--mist)}
+  .akciya s{color:color-mix(in srgb, var(--white) 40%, transparent)}
+
   /* ── Сцена с коробкой ──────────────────────────────────── */
   .scena{margin-top:44px;flex:1;display:flex;gap:34px;align-items:stretch}
 
@@ -184,17 +225,19 @@ ${fontCss}
      и тень внизу оказывается прямо под дном. При center коробка висела
      посередине, а тень оставалась у нижнего края контейнера — в полусотне
      пикселей под ней, и предмет всё равно не стоял. */
-  .box3d{position:relative;perspective:1800px;perspective-origin:50% 38%;
-    flex:0 0 600px;display:flex;align-items:stretch;padding-bottom:58px}
+  .box3d{position:relative;perspective:1500px;perspective-origin:50% 38%;
+    /* Отступ сверху — под верхнюю грань: она торчит над лицом на всю
+       глубину коробки и без запаса налезала на строчку про акцию. */
+    flex:0 0 600px;display:flex;align-items:stretch;padding:46px 0 40px}
 
   /* Тень на поверхности. Без неё коробка висит в пустоте: объём есть,
      а стоять ей не на чем — глаз это замечает раньше, чем разбирает
      грани. Две тени: чёрная под дном и цветной отсвет пошире. */
   .box3d::after{content:'';position:absolute;z-index:0;
-    left:2%;right:6%;bottom:14px;height:54px;border-radius:50%;
-    background:radial-gradient(ellipse at 50% 50%,
-      rgba(0,0,0,.85) 0%, rgba(0,0,0,.45) 45%, transparent 72%);
-    filter:blur(20px)}
+    left:-10%;right:10%;bottom:8px;height:64px;border-radius:50%;
+    background:radial-gradient(ellipse at 42% 50%,
+      rgba(0,0,0,.9) 0%, rgba(0,0,0,.5) 42%, transparent 74%);
+    filter:blur(26px)}
   .box3d::before{content:'';position:absolute;z-index:0;
     left:-4%;right:-2%;bottom:0;height:88px;border-radius:50%;
     background:radial-gradient(ellipse at 50% 50%,
@@ -230,10 +273,14 @@ ${fontCss}
     /* Боковина темнее лица: плоскость уходит от света, и без этого
        перепада грани сливаются в одну картонку. Слева по ребру —
        светлая полоса, это сгиб. */
-    background:linear-gradient(90deg,#040A16 0%,#0A1426 62%,#101E38 100%);
-    border:1px solid color-mix(in srgb, var(--acc) 22%, transparent);
+    /* Корешок СВЕТЛЕЕ лица, а не темнее. Первая версия была темнее —
+       и книга сливалась в одну чёрную массу: две грани одного тона
+       читаются как один плоский прямоугольник. Светлая боковина
+       и тёмное лицо разводят плоскости мгновенно. */
+    background:linear-gradient(90deg,#16294A 0%,#1E355C 55%,#25406C 100%);
+    border:1px solid color-mix(in srgb, var(--acc) 30%, transparent);
     border-radius:8px 0 0 8px;
-    box-shadow:inset -18px 0 34px rgba(0,0,0,.55);
+    box-shadow:inset -14px 0 30px rgba(0,0,0,.4);
     display:flex;align-items:center;justify-content:center}
   /* Корешок повёрнут наружу, то есть к зрителю он обращён ИЗНАНКОЙ,
      и текст на нём выходит зеркальным. Первая версия так и вышла:
@@ -242,21 +289,47 @@ ${fontCss}
      буквы встают как надо. Проверять такое можно только глазами
      на увеличенном куске картинки: на общем плане надпись мелкая
      и выглядит правдоподобно. */
-  .spine span{writing-mode:vertical-rl;
-    font-size:22px;font-weight:700;letter-spacing:.12em;
-    color:color-mix(in srgb, var(--white) 72%, transparent)}
+  .spine span{writing-mode:vertical-rl;text-align:center;
+    font-size:30px;font-weight:800;letter-spacing:.1em;color:#F2F7FF;
+    text-shadow:0 0 18px color-mix(in srgb, var(--acc) 55%, transparent)}
 
+  /* Лицо: не плоская заливка, а материал. Радиальный градиент из центра
+     к краям — середина светлее, углы уходят в тень. Без него обложка
+     читается как фон под текстом, а не как поверхность предмета.
+     Тень уведена влево-вниз: свет падает справа сверху, значит книга
+     отбрасывает тень в противоположный угол. */
   .face{position:relative;flex:1;padding:34px 32px 30px;border-radius:8px;
-    background:linear-gradient(155deg,#0C1830 0%,#060E1E 55%,#040A16 100%);
-    border:1px solid color-mix(in srgb, var(--acc) 30%, transparent);
-    box-shadow:0 40px 90px rgba(0,0,0,.6),
-               0 0 70px color-mix(in srgb, var(--acc) 14%, transparent);
+    background:
+      radial-gradient(ellipse 90% 70% at 42% 34%,
+        color-mix(in srgb, var(--acc) 9%, transparent) 0%,
+        transparent 62%),
+      radial-gradient(ellipse 120% 90% at 45% 40%,
+        #16243F 0%, #0B1428 48%, #050C1A 100%);
+    border:1px solid color-mix(in srgb, var(--acc) 32%, transparent);
+    box-shadow:-46px 60px 120px rgba(0,0,0,.72),
+               -18px 26px 60px rgba(0,0,0,.5),
+               0 0 80px color-mix(in srgb, var(--acc) 13%, transparent);
     display:flex;flex-direction:column}
-  /* Блик по левому краю — от него коробка читается объёмной. */
+
+  /* БЛИК НА СГИБЕ. Тонкая светлая полоса ровно по стыку лица и корешка.
+     Приём стоит две строчки, а объём даёт сразу: глаз читает ребро
+     как физический сгиб, поймавший свет. */
+  .face::after{content:'';position:absolute;top:2px;bottom:2px;left:0;width:2px;
+    border-radius:2px;
+    background:linear-gradient(180deg,
+      transparent 0%,
+      rgba(255,255,255,.72) 12%,
+      color-mix(in srgb, var(--acc) 90%, white) 50%,
+      rgba(255,255,255,.72) 88%,
+      transparent 100%);
+    box-shadow:0 0 16px color-mix(in srgb, var(--acc) 70%, transparent);
+    pointer-events:none}
+
+  /* Мягкая засветка от верхнего левого угла — след того же источника. */
   .face::before{content:'';position:absolute;inset:0;border-radius:8px;
-    background:linear-gradient(100deg,
-      color-mix(in srgb, var(--white) 9%, transparent) 0%,
-      transparent 26%);
+    background:linear-gradient(104deg,
+      rgba(255,255,255,.07) 0%,
+      transparent 30%);
     pointer-events:none}
 
   .f-eye{font-size:15px;font-weight:700;letter-spacing:.16em;
@@ -290,6 +363,16 @@ ${fontCss}
     font-size:14px;font-weight:800;color:var(--ink);background:var(--acc)}
   .okno .row span{flex:1}
   .okno .row b{color:var(--acc);font-size:17px}
+
+  /* Строка нарушения. Цифра штрафа рядом с формулировкой — единственное
+     место на карточке, где мы пугаем, и пугаем законом, а не собой.
+     Цифры сверены с калькулятором на главной: ч. 2 ст. 13.11 КоАП —
+     до 700 000 ₽, ч. 3 — до 100 000 ₽. На макете владелицы стояли
+     300 000 и 60 000: первое из другой части статьи, второе устарело. */
+  .okno .row.bad{background:rgba(255,77,125,.11);
+    border-color:rgba(255,77,125,.42)}
+  .okno .row.bad em{background:#FF4D7D;color:#fff}
+  .okno .row.bad b{color:#FF7D9E}
 
   .ticks{margin-top:auto;padding-top:22px;display:flex;flex-direction:column;gap:11px}
   .ticks div{display:flex;gap:12px;font-size:20px;line-height:1.25}
@@ -326,6 +409,7 @@ ${fontCss}
     <div class="plashka">
       <b>${k.cena}</b><i></i><span>${k.srokPrefix} ${k.srok}</span>
     </div>
+    ${k.akciya ? `<div class="akciya">${k.akciya}</div>` : ''}
 
     <div class="scena">
       <div class="box3d">
@@ -341,7 +425,7 @@ ${fontCss}
             <div class="okno">
               <div class="bar"><u></u><u></u><u></u>${k.okno.zagolovok}</div>
               <div class="rows">
-                ${k.okno.stroki.map((s) => `<div class="row"><em>✓</em><span>${s.text}</span><b>${s.hvost}</b></div>`).join('\n                ')}
+                ${k.okno.stroki.map((s) => `<div class="row${s.tip === 'bad' ? ' bad' : ''}"><em>${s.tip === 'bad' ? '!' : '✓'}</em><span>${s.text}</span><b>${s.hvost}</b></div>`).join('\n                ')}
               </div>
             </div>
 
@@ -389,6 +473,13 @@ fs.mkdirSync(OUT, { recursive: true });
        физически нельзя записать в текст карточки руками. */
     k.cena = PRICES.cena(k.usluga);
     k.srok = PRICES.srok(k.usluga);
+
+    /* Акция тоже из прайса: и текст, и прежняя цена. Кончится акция —
+       строка исчезнет сама, вычёркивать её на картинке не придётся. */
+    const u = PRICES.usluga(k.usluga);
+    k.akciya = u.akciya
+      ? `${u.akciya.tekst[0].toUpperCase()}${u.akciya.tekst.slice(1)} — обычная цена <s>${PRICES.rub(u.akciya.bylo)}</s>`
+      : '';
 
     const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
     const page = await ctx.newPage();
