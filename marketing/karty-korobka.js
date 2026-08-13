@@ -167,6 +167,9 @@ ${fontCss}
   :root{
     --ink:#020813; --white:#E8F0FF; --mist:#8A9BC4;
     --acc:${k.color}; --acc2:${k.color2};
+    /* Надпись на торце. Через переменную, потому что content
+       у псевдоэлемента иначе не собрать из данных. */
+    --korshok:"${k.title} · ${k.cena}";
   }
 
   body{width:${W}px;height:${H}px;background:var(--ink);color:var(--white);
@@ -214,141 +217,93 @@ ${fontCss}
   /* ── Сцена с коробкой ──────────────────────────────────── */
   .scena{margin-top:44px;flex:1;display:flex;gap:34px;align-items:stretch}
 
-  /* ГЛУБИНА КОРОБКИ — одно число, от него считаются боковая и верхняя
-     грани. Первая версия была 64px при развороте 15°: боковина в кадре
-     занимала 64·sin15° ≈ 16 пикселей, и предмет читался плоской панелью,
-     а не коробкой. Владелица сказала прямо — «книга не выходит».
-     Теперь 118px при 24°: боковина ≈ 48px, ребро видно. */
-  .scena{--glub:110px;--pol:55px}   /* --pol — половина толщины */
+  /* ── КНИГА ────────────────────────────────────────────────
 
-  /* align-items:stretch, а не center: коробка занимает всю высоту сцены,
-     и тень внизу оказывается прямо под дном. При center коробка висела
-     посередине, а тень оставалась у нижнего края контейнера — в полусотне
-     пикселей под ней, и предмет всё равно не стоял. */
-  .box3d{position:relative;perspective:1500px;perspective-origin:50% 38%;
-    /* Отступ сверху — под верхнюю грань: она торчит над лицом на всю
-       глубину коробки и без запаса налезала на строчку про акцию. */
-    flex:0 0 600px;display:flex;align-items:stretch;padding:46px 0 52px}
+     Собирается ОДНИМ блоком, а не тремя гранями. Разница
+     принципиальная, и предыдущие версии на ней и валились:
+     три отдельные грани браузер поворачивает независимо, между ними
+     появляются щели и провалы, а угол читается раскрытой обложкой.
 
-  /* Тень на поверхности. Без неё коробка висит в пустоте: объём есть,
-     а стоять ей не на чем — глаз это замечает раньше, чем разбирает
-     грани. Две тени: чёрная под дном и цветной отсвет пошире. */
-  .box3d::after{content:'';position:absolute;z-index:0;
-    left:-10%;right:10%;bottom:8px;height:64px;border-radius:50%;
+     Здесь тело одно — .book. Корешок и блик на сгибе — его
+     псевдоэлементы, то есть части того же тела. Разъехаться нечему.
+
+     Пропорции взяты из образца владелицы и пересчитаны под наш холст:
+     у неё книга 320px и корешок 45px, это 14% толщины. У нас книга
+     600px, значит корешок 84px. Оставить 45px как есть было нельзя:
+     на нашем размере это 7%, и книга снова стала бы плоской —
+     то самое, на что она жаловалась двумя правками раньше. */
+  .scena{--tolshchina:84px}
+
+  .book-container{position:relative;perspective:1200px;
+    flex:0 0 600px;display:flex;align-items:stretch;
+    justify-content:center;padding:52px 0 56px}
+
+  /* Тень на «полу». Отдельными пятнами под контейнером, а не только
+     через box-shadow книги: box-shadow поворачивается вместе с телом
+     и ложится на его плоскость, а лежать она должна на полу. */
+  .book-container::after{content:'';position:absolute;z-index:0;
+    left:-10%;right:10%;bottom:10px;height:62px;border-radius:50%;
     background:radial-gradient(ellipse at 42% 50%,
       rgba(0,0,0,.9) 0%, rgba(0,0,0,.5) 42%, transparent 74%);
     filter:blur(26px)}
-  .box3d::before{content:'';position:absolute;z-index:0;
+  .book-container::before{content:'';position:absolute;z-index:0;
     left:-4%;right:-2%;bottom:0;height:88px;border-radius:50%;
     background:radial-gradient(ellipse at 50% 50%,
       color-mix(in srgb, var(--acc) 26%, transparent) 0%, transparent 70%);
     filter:blur(34px)}
 
-  /* СБОРКА КОРОБКИ. Три грани одного тела, а не лист с отогнутыми
-     краями. Правило простое: каждая грань выдвигается на половину
-     толщины вперёд, и только потом поворачивается вокруг своего ребра.
+  .book{position:relative;z-index:1;flex:1;
+    padding:34px 32px 30px;
+    border-radius:4px 12px 12px 4px;
+    transform-style:preserve-3d;
+    transform:rotateY(-28deg) rotateX(7deg) rotateZ(-2deg);
 
-     Первая версия строилась иначе: корешок стоял СНАРУЖИ лица,
-     через right:100%, и отгибался от него, как раскрытая обложка.
-     На картинке это и выглядело вывернутой наизнанку книгой —
-     угол между гранями получался тупой, а не прямой.
-
-     Теперь: лицо на +55px, корешок пристыкован к левому ребру
-     через left:0 с поворотом вокруг левого края и уходит ВГЛУБЬ,
-     от +55 до -55. Верхняя грань так же — от верхнего ребра назад.
-     Угол между гранями ровно 90°, тело замкнуто.
-
-     Осторожно: этот файл — шаблонная строка JS. Обратные кавычки
-     в комментариях к CSS закрывают её и валят разбор. */
-  .box{position:relative;z-index:1;transform-style:preserve-3d;flex:1;display:flex;
-    transform:rotateY(-25deg) rotateX(5deg)}
-
-  .top{position:absolute;left:0;top:0;width:100%;height:var(--glub);
-    transform-origin:top center;
-    transform:translateZ(var(--pol)) rotateX(90deg);
-    background:linear-gradient(180deg,#1B2E52,#101C34);
-    border-radius:8px 8px 0 0}
-
-  /* Корешок — боковая грань, отогнутая назад от левого ребра лица.
-
-     Как считается. Элемент ставится ЛЕВЕЕ лица (right:100%), значит его
-     правое ребро совпадает с левым ребром лица. Точка вращения — это
-     самое правое ребро, поворот на -90° уводит левый край назад ровно
-     на свою ширину, то есть на глубину коробки.
-
-     Первая версия вращалась вокруг точки внутри лица и с лишним
-     сдвигом — корешок ложился поперёк передней грани и перечёркивал
-     цену. На глаз это видно сразу, но только если посмотреть картинку,
-     а не поверить, что «CSS правильный». */
-  .spine{position:absolute;top:0;left:0;width:var(--glub);height:100%;
-    transform-origin:left center;
-    transform:translateZ(var(--pol)) rotateY(-90deg);
-    /* Боковина темнее лица: плоскость уходит от света, и без этого
-       перепада грани сливаются в одну картонку. Слева по ребру —
-       светлая полоса, это сгиб. */
-    /* Корешок СВЕТЛЕЕ лица, а не темнее. Первая версия была темнее —
-       и книга сливалась в одну чёрную массу: две грани одного тона
-       читаются как один плоский прямоугольник. Светлая боковина
-       и тёмное лицо разводят плоскости мгновенно. */
-    /* Светлее лица — иначе две грани одного тона читаются как один
-       плоский прямоугольник. Ни рамки, ни внутренней тени у стыка:
-       рамка давала светящуюся щель между гранями, тень — провал.
-       Тело должно быть монолитным, стык обозначает только блик. */
-    background:linear-gradient(90deg,#25406C 0%,#1E355C 45%,#16294A 100%);
-    border-radius:8px 0 0 8px;
-    display:flex;align-items:center;justify-content:center}
-  /* Корешок повёрнут наружу, то есть к зрителю он обращён ИЗНАНКОЙ,
-     и текст на нём выходит зеркальным. Первая версия так и вышла:
-     «Сайт-лендинг» читался вывернутыми буквами снизу вверх. Поворот
-     содержимого на 180° вокруг вертикальной оси гасит зеркало —
-     буквы встают как надо. Проверять такое можно только глазами
-     на увеличенном куске картинки: на общем плане надпись мелкая
-     и выглядит правдоподобно. */
-  /* К зрителю корешок обращён изнанкой, поэтому текст на нём зеркалится.
-     Поворот содержимого на 180° вокруг вертикальной оси это гасит.
-     Пометка на будущее: меняешь знак поворота грани — перепроверяй
-     надпись на увеличенном куске, зеркало появляется и исчезает
-     вместе со знаком. */
-  .spine span{writing-mode:vertical-rl;text-align:center;transform:rotateY(180deg);
-    font-size:30px;font-weight:800;letter-spacing:.1em;color:#F2F7FF;
-    text-shadow:0 0 18px color-mix(in srgb, var(--acc) 55%, transparent)}
-
-  /* Лицо: не плоская заливка, а материал. Радиальный градиент из центра
-     к краям — середина светлее, углы уходят в тень. Без него обложка
-     читается как фон под текстом, а не как поверхность предмета.
-     Тень уведена влево-вниз: свет падает справа сверху, значит книга
-     отбрасывает тень в противоположный угол. */
-  .face{position:relative;flex:1;padding:34px 32px 30px;border-radius:8px;
-    transform:translateZ(var(--pol));
+    /* Обложка — материал, а не заливка: середина светлее, углы уходят
+       в тень. Поверх — едва заметный отсвет цветом услуги. */
     background:
       radial-gradient(ellipse 90% 70% at 42% 34%,
         color-mix(in srgb, var(--acc) 9%, transparent) 0%,
         transparent 62%),
       radial-gradient(ellipse 120% 90% at 45% 40%,
         #16243F 0%, #0B1428 48%, #050C1A 100%);
-    border:1px solid color-mix(in srgb, var(--acc) 32%, transparent);
-    box-shadow:-46px 60px 120px rgba(0,0,0,.72),
-               -18px 26px 60px rgba(0,0,0,.5),
-               0 0 80px color-mix(in srgb, var(--acc) 13%, transparent);
+
+    box-shadow:
+      -10px 20px 40px rgba(0,0,0,.6),
+      -25px 40px 60px rgba(0,0,0,.4),
+      0 0 80px color-mix(in srgb, var(--acc) 12%, transparent);
+
     display:flex;flex-direction:column}
 
-  /* БЛИК НА СГИБЕ. Тонкая светлая полоса ровно по стыку лица и корешка.
-     Приём стоит две строчки, а объём даёт сразу: глаз читает ребро
-     как физический сгиб, поймавший свет. */
-  .face::after{content:'';position:absolute;top:6px;bottom:6px;left:0;width:2px;
-    background:linear-gradient(180deg,
-      transparent 0%,
-      rgba(255,255,255,.34) 14%,
-      rgba(255,255,255,.55) 50%,
-      rgba(255,255,255,.34) 86%,
-      transparent 100%);
-    pointer-events:none}
+  /* КОРЕШОК. Пристыкован к левому ребру и уходит вглубь: поворот вокруг
+     собственного левого края на 90°. Ни рамки, ни внутренней тени —
+     они и давали светящуюся щель между гранями. */
+  .book::before{content:var(--korshok);
+    position:absolute;left:0;top:0;width:var(--tolshchina);height:100%;
+    transform-origin:left center;
+    /* Читать справа налево: сдвиг на свою ширину, зеркало, поворот.
+       Зеркало здесь не украшение — к зрителю торец обращён изнанкой,
+       и без него надпись читается вывернутыми буквами. Сдвиг возвращает
+       грань на место после зеркала, поэтому геометрия не едет:
+       корешок по-прежнему уходит вглубь ровно на свою толщину. */
+    transform:rotateY(-90deg) scaleX(-1) translateX(-100%);
+    background:linear-gradient(270deg,#07090D 0%,#121820 62%,#1B2739 100%);
+    border-radius:4px 0 0 4px;
 
-  /* Мягкая засветка от верхнего левого угла — след того же источника. */
-  .face::before{content:'';position:absolute;inset:0;border-radius:8px;
-    background:linear-gradient(104deg,
-      rgba(255,255,255,.07) 0%,
-      transparent 30%);
+    /* Надпись на торце: строка кладётся вертикально и центрируется.
+       writing-mode вместо rotateZ — так буквы не выходят за узкий торец
+       и не требуют подгонки сдвигом. */
+    writing-mode:vertical-rl;text-align:center;white-space:nowrap;
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.82);font-size:26px;font-weight:800;
+    letter-spacing:.12em;
+    text-shadow:0 0 16px color-mix(in srgb, var(--acc) 50%, transparent)}
+
+  /* БЛИК НА СГИБЕ. Тонкая полоса ровно по ребру между обложкой
+     и корешком — от неё угол читается сгибом, а не стыком двух картонок. */
+  .book::after{content:'';position:absolute;left:0;top:0;width:2px;height:100%;
+    background:linear-gradient(to bottom,
+      rgba(255,255,255,.28), rgba(255,255,255,.06));
+    box-shadow:0 0 8px color-mix(in srgb, var(--acc) 34%, transparent);
     pointer-events:none}
 
   .f-eye{font-size:15px;font-weight:700;letter-spacing:.16em;
@@ -431,11 +386,8 @@ ${fontCss}
     ${k.akciya ? `<div class="akciya">${k.akciya}</div>` : ''}
 
     <div class="scena">
-      <div class="box3d">
-        <div class="box">
-          <div class="top"></div>
-          <div class="spine"><span>${k.title} · ${k.cena}</span></div>
-          <div class="face">
+      <div class="book-container">
+        <div class="book">
             <div class="f-eye">${k.eyebrow}</div>
             <div class="f-title">${k.title}</div>
             <div class="f-cena"><b>${k.cena}</b><span>${k.srokPrefix} ${k.srok}</span></div>
@@ -456,10 +408,9 @@ ${fontCss}
               <b>Оставить заявку</b><span>vibe-digital999.ru</span>
             </div>
 
-            <div class="f-foot">
-              <span class="mark">VIBE DIGITAL 999</span>
-              <span class="tel">+7 999 244 99 99</span>
-            </div>
+          <div class="f-foot">
+            <span class="mark">VIBE DIGITAL 999</span>
+            <span class="tel">+7 999 244 99 99</span>
           </div>
         </div>
       </div>
@@ -508,7 +459,7 @@ fs.mkdirSync(OUT, { recursive: true });
 
     const check = await page.evaluate(() => {
       const s = document.querySelector('.sheet');
-      const f = document.querySelector('.face').getBoundingClientRect();
+      const f = document.querySelector('.book').getBoundingClientRect();
       return {
         perepolnenie: Math.round(s.scrollHeight - s.clientHeight),
         nizKorobki: Math.round(f.bottom),
