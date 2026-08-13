@@ -189,7 +189,7 @@ ${fontCss}
     background-size:58px 58px;
     mask-image:radial-gradient(ellipse at 50% 42%, #000 24%, transparent 78%)}
 
-  .sheet{position:relative;z-index:2;height:100%;padding:64px 60px 52px;
+  .sheet{position:relative;z-index:2;height:100%;padding:64px 48px 52px;
     display:flex;flex-direction:column}
 
   /* ── Шапка ─────────────────────────────────────────────── */
@@ -213,7 +213,7 @@ ${fontCss}
   .akciya s{color:color-mix(in srgb, var(--white) 40%, transparent)}
 
   /* ── Сцена с коробкой ──────────────────────────────────── */
-  .scena{margin-top:44px;flex:1;display:flex;gap:34px;align-items:stretch}
+  .scena{margin-top:44px;flex:1;display:flex;gap:20px;align-items:stretch}
 
   /* ── КНИГА ────────────────────────────────────────────────
 
@@ -232,9 +232,9 @@ ${fontCss}
      то самое, на что она жаловалась двумя правками раньше. */
   .scena{--tolshchina:84px}
 
-  .book-container{position:relative;perspective:1200px;
-    flex:0 0 600px;display:flex;align-items:stretch;
-    justify-content:center;padding:52px 0 56px}
+  .book-container{position:relative;
+    flex:0 0 676px;display:flex;align-items:stretch;
+    justify-content:center;padding:52px 0 56px 88px}
 
   /* Тень на «полу». Отдельными пятнами под контейнером, а не только
      через box-shadow книги: box-shadow поворачивается вместе с телом
@@ -253,8 +253,7 @@ ${fontCss}
   .book{position:relative;z-index:1;flex:1;
     padding:34px 32px 30px;
     border-radius:0 12px 12px 0;
-    transform-style:preserve-3d;
-    transform:rotateY(-28deg) rotateX(7deg) rotateZ(-2deg);
+    transform:skewY(-6deg);
 
     /* Обложка — материал, а не заливка: середина светлее, углы уходят
        в тень. Поверх — едва заметный отсвет цветом услуги. */
@@ -313,7 +312,7 @@ ${fontCss}
 
   .f-eye{font-size:15px;font-weight:700;letter-spacing:.16em;
     text-transform:uppercase;color:var(--acc)}
-  .f-title{margin-top:14px;font-size:56px;line-height:1;font-weight:800;
+  .f-title{margin-top:14px;font-size:50px;line-height:1;font-weight:800;
     letter-spacing:-.02em}
   .f-cena{margin-top:16px;display:flex;align-items:baseline;gap:16px}
   .f-cena b{font-size:44px;font-weight:800;color:var(--acc)}
