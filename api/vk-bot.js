@@ -40,7 +40,7 @@
  */
 
 const { vkApi, sendVk, API_VERSION } = require('./vk');
-const { askOnce, findContact, notifyOwner } = require('./brief');
+const { askOnce, findContact, notifyOwner, systemFor } = require('./brief');
 
 /* ── Память диалогов ──────────────────────────────────────────────
    Держим последние сообщения по каждому собеседнику: без истории бот
@@ -127,7 +127,7 @@ async function handleMessage(message) {
   }
 
   try {
-    const answer = await askOnce(dialog.messages);
+    const answer = await askOnce(dialog.messages, systemFor('vk'));
     if (!answer) throw new Error('модель вернула пустой ответ');
 
     dialog.messages.push({ role: 'assistant', content: answer });

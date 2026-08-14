@@ -8,6 +8,7 @@
     "build": "node build.js",
     "prestart": "node build.js || true",
     "start": "node server.js",
+    "test-kontakt": "node api/kontakt.test.js",
     "ceny": "node -e \"const p=require('./src/prices');console.log('\\nУСЛУГИ\\n'+p.prajsDlyaBota()+'\\n\\nПАКЕТЫ\\n'+p.paketyDlyaBota()+'\\n\\nСОПРОВОЖДЕНИЕ\\n'+p.soprovozhdenieDlyaBota()+'\\n')\"",
     "karty": "node marketing/karty-price.js",
     "karty-kartinki": "node marketing/karty-cards.js",

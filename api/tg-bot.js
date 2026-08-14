@@ -31,7 +31,7 @@
  * Long polling работает изнутри и переживает смену хостинга молча.
  */
 
-const { askOnce, findContact, notifyOwner } = require('./brief');
+const { askOnce, findContact, notifyOwner, systemFor } = require('./brief');
 
 const API = 'https://api.telegram.org';
 const POLL_TIMEOUT_S = 25;          // сколько Telegram держит запрос открытым
@@ -169,7 +169,7 @@ async function handleMessage(message) {
   tgApi('sendChatAction', { chat_id: chatId, action: 'typing' }).catch(() => {});
 
   try {
-    const answer = await askOnce(dialog.messages);
+    const answer = await askOnce(dialog.messages, systemFor('telegram'));
     if (!answer) throw new Error('модель вернула пустой ответ');
 
     dialog.messages.push({ role: 'assistant', content: answer });
