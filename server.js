@@ -22,6 +22,9 @@ const { handleLead, handleLeadsExport, resetLeadsIfAsked } = require('./api/lead
 const { handleBrief } = require('./api/brief');
 const { handleGeo } = require('./api/geo');
 const { handleMolchuny } = require('./api/sessii');
+const { telegramVklyuchen } = require('./api/kanaly');
+const { vkConfigured } = require('./api/vk');
+const { mailConfigured } = require('./api/mail');
 const { startVkBot } = require('./api/vk-bot');
 const { startTgBot } = require('./api/tg-bot');
 
@@ -242,5 +245,26 @@ app.listen(PORT, () => {
      Здесь в том же процессе живёт ещё и сайт, так что цена такой
      ошибки — весь сайт. */
   startVkBot();
-  startTgBot();
+  /* Бот в Telegram остановлен 14.08.2026 решением владелицы: соединения
+     с Telegram у неё нет, и отвечать клиентам там некому. Причины
+     и как вернуть — api/kanaly.js. */
+  if (telegramVklyuchen()) {
+    startTgBot();
+  } else {
+    console.log('[tg-bot] Канал Telegram выключен (TELEGRAM_KANAL не «on») — бот не запускаем');
+  }
+
+  /* Сторож читаемых каналов. Заявка считается доставленной, если её принял
+     хотя бы один канал, — а с выключенным Telegram их остаётся два.
+     Если не настроен ни один, заявки лягут только на диск, и узнать
+     о них будет неоткуда. Молчать об этом нельзя. */
+  if (!telegramVklyuchen() && !vkConfigured() && !mailConfigured()) {
+    console.error(
+      '\n[каналы] ⚠ НИ ОДИН КАНАЛ НЕ НАСТРОЕН. Telegram выключен, ВКонтакте\n' +
+      '          и почта не подключены. Заявки будут только на диске:\n' +
+      '          читать их придётся выгрузкой /api/leads?key=…\n' +
+      '          Задайте VK_TOKEN и VK_PEER_ID либо SMTP_USER, SMTP_PASS\n' +
+      '          и MAIL_TO — и перезапустите приложение.\n'
+    );
+  }
 });

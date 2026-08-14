@@ -16,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 const { sendVkToOwner, vkConfigured } = require('./vk');
 const { sendMailToOwner, mailConfigured } = require('./mail');
+const { telegramVklyuchen } = require('./kanaly');
 
 const TELEGRAM_API = 'https://api.telegram.org';
 
@@ -289,7 +290,9 @@ async function handleLead(req, res) {
   const subject = `Заявка${num ? ' № ' + num : ''} — ${service} — ${name}`;
 
   const [tg, vk, mail] = await Promise.all([
-    sendTelegram(htmlText, token, chatId),
+    telegramVklyuchen()
+      ? sendTelegram(htmlText, token, chatId)
+      : Promise.resolve({ ok: false, error: 'выключен 14.08 — см. api/kanaly.js' }),
     vkConfigured() ? sendVkToOwner(plainText) : Promise.resolve({ ok: false, error: 'не подключён' }),
     mailConfigured() ? sendMailToOwner(subject, plainText) : Promise.resolve({ ok: false, error: 'не подключена' }),
   ]);
