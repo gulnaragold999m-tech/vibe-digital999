@@ -32,6 +32,7 @@
  */
 
 const { askOnce, kontaktIzSoobshcheniya, notifyOwner, systemFor } = require('./brief');
+const { zapisatSobytie, zakrytSessiyu } = require('./sessii');
 
 const API = 'https://api.telegram.org';
 const POLL_TIMEOUT_S = 25;          // сколько Telegram держит запрос открытым
@@ -163,9 +164,21 @@ async function handleMessage(message) {
      человеку этого не ждёт. Копия переписки снимается сейчас: пока
      разбор идёт, в dialog.messages успеет лечь ответ бота. */
   const snimok = dialog.messages.slice();
+
+  /* След разговора — до разбора контакта, чтобы молчуны не пропадали. */
+  zapisatSobytie({
+    key: 'tg|' + chatId,
+    kanal: 'telegram',
+    peer: String(chatId),
+    istochnik: 'telegram',
+    n: snimok.filter(m => m.role === 'user').length,
+    vopros: [...snimok].reverse().find(m => m.role === 'assistant')?.content || null,
+  });
+
   kontaktIzSoobshcheniya(text)
     .then(contact => {
       if (!contact) return;
+      zakrytSessiyu('tg|' + chatId, 'telegram', contact);
       return notifyOwner(snimok, contact, 'tg|' + chatId, { kanal: 'telegram', istochnik: 'telegram' });
     })
     .catch(err => console.error('[tg-bot] Бриф не ушёл:', err.message));

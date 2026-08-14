@@ -5020,6 +5020,10 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.btn-svc[data-service]').forEach(function (btn) {
     btn.addEventListener('click', function () {
       reachGoal('click_order');
+      /* Запоминаем выбор на вкладку: если человек передумает заполнять
+         форму и пойдёт в чат, Джарвис уже будет знать, чем он
+         интересовался, и не начнёт с «что вас интересует». */
+      try { sessionStorage.setItem('usluga-vybor', btn.dataset.service || ''); } catch (e) {}
     });
   });
 });
@@ -5959,6 +5963,26 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
   const history = [];
   let busy = false;
 
+  /* Память вкладки: что человек уже выбрал до того, как пошёл в чат.
+     Приватный режим браузера запрещает её целиком, поэтому каждое
+     обращение обёрнуто — без памяти чат обязан работать как обычно. */
+  function pomnim(kluch) {
+    try { return sessionStorage.getItem(kluch) || ''; } catch (e) { return ''; }
+  }
+
+  /* Номер разговора на вкладку. Нужен журналу молчунов: по адресу
+     посетителя разговоры не различить — прокси Amvera подменяет адрес
+     своим внутренним, и все посетители выглядят одним человеком
+     (проверено 10.08.2026, переписка с поддержкой). */
+  function chatSid() {
+    let sid = pomnim('chat-sid');
+    if (!sid) {
+      sid = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      try { sessionStorage.setItem('chat-sid', sid); } catch (e) {}
+    }
+    return sid;
+  }
+
   function typingBubble() {
     const msg = document.createElement('div');
     msg.className = 'chat-msg from-admin';
@@ -5997,11 +6021,11 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
            docs/20-VORONKI.md, раздел 2. */
         body: JSON.stringify({
           messages: history,
+          sid: chatSid(),
           page: location.href.slice(0, 300),
           ref: document.referrer.slice(0, 300),
-          quiz: (function () {
-            try { return sessionStorage.getItem('quiz-itog') || ''; } catch (e) { return ''; }
-          })(),
+          quiz: pomnim('quiz-itog'),
+          usluga: pomnim('usluga-vybor'),
         }),
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);

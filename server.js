@@ -21,6 +21,7 @@ const compression = require('compression');
 const { handleLead, handleLeadsExport, resetLeadsIfAsked } = require('./api/lead');
 const { handleBrief } = require('./api/brief');
 const { handleGeo } = require('./api/geo');
+const { handleMolchuny } = require('./api/sessii');
 const { startVkBot } = require('./api/vk-bot');
 const { startTgBot } = require('./api/tg-bot');
 
@@ -152,6 +153,11 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 /* Выгрузка сохранённых заявок. Закрыта ключом из переменной LEADS_KEY,
    без неё адрес отвечает 404 — внутри персональные данные посетителей. */
 app.get('/api/leads', handleLeadsExport);
+
+/* Отчёт по разговорам, кончившимся ничем. Закрыт тем же ключом
+   LEADS_KEY. Показывает, сколько людей ушло молча, на каком вопросе
+   брифа они замолкают и кому во ВКонтакте можно написать самой. */
+app.get('/api/molchuny', handleMolchuny);
 
 /* Короткие адреса для сторис.
 

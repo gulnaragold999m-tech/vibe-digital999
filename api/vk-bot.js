@@ -41,6 +41,7 @@
 
 const { vkApi, sendVk, API_VERSION } = require('./vk');
 const { askOnce, kontaktIzSoobshcheniya, notifyOwner, systemFor } = require('./brief');
+const { zapisatSobytie, zakrytSessiyu } = require('./sessii');
 
 /* ── Память диалогов ──────────────────────────────────────────────
    Держим последние сообщения по каждому собеседнику: без истории бот
@@ -126,9 +127,23 @@ async function handleMessage(message) {
      без await, и копия переписки берётся сейчас: пока разбор идёт,
      в dialog.messages успеет лечь ответ бота. */
   const snimok = dialog.messages.slice();
+
+  /* След разговора — до разбора контакта. Во ВКонтакте это особенно
+     важно: собеседник известен по номеру страницы, написать ему можно
+     руками, но без журнала владелица не узнает даже, что он приходил. */
+  zapisatSobytie({
+    key: 'vk|' + peerId,
+    kanal: 'vk',
+    peer: String(peerId),
+    istochnik: 'vk',
+    n: snimok.filter(m => m.role === 'user').length,
+    vopros: [...snimok].reverse().find(m => m.role === 'assistant')?.content || null,
+  });
+
   kontaktIzSoobshcheniya(text)
     .then(contact => {
       if (!contact) return;
+      zakrytSessiyu('vk|' + peerId, 'vk', contact);
       return notifyOwner(snimok, contact, 'vk|' + peerId, { kanal: 'vk', istochnik: 'vk' });
     })
     .catch(err => console.error('[vk-bot] Бриф не ушёл:', err.message));
