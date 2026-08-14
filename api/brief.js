@@ -394,12 +394,30 @@ https://vibe-digital999.ru/pakety/.
 };
 
 /**
- * Промпт для канала: общий плюс добавка.
- * Неизвестный канал ведёт себя как сайт — это самый нейтральный набор.
+ * Промпт для канала: общий, добавка про канал и — если есть — то,
+ * что уже известно про этот визит.
+ *
+ * Контекст идёт последним куском намеренно: он свежий и должен
+ * перевешивать общие правила. Знаем, что человек читал страницу
+ * про Telegram-ботов, — спрашивать «что вас интересует» уже нельзя.
  */
-function systemFor(kanal) {
-  return SYSTEM + '\n\n' + (KANAL[kanal] || KANAL.sajt);
+function systemFor(kanal, kontekst) {
+  const chasti = [SYSTEM, KANAL[kanal] || KANAL.sajt];
+
+  if (kontekst) {
+    chasti.push(
+      'ЧТО УЖЕ ИЗВЕСТНО ПРО ЭТОТ ВИЗИТ:\n' + kontekst +
+      '\nЭто ты уже знаешь — не переспрашивай. Про источник перехода\n' +
+      'не заговаривай вовсе: посетителю до него дела нет.'
+    );
+  }
+
+  return chasti.join('\n\n');
 }
+
+/* Разбор источника визита живёт отдельным модулем — у него свои
+   проверки в npm run test-kontakt, а зависимостей нет. */
+const { istochnik } = require('./vizit');
 
 /* ── Лимит: защищает кошелёк от перебора запросов с одного адреса ── */
 const hits = new Map();
@@ -442,7 +460,72 @@ function escapeHtml(text) {
 /* Распознавание контакта живёт отдельным модулем: у него есть свои
    проверки (npm run test-kontakt), а зависимостей нет вовсе — тест
    запускается на любом компьютере, даже без установленных пакетов. */
-const { findContact } = require('./kontakt');
+const { findContact, normalizeKontakt, mozhetBytKontakt } = require('./kontakt');
+
+/* ── Второй слой: контакт достаёт модель ──────────────────────────
+   Разбор выше ловит написанное знаками. Он не поймёт «мой номер восемь
+   девятьсот девяносто девять два сорок четыре» и «мой тг granatjarvis»
+   без собаки — а так пишут, особенно с телефона и голосом.
+
+   ПОЧЕМУ МОДЕЛЬ ВТОРЫМ СЛОЕМ, А НЕ ВМЕСТО РАЗБОРА. Заявка уходит
+   владелице ДО того, как модель ответила посетителю, — это защита
+   с 3 августа, когда отказ одного канала оставлял нас без заявок вовсе.
+   Если доставку заявки поставить в зависимость от модели, любой её сбой
+   снова начнёт терять клиентов, причём молча. Поэтому порядок такой:
+   знаками — гарантированно и мгновенно; словами — насколько сможет
+   модель. Отказ модели теряет редкий случай, а не заявку вообще. ── */
+const KONTAKT_SYSTEM = `
+Ты разбираешь одно сообщение посетителя сайта веб-студии и ищешь в нём
+средство связи: телефон, ник в Telegram или адрес почты.
+
+Ответь ОДНОЙ строкой и ничем больше:
+  телефон — цифрами, в виде +7XXXXXXXXXX;
+  ник — с собакой, @nickname;
+  почту — как написана;
+  если средства связи в сообщении нет — ответь НЕТ.
+
+Считай контактом и записанное словами вперемешку с цифрами: «восемь
+девятьсот девяносто девять…», «мой тг granatjarvis», «наберите меня
+на девятьсот…».
+
+НЕ считай контактом суммы, сроки, количество номеров в гостинице,
+адреса сайтов, годы и часы работы. Сомневаешься — отвечай НЕТ:
+ложный контакт хуже пропущенного, по нему звонят и попадают не туда.
+
+Ничего не объясняй и не здоровайся. Одна строка.
+`.trim();
+
+/**
+ * Просит модель найти контакт в сообщении.
+ * Не ответила за шесть секунд или ответила ерундой — возвращаем null.
+ */
+async function izvlechKontakt(text) {
+  try {
+    const otvet = await Promise.race([
+      askOnce([{ role: 'user', content: String(text).slice(0, 1000) }], KONTAKT_SYSTEM),
+      new Promise((resolve) => setTimeout(() => resolve(''), 6000)),
+    ]);
+
+    const stroka = String(otvet || '').trim().split('\n')[0];
+    if (!stroka || /^нет\b/i.test(stroka)) return null;
+
+    return normalizeKontakt(stroka);
+  } catch (err) {
+    console.warn('[brief] Контакт моделью не разобран:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Контакт из сообщения: сначала разбором, потом моделью.
+ * Единая точка для всех трёх дверей — сайта, ВКонтакте и Telegram.
+ */
+async function kontaktIzSoobshcheniya(text) {
+  const naydeno = findContact(text);
+  if (naydeno) return naydeno;
+  if (!mozhetBytKontakt(text)) return null;
+  return izvlechKontakt(text);
+}
 
 /**
  * Шлёт бриф владельцу — в Telegram и ВКонтакте сразу.
@@ -514,7 +597,7 @@ async function summarize(messages) {
   }
 }
 
-async function notifyOwner(messages, contact, sessionKey) {
+async function notifyOwner(messages, contact, sessionKey, meta = {}) {
   const now = Date.now();
   const seen = notified.get(sessionKey);
 
@@ -573,6 +656,11 @@ async function notifyOwner(messages, contact, sessionKey) {
     num,
     site,
     source: 'chat',
+    /* Откуда пришёл человек и с какой страницы писал. У заявок с формы
+       это есть с 10.08, у разговоров в чате появилось 14.08. */
+    istochnik: meta.istochnik || null,
+    page: meta.page || null,
+    kanal: meta.kanal || 'sajt',
     name: null,                        // в чате имя спрашивают не всегда
     contact,
     service: 'Разговор в чате',
@@ -589,6 +677,8 @@ async function notifyOwner(messages, contact, sessionKey) {
     `🌐 ${site}`,
     '',
     `📱 Контакт: ${contact}`,
+    ...(meta.istochnik ? [`📣 Источник: ${meta.istochnik}`] : []),
+    ...(meta.page ? [`📄 Страница: ${meta.page}`] : []),
     ...(summary ? ['', summary] : []),
     '',
     'Диалог:',
@@ -600,6 +690,8 @@ async function notifyOwner(messages, contact, sessionKey) {
     `🌐 ${escapeHtml(site)}`,
     '',
     `📱 Контакт: ${escapeHtml(contact)}`,
+    ...(meta.istochnik ? [`📣 Источник: ${escapeHtml(meta.istochnik)}`] : []),
+    ...(meta.page ? [`📄 Страница: ${escapeHtml(meta.page)}`] : []),
     ...(summary ? ['', escapeHtml(summary)] : []),
     '',
     '<b>Диалог:</b>',
@@ -738,11 +830,35 @@ async function handleBrief(req, res) {
     return res.status(400).json({ ok: false, error: 'Пустой запрос' });
   }
 
-  /* Контакт появился — шлём бриф себе сразу, не дожидаясь ответа модели. */
+  /* ── Что известно про визит ──────────────────────────────────────
+     Фронт присылает адрес страницы, адрес предыдущей страницы и, если
+     человек уже прошёл квиз, его итог. Раньше не присылал ничего, и бот
+     переспрашивал то, на что человек только что ответил в калькуляторе.
+
+     Всё это идёт в промпт и в заявку, но НЕ в ответ посетителю:
+     про источник перехода с ним не разговаривают. */
+  const page = String(req.body?.page || '').slice(0, 300);
+  const ref = String(req.body?.ref || '').slice(0, 300);
+  const quiz = String(req.body?.quiz || '').slice(0, 300);
+  const otkuda = istochnik(page, ref);
+
+  const kontekst = [
+    page ? `Читает страницу: ${page.split('?')[0]}` : '',
+    quiz ? `Прошёл квиз-калькулятор: ${quiz}` : '',
+  ].filter(Boolean).join('\n');
+
+  /* Контакт появился — шлём бриф себе сразу, не дожидаясь ответа модели.
+     Разбор знаками отрабатывает мгновенно; если он ничего не нашёл,
+     а посмотреть есть на что, к делу подключается модель. Ответ
+     посетителю ждать этого не должен — поэтому без await. */
   const last = messages[messages.length - 1];
   if (last.role === 'user') {
-    const contact = findContact(last.content);
-    if (contact) notifyOwner(messages, contact, ip + '|' + messages.length);
+    const meta = { istochnik: otkuda, page: page || null, kanal: 'sajt' };
+    kontaktIzSoobshcheniya(last.content)
+      .then((contact) => {
+        if (contact) notifyOwner(messages, contact, ip + '|' + messages.length, meta);
+      })
+      .catch((err) => console.error('[brief] Разбор контакта упал:', err.message));
   }
 
   /* Поток. X-Accel-Buffering отключает буферизацию прокси, иначе текст
@@ -764,7 +880,7 @@ async function handleBrief(req, res) {
   });
 
   try {
-    const cfg = buildRequest(messages, true, systemFor('sajt'));
+    const cfg = buildRequest(messages, true, systemFor('sajt', kontekst));
     const upstream = await fetch(cfg.url, {
       method: 'POST',
       signal: ctrl.signal,
@@ -818,4 +934,7 @@ async function handleBrief(req, res) {
   }
 }
 
-module.exports = { handleBrief, askOnce, findContact, notifyOwner, systemFor };
+module.exports = {
+  handleBrief, askOnce, findContact, notifyOwner, systemFor,
+  kontaktIzSoobshcheniya, istochnik,
+};

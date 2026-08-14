@@ -5825,6 +5825,11 @@ document.getElementById('modal-form').addEventListener('submit', async e => {
 
       /* Передаём итог квиза в форму заявки, чтобы не спрашивать заново */
       const summary = `${base.label} · ${answers.slice(1).map(a => a.t).join(' · ')} · оценка ${price}`;
+
+      /* Тот же итог кладём в память вкладки: если человек закроет форму
+         и пойдёт в чат, Джарвис не станет спрашивать заново то, на что
+         он только что ответил четырьмя кликами. */
+      try { sessionStorage.setItem('quiz-itog', summary); } catch (e) {}
       document.getElementById('modal-svc-tag').textContent = base.label;
       document.getElementById('mf-service').value = summary;
       document.getElementById('modal-form').style.display = '';
@@ -5984,7 +5989,20 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
       const res = await fetch('/api/brief', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history }),
+        /* Кроме переписки шлём то, что уже знаем про визит: адрес
+           страницы (из него сервер достаёт рекламную метку), откуда
+           человек пришёл и итог квиза, если он его прошёл. Без этого
+           заявка из чата приходила без источника, а бот переспрашивал
+           то, на что человек ответил в калькуляторе. Подробно —
+           docs/20-VORONKI.md, раздел 2. */
+        body: JSON.stringify({
+          messages: history,
+          page: location.href.slice(0, 300),
+          ref: document.referrer.slice(0, 300),
+          quiz: (function () {
+            try { return sessionStorage.getItem('quiz-itog') || ''; } catch (e) { return ''; }
+          })(),
+        }),
       });
       if (!res.ok) throw new Error('HTTP ' + res.status);
 

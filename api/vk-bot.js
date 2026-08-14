@@ -40,7 +40,7 @@
  */
 
 const { vkApi, sendVk, API_VERSION } = require('./vk');
-const { askOnce, findContact, notifyOwner, systemFor } = require('./brief');
+const { askOnce, kontaktIzSoobshcheniya, notifyOwner, systemFor } = require('./brief');
 
 /* ── Память диалогов ──────────────────────────────────────────────
    Держим последние сообщения по каждому собеседнику: без истории бот
@@ -119,12 +119,19 @@ async function handleMessage(message) {
   dialog.updatedAt = Date.now();
 
   /* Контакт появился — бриф владельцу уходит сразу, не дожидаясь ответа
-     модели. Если модель откажет, заявка всё равно будет у нас. */
-  const contact = findContact(text);
-  if (contact) {
-    notifyOwner(dialog.messages, contact, 'vk|' + peerId)
-      .catch(err => console.error('[vk-bot] Бриф не ушёл:', err.message));
-  }
+     модели. Если модель откажет, заявка всё равно будет у нас.
+
+     Разбор в два слоя: знаками — мгновенно, словами («мой номер восемь
+     девятьсот…») — моделью. Ответ человеку этого не ждёт, поэтому
+     без await, и копия переписки берётся сейчас: пока разбор идёт,
+     в dialog.messages успеет лечь ответ бота. */
+  const snimok = dialog.messages.slice();
+  kontaktIzSoobshcheniya(text)
+    .then(contact => {
+      if (!contact) return;
+      return notifyOwner(snimok, contact, 'vk|' + peerId, { kanal: 'vk', istochnik: 'vk' });
+    })
+    .catch(err => console.error('[vk-bot] Бриф не ушёл:', err.message));
 
   try {
     const answer = await askOnce(dialog.messages, systemFor('vk'));

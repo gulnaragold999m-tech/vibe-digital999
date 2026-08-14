@@ -70,4 +70,57 @@ function findContact(text) {
   return nick ? '@' + nick[1] : null;
 }
 
-module.exports = { findContact, findPhone };
+/**
+ * Приводит к общему виду то, что вернула модель.
+ *
+ * Модель отвечает строкой, а не структурой, и может вернуть ник без
+ * собаки — «gulnara_vd». Такое принимаем, всё остальное прогоняем
+ * через обычный разбор: нормализация должна быть одна на оба пути,
+ * иначе один и тот же человек придёт владелице двумя заявками —
+ * «+79992449999» от регулярки и «+7 999 244 99 99» от модели.
+ */
+function normalizeKontakt(raw) {
+  const text = String(raw || '').trim();
+  if (!text || text.length > 120) return null;
+
+  const naydeno = findContact(text);
+  if (naydeno) return naydeno;
+
+  if (/^[a-zA-Z][a-zA-Z0-9_]{3,31}$/.test(text)) return '@' + text;
+  return null;
+}
+
+/* Слова, рядом с которыми люди называют контакт.
+
+   Границы кириллических слов помечены через (?![а-яё]), а НЕ через \b:
+   в JavaScript \b считается по латинице, и «тг\b» после буквы «г»
+   не срабатывает вовсе — граница между «г» и пробелом для движка
+   не граница, потому что кириллица для него не буква. Проверка
+   на «пишите в тг granatjarvis» это и поймала. */
+const NAMEKI = /(телефон|тел(?![а-яё])|номер|звон|позвон|вотсап|ватсап|whats|телеграм|телега|тг(?![а-яё])|telegram|почт|мейл|майл|mail|@|вайбер|viber)/i;
+
+/* Цифры, записанные словами: «восемь девятьсот двадцать восемь». */
+const CIFRY_SLOVAMI = /(ноль|один|два|три|четыр|пят|шест|сем|восем|девят|десят|сорок|сто)/gi;
+
+/**
+ * Стоит ли звать модель, чтобы она поискала контакт сама.
+ *
+ * Нужен, чтобы не платить за лишний запрос на каждое «сколько стоит».
+ * Отвечает «да» только там, где обычный разбор ничего не нашёл,
+ * а в сообщении есть на что посмотреть: много цифр, намёк на канал
+ * связи или число, записанное словами.
+ */
+function mozhetBytKontakt(text) {
+  const stroka = String(text || '');
+  if (findContact(stroka)) return false;      // уже нашли, модель не нужна
+
+  const cifr = (stroka.match(/\d/g) || []).length;
+  if (cifr >= 7) return true;
+
+  if ((stroka.match(CIFRY_SLOVAMI) || []).length >= 4) return true;
+
+  const latinica = /[a-zA-Z][a-zA-Z0-9_.]{3,}/.test(stroka);
+  return NAMEKI.test(stroka) && (latinica || cifr >= 5);
+}
+
+module.exports = { findContact, findPhone, normalizeKontakt, mozhetBytKontakt };

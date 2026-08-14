@@ -31,7 +31,7 @@
  * Long polling работает изнутри и переживает смену хостинга молча.
  */
 
-const { askOnce, findContact, notifyOwner, systemFor } = require('./brief');
+const { askOnce, kontaktIzSoobshcheniya, notifyOwner, systemFor } = require('./brief');
 
 const API = 'https://api.telegram.org';
 const POLL_TIMEOUT_S = 25;          // сколько Telegram держит запрос открытым
@@ -157,12 +157,18 @@ async function handleMessage(message) {
   dialog.updatedAt = Date.now();
 
   /* Контакт появился — бриф уходит сразу, не дожидаясь ответа модели.
-     Откажет модель — заявка всё равно у нас. */
-  const contact = findContact(text);
-  if (contact) {
-    notifyOwner(dialog.messages, contact, 'tg|' + chatId)
-      .catch(err => console.error('[tg-bot] Бриф не ушёл:', err.message));
-  }
+     Откажет модель — заявка всё равно у нас.
+
+     Разбор в два слоя: знаками мгновенно, словами — моделью. Ответ
+     человеку этого не ждёт. Копия переписки снимается сейчас: пока
+     разбор идёт, в dialog.messages успеет лечь ответ бота. */
+  const snimok = dialog.messages.slice();
+  kontaktIzSoobshcheniya(text)
+    .then(contact => {
+      if (!contact) return;
+      return notifyOwner(snimok, contact, 'tg|' + chatId, { kanal: 'telegram', istochnik: 'telegram' });
+    })
+    .catch(err => console.error('[tg-bot] Бриф не ушёл:', err.message));
 
   /* «Печатает…» — человек видит, что его услышали, и не уходит,
      пока модель думает свои три секунды. */
