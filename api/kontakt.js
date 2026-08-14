@@ -123,4 +123,33 @@ function mozhetBytKontakt(text) {
   return NAMEKI.test(stroka) && (latinica || cifr >= 5);
 }
 
-module.exports = { findContact, findPhone, normalizeKontakt, mozhetBytKontakt };
+/* Почта — глобальным вариантом, для замены всех вхождений разом. */
+const POCHTA_RE_G = /[\w.+-]+@[\w-]+\.[a-z]{2,}/gi;
+const NIK_RE_G = /(^|[^\w@.-])@([a-zA-Z][a-zA-Z0-9_]{3,31})\b/g;
+
+/**
+ * Прячет контакты в тексте: телефон, почту и ник — метками.
+ *
+ * ЗАЧЕМ. Всё, что уходит в модель, покидает наш сервер. Пока инференс
+ * стоит не в России (см. api/brief.js, сторож трансграничной передачи),
+ * телефон живого человека в этом тексте — это персональные данные,
+ * уехавшие за границу.
+ *
+ * Модели они не нужны. Ей достаточно знать, что контакт назван:
+ * заявку собирает не она, а наш код, который читает тот же текст
+ * до маскировки. Поэтому в модель уходит «[телефон]», а владелице —
+ * настоящий номер.
+ *
+ * Тот же приём закрывает и свод по разговору: в нём про контакт
+ * ничего не должно быть, он приходит отдельной строкой.
+ */
+function zamaskirovat(text) {
+  return String(text ?? '')
+    .replace(POCHTA_RE_G, '[почта]')
+    .replace(TELEFON_RE, (m) => (findPhone(m) ? '[телефон]' : m))
+    .replace(NIK_RE_G, '$1[ник]');
+}
+
+module.exports = {
+  findContact, findPhone, normalizeKontakt, mozhetBytKontakt, zamaskirovat,
+};

@@ -50,7 +50,27 @@ const TELEGRAM_API = 'https://api.telegram.org';
    в журнал предупреждение при каждом запуске: заметить его проще, чем
    вспомнить про политику через полгода. Работу не блокируем — решение,
    куда отправлять запросы, принимает владелец, а не код. */
-const RU_INFERENCE_HOSTS = ['inference.waw0.amvera.ru', 'llm.api.cloud.yandex.net', 'gigachat.devices.sberbank.ru'];
+/* ВНИМАНИЕ: inference.waw0.amvera.ru здесь БЫЛ и убран 14.08.2026.
+
+   `waw0` — это регион «Варшава_0», подтверждено интерфейсом самой Amvera
+   12.08.2026: площадка пишет «доступ Telegram-ботов в регионе Москва_0
+   нестабилен, используйте регион Варшава_0». То есть хост польский,
+   а в списке российских он стоял по недосмотру — и сторож ниже
+   не срабатывал НИ РАЗУ, хотя ровно для этого случая и написан.
+
+   Приложение при этом стоит в Москва_0. Регион приложения и регион
+   инференса — разные вещи: сайт в Москве, а диалоги уезжали в Варшаву.
+
+   Разбор — docs/16, раздел «waw0 — это Варшава». */
+const RU_INFERENCE_HOSTS = ['llm.api.cloud.yandex.net', 'gigachat.devices.sberbank.ru'];
+
+/* Российский ли инференс. Считается один раз при запуске и решает две
+   вещи: маскировать ли контакты перед отправкой в модель и работает ли
+   второй слой разбора, который шлёт модели сырое сообщение. */
+const RU_INFERENCE = (() => {
+  try { return RU_INFERENCE_HOSTS.includes(new URL(BASE_URL).hostname); }
+  catch (e) { return false; }
+})();
 
 (function warnIfCrossBorder() {
   let host = '';
@@ -58,12 +78,21 @@ const RU_INFERENCE_HOSTS = ['inference.waw0.amvera.ru', 'llm.api.cloud.yandex.ne
   if (RU_INFERENCE_HOSTS.includes(host)) return;
 
   console.warn(
-    `\n[brief] ⚠ ВНИМАНИЕ: диалоги чата уходят на ${host}.\n` +
-    '        Политика конфиденциальности (раздел 4) заявляет обработку\n' +
-    '        на территории России. Если этот адрес зарубежный — приведите\n' +
-    '        в соответствие политику (раздел 5, получатели данных) и подайте\n' +
-    '        уведомление о трансграничной передаче в Роскомнадзор,\n' +
-    '        либо верните LLM_BASE_URL к российскому инференсу.\n'
+    `\n[brief] ⚠ ВНИМАНИЕ: диалоги чата уходят на ${host} — это НЕ российский\n` +
+    '        инференс. Политика конфиденциальности (раздел 4) заявляет\n' +
+    '        обработку на территории России, то есть сейчас она неверна.\n' +
+    '\n' +
+    '        ЧТО КОД ДЕЛАЕТ САМ, пока это не исправлено:\n' +
+    '        - телефоны, почты и ники заменяются метками перед отправкой\n' +
+    '          в модель — за границу уезжает «[телефон]», а не номер;\n' +
+    '        - второй слой разбора контакта (izvlechKontakt) ВЫКЛЮЧЕН:\n' +
+    '          он существует ровно для того, чтобы показать модели сырое\n' +
+    '          сообщение, и делать это за границей нельзя.\n' +
+    '\n' +
+    '        ЧТО НУЖНО ОТ ЧЕЛОВЕКА: вернуть LLM_BASE_URL на российский\n' +
+    '        инференс (YandexGPT, GigaChat либо адрес Amvera в Москва_0),\n' +
+    '        либо править политику и подавать уведомление о трансграничной\n' +
+    '        передаче в Роскомнадзор (ст. 12 152-ФЗ).\n'
   );
 })();
 
@@ -467,7 +496,7 @@ function escapeHtml(text) {
 /* Распознавание контакта живёт отдельным модулем: у него есть свои
    проверки (npm run test-kontakt), а зависимостей нет вовсе — тест
    запускается на любом компьютере, даже без установленных пакетов. */
-const { findContact, normalizeKontakt, mozhetBytKontakt } = require('./kontakt');
+const { findContact, normalizeKontakt, mozhetBytKontakt, zamaskirovat } = require('./kontakt');
 
 /* ── Второй слой: контакт достаёт модель ──────────────────────────
    Разбор выше ловит написанное знаками. Он не поймёт «мой номер восемь
@@ -507,9 +536,15 @@ const KONTAKT_SYSTEM = `
  * Не ответила за шесть секунд или ответила ерундой — возвращаем null.
  */
 async function izvlechKontakt(text) {
+  /* За границу сырое сообщение с телефоном не уходит. Этот слой нужен,
+     чтобы модель прочла контакт словами, — а значит, он обязан видеть
+     текст как есть. Пока инференс не в России, слоя просто нет:
+     заявки продолжают собираться разбором знаками. */
+  if (!RU_INFERENCE) return null;
+
   try {
     const otvet = await Promise.race([
-      askOnce([{ role: 'user', content: String(text).slice(0, 1000) }], KONTAKT_SYSTEM),
+      askOnce([{ role: 'user', content: String(text).slice(0, 1000) }], KONTAKT_SYSTEM, true),
       new Promise((resolve) => setTimeout(() => resolve(''), 6000)),
     ]);
 
@@ -744,7 +779,19 @@ async function notifyOwner(messages, contact, sessionKey, meta = {}) {
    Два формата отличаются тем, где лежит системный промпт и как
    называются поля. Разводим это в одном месте, чтобы всё остальное
    работало одинаково независимо от того, чей инференс подключён. */
-function buildRequest(messages, stream = true, system = SYSTEM) {
+/**
+ * Собирает запрос к модели.
+ *
+ * @param {boolean} syrye пропустить маскировку контактов. Ставится ТОЛЬКО
+ *   разбором контакта и только при российском инференсе: там показать
+ *   модели настоящий номер — законно и необходимо. Везде остальном
+ *   контакты уходят метками.
+ */
+function buildRequest(messages, stream = true, system = SYSTEM, syrye = false) {
+  if (!syrye) {
+    messages = messages.map((m) => ({ role: m.role, content: zamaskirovat(m.content) }));
+  }
+
   if (FORMAT === 'anthropic') {
     return {
       url: BASE_URL + '/messages',
@@ -781,8 +828,8 @@ function buildRequest(messages, stream = true, system = SYSTEM) {
  *
  * @returns {Promise<string>} текст ответа
  */
-async function askOnce(messages, system = SYSTEM) {
-  const req = buildRequest(messages, false, system);
+async function askOnce(messages, system = SYSTEM, syrye = false) {
+  const req = buildRequest(messages, false, system, syrye);
 
   const res = await fetch(req.url, {
     method: 'POST',

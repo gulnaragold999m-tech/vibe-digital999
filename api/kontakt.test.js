@@ -18,7 +18,7 @@
  * убедись, что тест на нём падает, и только потом чини код.
  */
 
-const { findContact, normalizeKontakt, mozhetBytKontakt } = require('./kontakt');
+const { findContact, normalizeKontakt, mozhetBytKontakt, zamaskirovat } = require('./kontakt');
 const { istochnik } = require('./vizit');
 
 /* Как люди пишут контакт на самом деле. Каждая строка — из тех,
@@ -143,8 +143,30 @@ for (const [page, ref, zhdyom] of ISTOCHNIKI) {
   console.log(`  ${ok ? '✓' : '✗'} ${JSON.stringify(page)} ${ref ? 'от ' + ref : ''} → ${bylo}${ok ? '' : `  (ждали ${zhdyom})`}`);
 }
 
+/* ── Маскировка перед отправкой в модель ──────────────────────────
+   Пока инференс стоит не в России, всё, что уходит модели, покидает
+   страну. Телефон и почта живого человека уходить не должны — модели
+   довольно метки. Проверка следит, чтобы маскировка не съела лишнего:
+   бюджет и сроки обязаны остаться, иначе бот перестанет их понимать. */
+const MASKA = [
+  ['телефон +7 (999) 244-99-99 звоните', 'телефон [телефон] звоните'],
+  ['звоните 8 999 244 99 99', 'звоните [телефон]'],
+  ['мой тг @granat_jarvis', 'мой тг [ник]'],
+  ['почта anna.ivanova@yandex.ru', 'почта [почта]'],
+  ['бюджет 150 000, срок 3 месяца, 12 номеров', 'бюджет 150 000, срок 3 месяца, 12 номеров'],
+  ['сайт vibe-digital999.ru, цена от 35 000', 'сайт vibe-digital999.ru, цена от 35 000'],
+];
+
+console.log('\nКОНТАКТЫ НЕ УХОДЯТ В МОДЕЛЬ:');
+for (const [bylo, zhdyom] of MASKA) {
+  const stalo = zamaskirovat(bylo);
+  const ok = stalo === zhdyom;
+  if (!ok) oshibok++;
+  console.log(`  ${ok ? '✓' : '✗'} ${JSON.stringify(bylo)} → ${JSON.stringify(stalo)}`);
+}
+
 const vsego = LOVIM.length + NE_LOVIM.length + ZVAT_MODEL.length
-  + NE_ZVAT.length + OTVETY.length + ISTOCHNIKI.length;
+  + NE_ZVAT.length + OTVETY.length + ISTOCHNIKI.length + MASKA.length;
 
 if (oshibok) {
   console.error(`\n✗ ПРОВЕРКА НЕ ПРОШЛА: ${oshibok} из ${vsego}.`);
