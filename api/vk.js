@@ -39,12 +39,17 @@ function vkConfigured() {
  * ВК отвечает 200 OK даже на ошибку — причина лежит внутри тела в поле
  * `error`. Проверять по HTTP-коду здесь бесполезно, поэтому разбираем тело.
  *
+ * У проекта два сообщества — агентства и типографии Гранат, — и у каждого
+ * свой ключ. Поэтому ключ можно передать третьим доводом; без него берётся
+ * `VK_TOKEN`, как было. Класть ключ в `params` нельзя: он затрётся строкой
+ * ниже, и запрос молча уйдёт не от того сообщества.
+ *
  * @returns {Promise<{ok: boolean, response?: any, error?: string, code?: number}>}
  */
-async function vkApi(method, params) {
+async function vkApi(method, params, token) {
   const body = new URLSearchParams({
     ...params,
-    access_token: process.env.VK_TOKEN,
+    access_token: token || process.env.VK_TOKEN,
     v: API_VERSION,
   });
 

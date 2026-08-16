@@ -23,6 +23,8 @@ const { handleBrief } = require('./api/brief');
 const { handleGeo } = require('./api/geo');
 const { startVkBot } = require('./api/vk-bot');
 const { startTgBot } = require('./api/tg-bot');
+const { startAutopost } = require('./api/autopost');
+const { startBoli } = require('./api/boli');
 
 const app = express();
 
@@ -237,4 +239,6 @@ app.listen(PORT, () => {
      ошибки — весь сайт. */
   startVkBot();
   startTgBot();
+  startAutopost();
+  startBoli();
 });
