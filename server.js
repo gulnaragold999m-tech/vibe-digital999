@@ -25,6 +25,8 @@ const { startVkBot } = require('./api/vk-bot');
 const { startTgBot } = require('./api/tg-bot');
 const { startAutopost } = require('./api/autopost');
 const { startBoli } = require('./api/boli');
+const { startRedaktor } = require('./api/redaktor');
+const { handlePlanPage, handlePlanCancel } = require('./api/plan-page');
 
 const app = express();
 
@@ -189,6 +191,13 @@ for (const [shortPath, source] of Object.entries(STORY_SOURCES)) {
   });
 }
 
+/* План постов: что выйдет и когда, с возможностью снять лишнее.
+   Закрыто ключом PLAN_KEY, без него оба адреса отвечают 404.
+   Регистрируется ДО express.static — иначе /plan ушёл бы искать
+   файл public/plan.html из-за extensions: ['html']. */
+app.get('/plan', handlePlanPage);
+app.post('/api/plan/cancel', handlePlanCancel);
+
 /* Картинки и шрифты кэшируем надолго, а HTML — никогда:
    иначе после обновления сайта посетители ещё час видят старую страницу. */
 app.use(express.static(path.join(__dirname, 'public'), {
@@ -241,4 +250,10 @@ app.listen(PORT, () => {
   startTgBot();
   startAutopost();
   startBoli();
+
+  /* Редакция последней: она читает боли, собранные разбором, и дописывает
+     план, из которого публикует расписание. Порядок запуска на это не
+     влияет — каждый работает по своему таймеру, — но читается так же,
+     как идёт работа: разбор → редакция → публикация. */
+  startRedaktor();
 });

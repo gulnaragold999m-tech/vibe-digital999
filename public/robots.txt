@@ -1,10 +1,12 @@
 # robots.txt для vibe-digital999.ru
-# Закрыт только /api/ — это служебные адреса приёма заявок и чата,
-# показывать их в поиске нечего и незачем.
+# Закрыты /api/ и /plan — служебные адреса приёма заявок, чата и план
+# постов. Показывать их в поиске нечего и незачем. /plan вдобавок закрыт
+# ключом и мета-тегом noindex: robots.txt ничего не запрещает, он просит.
 
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /plan
 
 # ── Яндекс ────────────────────────────────────────────────────────
 # Clean-param говорит Яндексу, что страница с рекламной меткой в адресе
@@ -15,6 +17,7 @@ Disallow: /api/
 User-agent: Yandex
 Allow: /
 Disallow: /api/
+Disallow: /plan
 Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&yclid&_openstat&region
 
 # ── Обходчики ИИ-поиска ───────────────────────────────────────────
@@ -42,6 +45,7 @@ User-agent: Amazonbot
 User-agent: Bytespider
 Allow: /
 Disallow: /api/
+Disallow: /plan
 
 Sitemap: https://vibe-digital999.ru/sitemap.xml
 Host: vibe-digital999.ru

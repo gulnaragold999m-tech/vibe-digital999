@@ -1,0 +1,571 @@
+/**
+ * Редакция: главред и копирайтер. Замыкает цепочку от болей до плана.
+ *
+ * ЗАЧЕМ. Парсер `boli.js` собирает, что людей мучает, но дальше между
+ * болями и постами стоял человек: кто-то должен был придумать темы и
+ * написать тексты. Теперь этого человека нет — план пополняется сам.
+ *
+ * ПРАВИЛО ВЛАДЕЛИЦЫ, 16.08.2026: «Чтобы я не возвращалась к этой теме,
+ * всё должно работать на автомате». Поэтому здесь НЕТ ручного одобрения:
+ * пост, прошедший приёмку, встаёт в план сразу с `"approved": true`.
+ * Ручное одобрение мы обсуждали до этого правила — оно означало бы, что
+ * машина встаёт каждую неделю и ждёт, а это ровно то, чего быть не должно.
+ *
+ * ЧТО ВМЕСТО ОДОБРЕНИЯ. Автоматическая приёмка (`otk` ниже). Она грубее
+ * человека, но работает всегда и не устаёт. Отбраковывает по тому, где
+ * ошибка стоит дороже всего:
+ *   · цена, которой нет в `src/prices.js`, — расхождение с сайтом
+ *     уводит клиента вернее высокой цены;
+ *   · ЛЮБАЯ цена в посте типографии — на печать единого прайса в коде
+ *     нет, а выдуманная цифра станет обещанием;
+ *   · обещания, которые мы не держим: круглосуточно, гарантия, «№1»;
+ *   · ссылка t.me — у владелицы Telegram не открывается, отправлять
+ *     туда клиента значит терять его;
+ *   · разметка markdown — ВКонтакте показывает звёздочки как есть;
+ *   · повтор недавнего поста — сравнение по словам, а не по названию.
+ * Забракованный текст переписывается один раз с указанием причины.
+ * Не исправился — пост не встаёт в план, и слот остаётся пустым.
+ * Пустой слот дешевле плохого поста.
+ *
+ * КОГДА РАБОТАЕТ. Раз в шесть часов смотрит, есть ли пустой слот в
+ * ближайшие `REDAKTOR_ZAPAS_DNEJ` дней. Нет — молчит и не тратит на
+ * модель ни рубля. Есть — дописывает план сразу до горизонта. Поэтому
+ * счёт за модель зависит от того, сколько постов вышло, а не от того,
+ * сколько раз проснулась проверка.
+ *
+ * ОТКУДА ТЕМЫ. Первым делом — свежие боли из `/data/boli.json`. Если
+ * парсер ещё не настроен (нет `PARSE_GROUPS`) или ничего не нашёл, берём
+ * боли ниш КМВ, записанные в `api/brief.js`. Цепочка не должна вставать
+ * из-за ненастроенной переменной: без болей план всё равно пополнится,
+ * просто темами поосторожнее.
+ *
+ * ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ. Ни одной обязательной сверх тех, что уже стоят
+ * на Amvera ради автопостинга и чат-бота, — это сделано намеренно.
+ *   REDAKTOR              — "off", чтобы выключить. Всё остальное
+ *                           включает редакцию само.
+ *   REDAKTOR_GORIZONT     — на сколько дней вперёд держим план, 7.
+ *   REDAKTOR_ZAPAS_DNEJ   — при каком запасе пополнять, 3.
+ *   REDAKTOR_MAX_POSTOV   — потолок постов за один заход, 12.
+ *   REDAKTOR_EVERY_HOURS  — как часто проверять запас, 6.
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const PRICES = require('../src/prices');
+const { askOnce } = require('./brief');
+const { vkConfigured, sendVkToOwner } = require('./vk');
+const { sendMailToOwner, mailConfigured } = require('./mail');
+const { autopostConfigured, slotTime, PLAN_PATH } = require('./autopost');
+
+const BOLI_PATH = process.env.BOLI_PATH || '/data/boli.json';
+
+const GORIZONT_DNEJ = Number(process.env.REDAKTOR_GORIZONT) || 7;
+const ZAPAS_DNEJ = Number(process.env.REDAKTOR_ZAPAS_DNEJ) || 3;
+const MAX_POSTOV = Number(process.env.REDAKTOR_MAX_POSTOV) || 12;
+const EVERY_MS = (Number(process.env.REDAKTOR_EVERY_HOURS) || 6) * 60 * 60 * 1000;
+
+const MSK_OFFSET_MS = 3 * 60 * 60 * 1000;
+
+/* Ближе чем за два часа до слота пост не ставим: модель отвечает минуты,
+   но если она сегодня медленная, текст успеет опоздать к публикации. */
+const ZAPAS_DO_SLOTA_MS = 2 * 60 * 60 * 1000;
+
+/**
+ * Сетка слотов. Утро и вечер под школьный и рабочий ритм типографии,
+ * день и ночь — под агентство: заказчик сайта читает ленту в обед и
+ * после работы, завуч и администратор — до начала дня и после него.
+ *
+ * `vk_group: null` — сообщество агентства (переменная VK_GROUP_ID),
+ * 'granat' — типография (VK_GROUP_ID_GRANAT). Так же, как в плане.
+ */
+const SLOTY = [
+  { time: '08:00', vk_group: 'granat' },
+  { time: '13:00', vk_group: null },
+  { time: '16:00', vk_group: 'granat' },
+  { time: '20:00', vk_group: null },
+];
+
+/* Запасные боли на случай, если парсер молчит. Списаны с промпта чат-бота
+   (`api/brief.js`), чтобы редакция и бот говорили об одном и том же. */
+const NISHI_ZAPAS = [
+  'Гостиницы и санатории: брони идут через агрегаторы, площадка забирает 15–20 %.',
+  'Джиппинг и экскурсии: тур продаёт эмоция, в переписке её не передать, человек уходит думать.',
+  'Кафе и кофейни: меню лежит картинкой, на телефоне не прочитать, поиск его не видит.',
+  'Пекарни и кондитерские: торт согласовывают перепиской по три дня.',
+  'Авто: ищут с телефона по срочности, а сайт грузится десять секунд.',
+  'Салоны красоты: запись живёт в директе и блокноте, свободные окна не видит никто.',
+  'Стройка и ремонт: решают по портфолио, а портфолио нет.',
+  'Обучение и автошколы: на сайте нет ни расписания наборов, ни цены.',
+  'Юристы, бухгалтеры, клиники: одна страница на все услуги, поэтому не находят ни по одной.',
+];
+
+// ------------------------------------------------------------------ план
+
+function readJson(file, fallback) {
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch {
+    return fallback;
+  }
+}
+
+function loadPlan() {
+  const plan = readJson(PLAN_PATH, null);
+  if (plan && Array.isArray(plan.posts)) return plan;
+
+  /* Плана на диске нет — берём заготовку из репозитория. Тот же путь,
+     что у автопостинга: два модуля не должны спорить, где лежит план. */
+  const seed = readJson(path.join(__dirname, '..', 'content', 'plan.json'), null);
+  return seed && Array.isArray(seed.posts) ? seed : { posts: [] };
+}
+
+/** Пишет план через временный файл: расписание читает его каждые полминуты. */
+function savePlan(plan) {
+  fs.mkdirSync(path.dirname(PLAN_PATH), { recursive: true });
+  const tmp = `${PLAN_PATH}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(plan, null, 2));
+  fs.renameSync(tmp, PLAN_PATH);
+}
+
+/** Дата по Москве в виде «2026-08-17». */
+function mskDate(ms) {
+  return new Date(ms + MSK_OFFSET_MS).toISOString().slice(0, 10);
+}
+
+/**
+ * Пустые слоты от «сейчас» до горизонта.
+ *
+ * Занятым считается слот, для которого в плане есть пост, — независимо от
+ * того, вышел он или ещё ждёт. Иначе редакция дописала бы второй пост
+ * поверх уже опубликованного.
+ */
+function pustyeSloty(posts, now) {
+  const zanyato = new Set(posts.map((p) => String(p.when || '').trim()));
+  const out = [];
+
+  for (let d = 0; d <= GORIZONT_DNEJ; d += 1) {
+    const den = mskDate(now + d * 24 * 60 * 60 * 1000);
+    for (const slot of SLOTY) {
+      const when = `${den} ${slot.time}`;
+      if (zanyato.has(when)) continue;
+      const kogda = slotTime(when);
+      if (Number.isNaN(kogda) || kogda < now + ZAPAS_DO_SLOTA_MS) continue;
+      out.push({ when, vk_group: slot.vk_group });
+    }
+  }
+
+  return out.sort((a, b) => slotTime(a.when) - slotTime(b.when));
+}
+
+/** На сколько дней вперёд план ещё полон. По этому числу решаем, будить ли модель. */
+function zapasDnej(posts, now) {
+  const budushchie = posts
+    .map((p) => slotTime(p.when))
+    .filter((t) => !Number.isNaN(t) && t > now);
+
+  if (!budushchie.length) return 0;
+  return (Math.max(...budushchie) - now) / (24 * 60 * 60 * 1000);
+}
+
+// ------------------------------------------------------------------ сырьё
+
+/** Свежие боли из разбора. Пусто — не беда, есть запасные ниши. */
+function svezhieBoli() {
+  const data = readJson(BOLI_PATH, { runs: [] });
+  const runs = Array.isArray(data.runs) ? data.runs : [];
+
+  for (let i = runs.length - 1; i >= 0; i -= 1) {
+    const pains = Array.isArray(runs[i].pains) ? runs[i].pains : [];
+    if (pains.length) {
+      return pains.map((p) => (p.context ? `${p.pain} Цитата: «${p.context}»` : p.pain));
+    }
+  }
+
+  return [];
+}
+
+/** Первые строки последних постов — чтобы главред не повторил тему. */
+function nedavnieTemy(posts) {
+  return posts
+    .slice(-40)
+    .map((p) => textOf(p).trim().split('\n')[0])
+    .filter(Boolean);
+}
+
+function textOf(post) {
+  const body = post && post.text;
+  if (body && typeof body === 'object') return body.vk || body.default || '';
+  return typeof body === 'string' ? body : '';
+}
+
+// ------------------------------------------------------------------ главред
+
+const GLAVRED_SYSTEM = `Ты — главный редактор двух сообществ ВКонтакте на Кавминводах.
+
+СООБЩЕСТВА:
+1. Агентство «VIBE DIGITAL 999» — сайты, Telegram-боты, ИИ-агенты, автоматизация.
+   Пишет предпринимателям КМВ: гостиницы, кафе, туры, салоны, стройка, автошколы.
+2. Типография «Гранат» — печать: баннеры, плакаты, таблички, грамоты, наклейки,
+   визитки, оформление помещений. Пишет тем, кто заказывает печать:
+   администраторы, завучи, владельцы кафе и магазинов.
+
+ТВОЯ ЗАДАЧА: на каждый свободный слот придумать одно техническое задание
+копирайтеру. Не текст поста — задание.
+
+ПРАВИЛА:
+- Одна боль — один пост. Пост про всё сразу не читают.
+- Боль должна стоить человеку денег или времени. «Красивый сайт» — не боль,
+  «заявки с формы не доходят» — боль.
+- Не повторяй темы, которые уже были. Список прошлых тем тебе дадут.
+- Слоту типографии — только тема про печать. Слоту агентства — только про
+  сайты, ботов и автоматизацию. Перепутать нельзя: это разные подписчики.
+- Формат выбирай под тему: разбор ошибки, случай из работы, инструкция
+  «проверьте у себя», объяснение цены, сравнение «как делают и как надо».
+
+Ответ — строго JSON, без пояснений до и после:
+[{"when":"2026-08-17 13:00","nisha":"кому пост","bol":"что мучает человека",
+"zadacha":"о чём написать и что человек должен понять","format":"разбор|случай|инструкция|объяснение",
+"cta":"какое действие предложить в конце"}]`;
+
+async function glavred(sloty, boli, temy) {
+  const zadanie = [
+    'Свободные слоты (для каждого нужно одно задание):',
+    ...sloty.map((s) => `  ${s.when} — ${s.vk_group === 'granat' ? 'ТИПОГРАФИЯ ГРАНАТ (печать)' : 'АГЕНТСТВО (сайты, боты, автоматизация)'}`),
+    '',
+    boli.length ? 'Свежие боли, собранные из сообществ ВКонтакте:' : 'Боли ниш Кавминвод:',
+    ...(boli.length ? boli : NISHI_ZAPAS).map((b) => `  ${b}`),
+    '',
+    temy.length ? 'Темы, которые уже были, — не повторяй:' : '',
+    ...temy.map((t) => `  ${t}`),
+  ].filter((line) => line !== '').join('\n');
+
+  return parseJsonList(await askOnce([{ role: 'user', content: zadanie }], GLAVRED_SYSTEM))
+    .filter((tz) => tz && typeof tz.when === 'string' && tz.zadacha);
+}
+
+// ------------------------------------------------------------------ копирайтер
+
+const KOPIRAJTER_OBSHCHEE = `Ты — копирайтер. Пишешь пост для ВКонтакте по заданию редактора.
+
+КАК ПИСАТЬ:
+- Первая строка — боль или факт, а не приветствие и не «друзья».
+- Дальше: что происходит на самом деле, почему так, что с этим делать.
+- Конкретика вместо оценок. Не «быстро и качественно», а «за два дня»,
+  не «много клиентов», а «282 человека за июль».
+- Короткие предложения. Один абзац — одна мысль, три-четыре строки.
+- Без markdown: ни звёздочек, ни решёток, ни ссылок в квадратных скобках.
+  ВКонтакте показывает их как есть.
+- Без штампов: «в современном мире», «команда профессионалов», «под ключ»,
+  «индивидуальный подход», «широкий спектр».
+- 900–2500 знаков.
+- В конце — одно понятное действие. Обычно: написать в сообщения сообщества.
+
+ЧЕГО НЕЛЬЗЯ НИКОГДА:
+- Обещать круглосуточную работу, гарантии результата, «лучшие» и «№1».
+- Ссылаться на t.me: этот канал у нас не работает.
+- Придумывать цифры, отзывы и случаи, которых не было. Пример можно
+  описать обезличенно и без выдуманных подробностей.
+
+Ответ — только текст поста. Ни заголовка, ни пояснений, ни кавычек вокруг.`;
+
+const KOPIRAJTER_AGENTSTVO = `${KOPIRAJTER_OBSHCHEE}
+
+Ты пишешь для агентства «VIBE DIGITAL 999»: сайты, Telegram-боты, ИИ-агенты,
+автоматизация. Кавминводы, но работаем по всей России.
+
+ЦЕНЫ. Называть можно ТОЛЬКО эти. Цифра, которой здесь нет, — ошибка:
+человек сверит её с сайтом и уйдёт из-за расхождения, а не из-за цены.
+Цену можно не называть вовсе — это лучше, чем назвать неверную.
+
+${PRICES.prajsDlyaBota()}
+
+Сопровождение после запуска: первый месяц бесплатно, дальше —
+${PRICES.soprovozhdenieDlyaBota()}
+
+Действие в конце: написать в сообщения сообщества (там отвечает бот и
+собирает задачу) или телефон +7 999 244 99 99.`;
+
+const KOPIRAJTER_GRANAT = `${KOPIRAJTER_OBSHCHEE}
+
+Ты пишешь для типографии «Гранат» на Кавминводах: баннеры, плакаты,
+таблички, грамоты, наклейки, визитки, оформление помещений и витрин.
+Печать до 95 сантиметров шириной, длина любая. Срочная печать — в день
+обращения. Макет делаем сами по тексту и фото заказчика.
+
+ЦЕНЫ НЕ НАЗЫВАЙ ВООБЩЕ. Ни рублей, ни «от», ни «дешевле». Печать считается
+по размеру, материалу и тиражу, единой цены нет — любая цифра в посте
+станет обещанием, которое придётся держать. Вместо цены: «пришлите размеры
+и тираж — посчитаем».
+
+Действие в конце: написать в сообщения сообщества.`;
+
+async function kopirajter(tz, zamechanie) {
+  const system = tz.vk_group === 'granat' ? KOPIRAJTER_GRANAT : KOPIRAJTER_AGENTSTVO;
+
+  const zadanie = [
+    `Ниша: ${tz.nisha || 'предприниматели Кавминвод'}`,
+    `Боль: ${tz.bol || tz.zadacha}`,
+    `Задача: ${tz.zadacha}`,
+    `Формат: ${tz.format || 'разбор'}`,
+    `Действие в конце: ${tz.cta || 'написать в сообщения сообщества'}`,
+    zamechanie ? `\nПрошлый вариант забракован: ${zamechanie}\nНапиши заново, без этой ошибки.` : '',
+  ].filter(Boolean).join('\n');
+
+  return String(await askOnce([{ role: 'user', content: zadanie }], system)).trim();
+}
+
+// ------------------------------------------------------------------ приёмка
+
+/** Все суммы, которые нам разрешено называть. Источник один — src/prices.js. */
+function razreshennyeCeny() {
+  const set = new Set();
+  for (const u of PRICES.USLUGI) {
+    set.add(u.cena);
+    if (u.akciya) set.add(u.akciya.bylo);
+  }
+  for (const p of PRICES.PAKETY) {
+    set.add(PRICES.cenaPaketa(p));
+    set.add(p.soprovozhdenie);
+  }
+  return set;
+}
+
+/** Суммы из текста: «35 000 ₽», «15000 руб», «от 90 000 рублей». */
+function cenyIzTeksta(text) {
+  const out = [];
+  const re = /(\d[\d\s  ]{2,})\s*(?:₽|руб)/gi;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    const n = Number(m[1].replace(/[\s  ]/g, ''));
+    if (Number.isFinite(n)) out.push(n);
+  }
+  return out;
+}
+
+/** Похожесть по словам. Названия разные, а пост тот же — ловится только так. */
+function pohozhest(a, b) {
+  const slova = (t) => new Set(
+    String(t).toLowerCase().replace(/[^а-яёa-z0-9 ]/gi, ' ').split(/\s+/).filter((w) => w.length > 4),
+  );
+  const A = slova(a);
+  const B = slova(b);
+  if (!A.size || !B.size) return 0;
+
+  let obshchih = 0;
+  for (const w of A) if (B.has(w)) obshchih += 1;
+  return obshchih / Math.min(A.size, B.size);
+}
+
+const ZAPRETY = [
+  [/кругл(осуточн|ые сутки)|24\s*[\/\\]\s*7|в любое время суток/i, 'обещает круглосуточную работу'],
+  [/гарантиру|гаранти(я|ей|ю) результат|100\s*%/i, 'даёт гарантию результата'],
+  [/№\s*1|номер один|лучш(ая|ий|ие) (студи|агентств|типограф)|дешевле всех|быстрее всех/i, 'превосходная степень без доказательств'],
+  [/t\.me\//i, 'ссылка на Telegram — этот канал не работает'],
+  [/\*\*|^#{1,3}\s|\[[^\]]+\]\([^)]+\)/m, 'разметка markdown — ВКонтакте покажет её как есть'],
+];
+
+/**
+ * Автоматическая приёмка. Возвращает причину брака или пустую строку.
+ *
+ * Проверок немного и они грубые — так и задумано. Тонкие правки текста
+ * машина за человека не сделает, а вот не пустить в эфир выдуманную цену,
+ * чужой канал связи и повтор — сделает надёжнее человека, потому что
+ * проверит каждый пост и в отпуске тоже.
+ */
+function otk(text, tz, chuzhieTeksty) {
+  const dlina = text.trim().length;
+  if (dlina < 400) return `слишком коротко: ${dlina} знаков`;
+  if (dlina > 3800) return `слишком длинно: ${dlina} знаков`;
+
+  for (const [re, prichina] of ZAPRETY) {
+    if (re.test(text)) return prichina;
+  }
+
+  const ceny = cenyIzTeksta(text);
+
+  if (tz.vk_group === 'granat') {
+    if (ceny.length) return `цена в посте типографии (${ceny.join(', ')}) — единого прайса на печать нет`;
+  } else {
+    const razresheno = razreshennyeCeny();
+    const chuzhaya = ceny.find((c) => !razresheno.has(c));
+    if (chuzhaya) return `цены ${chuzhaya} нет в src/prices.js — разойдётся с сайтом`;
+  }
+
+  for (const chuzhoj of chuzhieTeksty) {
+    if (pohozhest(text, chuzhoj) > 0.45) return 'повторяет недавний пост';
+  }
+
+  return '';
+}
+
+// ------------------------------------------------------------------ заход
+
+async function run(now = Date.now()) {
+  const plan = loadPlan();
+  const posts = plan.posts;
+  const zapas = zapasDnej(posts, now);
+
+  /* Будим модель не по календарю, а по дыркам в плане.
+     Проверка «полон ли план на неделю вперёд» была бы хуже: план может
+     кончаться двадцать шестым числом и при этом иметь по два поста в день
+     вместо четырёх — формально запас есть, а половина слотов пустая.
+     Считаем то, что нужно на деле: есть ли пустой слот в ближайшие дни. */
+  const vse = pustyeSloty(posts, now);
+  const blizhnie = vse.filter((s) => slotTime(s.when) < now + ZAPAS_DNEJ * 24 * 60 * 60 * 1000);
+  if (!blizhnie.length) return { skipped: true, zapas: Number(zapas.toFixed(1)) };
+
+  /* Раз уж модель разбужена, дописываем сразу до горизонта: один заход
+     с двенадцатью заданиями дешевле и связнее, чем четыре по три. */
+  const sloty = vse.slice(0, MAX_POSTOV);
+
+  console.log('[redaktor] Пустых слотов в ближайшие', ZAPAS_DNEJ, 'дн.:', blizhnie.length,
+    '| пишем:', sloty.length, '| план расписан на', zapas.toFixed(1), 'дн. вперёд');
+
+  const boli = svezhieBoli();
+  const zadaniya = await glavred(sloty, boli, nedavnieTemy(posts));
+
+  const napisano = [];
+  const brak = [];
+
+  /* Сопоставляем задания со слотами по времени, а не по порядку: модель
+     иногда возвращает задания не в том порядке и иногда пропускает одно.
+     Свободный слот, на который задания не пришло, просто остаётся пустым. */
+  const poVremeni = new Map(zadaniya.map((z) => [String(z.when).trim(), z]));
+  const teksty = posts.slice(-40).map(textOf).filter(Boolean);
+
+  for (const slot of sloty) {
+    const tz = { ...(poVremeni.get(slot.when) || {}), when: slot.when, vk_group: slot.vk_group };
+    if (!tz.zadacha) continue;
+
+    let text = '';
+    let prichina = '';
+
+    for (let popytka = 0; popytka < 2; popytka += 1) {
+      try {
+        text = await kopirajter(tz, prichina);
+      } catch (err) {
+        prichina = `модель не ответила: ${err.message}`;
+        break;
+      }
+      prichina = otk(text, tz, teksty);
+      if (!prichina) break;
+    }
+
+    if (prichina) {
+      brak.push(`${slot.when} — ${prichina}`);
+      continue;
+    }
+
+    const post = {
+      id: `${slot.when.replace(' ', '-').replace(':', '')}`,
+      when: slot.when,
+      approved: true,
+      platforms: ['vk'],
+      tema: tz.zadacha,
+      istochnik: boli.length ? 'боли из разбора' : 'ниши КМВ',
+      text,
+    };
+    if (slot.vk_group) post.vk_group = slot.vk_group;
+
+    posts.push(post);
+    teksty.push(text);
+    napisano.push(post);
+  }
+
+  if (napisano.length) {
+    posts.sort((a, b) => slotTime(a.when) - slotTime(b.when));
+    savePlan(plan);
+  }
+
+  await doklad(napisano, brak, boli.length);
+  return { napisano: napisano.length, brak: brak.length, zapas: Number(zapas.toFixed(1)) };
+}
+
+async function doklad(napisano, brak, boliBylo) {
+  if (!napisano.length && !brak.length) return;
+
+  const lines = [
+    `Написано постов: ${napisano.length}. Темы взяты ${boliBylo ? 'из разбора сообществ' : 'из списка ниш КМВ (парсер пока молчит)'}.`,
+    '',
+  ];
+
+  napisano.forEach((p) => {
+    lines.push(`${p.when} · ${p.vk_group === 'granat' ? 'Гранат' : 'агентство'}`);
+    lines.push(`  ${p.text.trim().split('\n')[0].slice(0, 120)}`);
+  });
+
+  if (brak.length) {
+    lines.push('', 'Не прошло приёмку (слот остался пустым):');
+    brak.forEach((b) => lines.push(`  ${b}`));
+  }
+
+  lines.push('', 'Посты уже стоят в плане и выйдут по расписанию. Делать ничего не нужно.');
+  if (process.env.PLAN_KEY) {
+    lines.push(`Посмотреть и отменить лишнее: https://vibe-digital999.ru/plan?key=${process.env.PLAN_KEY}`);
+  }
+
+  const subject = `Редакция · план пополнен на ${napisano.length} пост.`;
+  const text = lines.join('\n');
+
+  if (vkConfigured() && process.env.VK_PEER_ID) {
+    await sendVkToOwner(`${subject}\n\n${text}`).catch((e) => console.error('[redaktor] ВК:', e.message));
+  }
+  if (mailConfigured()) {
+    await sendMailToOwner(subject, text).catch((e) => console.error('[redaktor] почта:', e.message));
+  }
+}
+
+// ------------------------------------------------------------------ разбор ответа
+
+/** Достаёт список из ответа модели: она любит обернуть JSON в ```json. */
+function parseJsonList(answer) {
+  const text = String(answer).replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
+  const start = text.indexOf('[');
+  const end = text.lastIndexOf(']');
+  if (start === -1 || end === -1) return [];
+
+  try {
+    const list = JSON.parse(text.slice(start, end + 1));
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+// ------------------------------------------------------------------ запуск
+
+/**
+ * Включена ли редакция.
+ *
+ * Отдельной переменной для включения намеренно НЕТ. Редакция поднимается
+ * сама, как только работают две вещи, которые уже настроены: расписание
+ * публикаций и ключ модели. Иначе получилось бы, что план пополняет тот,
+ * кто помнит про ещё одну переменную, — а помнить никто не должен.
+ */
+function redaktorConfigured() {
+  if (String(process.env.REDAKTOR || '').toLowerCase() === 'off') return false;
+  return autopostConfigured() && Boolean(process.env.LLM_API_KEY);
+}
+
+function startRedaktor() {
+  if (!redaktorConfigured()) {
+    console.log('[redaktor] Выключен (нужны AUTOPOST=on, VK_TOKEN, VK_GROUP_ID и LLM_API_KEY)');
+    return null;
+  }
+
+  console.log('[redaktor] Работает: горизонт', GORIZONT_DNEJ, 'дн., пополняет при запасе меньше', ZAPAS_DNEJ, 'дн.');
+
+  /* Первый заход через пять минут после старта: пусть сайт и боты
+     поднимутся, а выкатка успеет отстояться. Дальше — по расписанию. */
+  setTimeout(() => run().catch((e) => console.error('[redaktor] первый заход:', e)), 5 * 60 * 1000).unref();
+  const timer = setInterval(() => run().catch((e) => console.error('[redaktor] заход:', e)), EVERY_MS);
+  timer.unref();
+  return timer;
+}
+
+module.exports = {
+  startRedaktor, redaktorConfigured, run,
+  pustyeSloty, zapasDnej, otk, cenyIzTeksta, pohozhest, razreshennyeCeny, parseJsonList,
+  loadPlan, savePlan, SLOTY,
+};

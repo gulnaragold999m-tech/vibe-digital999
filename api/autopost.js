@@ -357,4 +357,10 @@ function startAutopost() {
   return timer;
 }
 
-module.exports = { startAutopost, autopostConfigured, tick, slotTime, textFor, targetFor };
+/* PLAN_PATH и STATE_PATH наружу — их читают редакция (api/redaktor.js)
+   и страница плана. Путь к плану должен быть один на всех: разойдись он,
+   редакция дописывала бы в один файл, а публиковалось бы из другого. */
+module.exports = {
+  startAutopost, autopostConfigured, tick, slotTime, mskLabel, textFor, targetFor,
+  PLAN_PATH, STATE_PATH,
+};
