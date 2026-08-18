@@ -18,7 +18,10 @@ User-agent: Yandex
 Allow: /
 Disallow: /api/
 Disallow: /plan
-Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&yclid&_openstat&region
+# 15.08.2026: в поиск попала копия главной с метками Яндекс Бизнеса —
+# utm_referer, utm_ya_campaign, yabizcmpgn, utm_candidate. Их в списке
+# не было, поэтому Clean-param их не склеивал. Добавлены.
+Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&utm_referer&utm_referrer&utm_ya_campaign&utm_candidate&yabizcmpgn&yclid&gclid&_openstat&region
 
 # ── Обходчики ИИ-поиска ───────────────────────────────────────────
 # Эти роботы собирают материал для ответов ChatGPT, Perplexity, Claude
