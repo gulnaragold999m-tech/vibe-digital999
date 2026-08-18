@@ -108,6 +108,18 @@ MEMO=$(cat <<TXT
    Работа по Гранату — docs/granat-kmv/, правки кода — в его
    репозитории, не здесь.
 
+9. ДИЗАЙН — ТОЛЬКО ЧЕРЕЗ НАВЫКИ, правило владелицы от 18.08.2026:
+   «в любом чате, где требуется дизайнер, навык должен использоваться».
+   Сайт, лендинг, экран, макет, мокап, баннер, сторис, презентация,
+   печать — и просто слова «покрасивее», «как у них», «вау».
+   Порядок: задача бизнеса -> dizajn-dnk -> texty-uslug -> статика ->
+   vizualnyj-vkus -> animacii-veb. 3d-na-sajte только если 3D нужен.
+   Цвет и отступ на глаз не подбирать: значения берутся из токенов.
+   Инструкция целиком — docs/20-DIZAJN-PORYADOK.md.
+   Перед «готово»:
+   node .claude/skills/dizajn-dnk/scripts/proverka-tokenov.mjs public
+   node .claude/skills/animacii-veb/scripts/proverka-dvizheniya.mjs public
+
 Твоя ветка: ${BRANCH}
 TXT
 )

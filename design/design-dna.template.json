@@ -1,0 +1,94 @@
+{
+  "_": "ШАБЛОН. Значения не заполнены намеренно: их снимают с референсов навыком dizajn-dnk. Копируется в design-dna.json.",
+  "proekt": "",
+  "data_snyatiya": "",
+  "referensy": [],
+  "utverzhdeno_vladelicej": false,
+  "cvet": {
+    "fon": "",
+    "poverhnost": "",
+    "tekst": "",
+    "tekst_tihij": "",
+    "akcent": "",
+    "oshibka": "",
+    "uspeh": "",
+    "kontrast": {
+      "tekst_k_fonu": "",
+      "tihij_k_fonu": "",
+      "trebovanie": "не ниже 4.5:1"
+    }
+  },
+  "tipografika": {
+    "garnitury": {
+      "zagolovki": "",
+      "tekst": "",
+      "akcidencnaya": ""
+    },
+    "kirillica_proverena": false,
+    "licenziya": "",
+    "shkala": {
+      "h1": {
+        "telefon": "",
+        "desktop": ""
+      },
+      "h2": {
+        "telefon": "",
+        "desktop": ""
+      },
+      "h3": {
+        "telefon": "",
+        "desktop": ""
+      },
+      "tekst": {
+        "telefon": "не меньше 16px",
+        "desktop": ""
+      },
+      "podpis": {
+        "telefon": "",
+        "desktop": ""
+      }
+    },
+    "mezhstrochnyj": {
+      "zagolovok": "",
+      "tekst": "~1.5"
+    },
+    "dlina_stroki": "45–75 знаков"
+  },
+  "ritm": {
+    "bazovyj_shag": "",
+    "pole_sekcii": {
+      "telefon": "",
+      "desktop": ""
+    },
+    "shirina_kontenta": ""
+  },
+  "forma": {
+    "radius_melkij": "",
+    "radius_srednij": "",
+    "radius_krupnyj": "",
+    "tolshchina_granic": ""
+  },
+  "glubina": {
+    "svet_padaet": "",
+    "uroven_poverhnost": "",
+    "uroven_pripodnyato": "",
+    "uroven_plavaet": ""
+  },
+  "dvizhenie": {
+    "bystro_ms": "",
+    "sredne_ms": "",
+    "krivaya_vhod": "",
+    "krivaya_uhod": "",
+    "chto_dvizhetsya": [],
+    "prefers_reduced_motion": "обязательно"
+  },
+  "harakter_kompozicii": "",
+  "komponenty": {
+    "karta": "",
+    "knopka": "",
+    "navigaciya": "",
+    "forma": ""
+  },
+  "chego_izbegat": [],
+  "resheniya_ne_peresmatrivayutsya": []
+}
