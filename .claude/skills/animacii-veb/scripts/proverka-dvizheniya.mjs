@@ -41,6 +41,15 @@ function obojti(dir, out = []) {
   return out;
 }
 
+/**
+ * Собранный (минифицированный) файл — это не то, что писал человек:
+ * ругаться на утилиты Tailwind или на сжатый бандл бессмысленно,
+ * правится всё равно исходник. Признак: файл большой, а строк почти нет.
+ */
+function sobrannyj(put, text) {
+  return text.length > 5000 && text.split('\n').length < 5;
+}
+
 // Свойства, ради которых браузер пересчитывает разметку на каждом кадре.
 // Всё это делается через transform/opacity — как именно, написано в SKILL.md.
 const TYAZHELYE = {
@@ -66,9 +75,12 @@ for (const f of fajly) {
   }
 }
 
+let propushcheno = 0;
+
 for (const f of fajly) {
   const text = readFileSync(f, 'utf8');
   const otn = relative('.', f);
+  if (sobrannyj(f, text)) { propushcheno++; continue; }
   const stroki = text.split('\n');
 
   // CSS-анимации в файле: общий блок глушения со звёздочкой (если он есть
@@ -121,6 +133,7 @@ for (const f of fajly) {
 for (const f of fajly) {
   const text = readFileSync(f, 'utf8');
   const otn = relative('.', f);
+  if (sobrannyj(f, text)) continue;
   for (const blok of text.matchAll(/@keyframes\s+([\w-]+)\s*\{([\s\S]*?)\n\s*\}/g)) {
     const [, imya, telo] = blok;
     for (const m of telo.matchAll(/^\s*([a-z-]+)\s*:/gim)) {
@@ -144,7 +157,8 @@ const spisok = (arr, n = 8, f = x => `      ${x.fajl}:${x.stroka}  ${x.kusok ?? 
 };
 
 P('');
-P(`Проверка движения: ${fajly.length} файлов в ${koren}`);
+P(`Проверка движения: ${fajly.length} файлов в ${koren}` +
+  (propushcheno ? `, из них ${propushcheno} собранных — пропущены, правится исходник` : ''));
 P('');
 let plohih = 0;
 
