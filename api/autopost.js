@@ -212,6 +212,27 @@ async function publishToVk(post, target) {
   }
 
   const res = await call('wall.post', params, target.token);
+
+  /* Первый комментарий от имени сообщества. Он пишется копирайтером вместе
+     с постом (`api/redaktor.js`) и нужен, чтобы разговор начался не с
+     пустоты: под записью с одним комментарием отвечают охотнее, чем под
+     пустой.
+
+     Сбой комментария НЕ роняет публикацию: пост уже вышел, и считать его
+     неопубликованным нельзя — иначе следующий проход выложит его второй раз.
+     Поэтому здесь свой try, а не общий. */
+  if (post.comment) {
+    try {
+      await call(
+        'wall.createComment',
+        { owner_id: `-${target.groupId}`, post_id: res.post_id, from_group: target.groupId, message: String(post.comment).slice(0, 16000) },
+        target.token,
+      );
+    } catch (err) {
+      console.error('[autopost] первый комментарий не ушёл:', err.message);
+    }
+  }
+
   return `https://vk.com/wall-${target.groupId}_${res.post_id}`;
 }
 
