@@ -118,6 +118,7 @@ node .claude/skills/dizajn-dnk/scripts/proverka-tokenov.mjs public
 | `references/snyatie-dnk.md` | снимаете значения с референса |
 | `references/tokeny-i-stek.md` | переносите ДНК в наш CSS |
 | `references/shablon-dnk.md` | оформляете результат для проекта и для заказчика |
+| навык `design-dna` рядом | нужен подробный машиночитаемый профиль референса: первоисточник, на английском, лежит целиком в `.claude/skills/design-dna/` |
 
 Дальше по цепочке: `vizualnyj-vkus` — довести собранную страницу до
 вида, за который не стыдно; `animacii-veb` — оживить; `texty-uslug` —

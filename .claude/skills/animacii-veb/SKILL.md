@@ -119,7 +119,8 @@ description: "Движение на сайте: где анимация помо
 - **GSAP** — когда нужен таймлайн: пять элементов в заданном порядке,
   прокрутка, привязанная к сцене, пиннинг, обратное проигрывание.
   Подробно, включая подключение без сборщика, —
-  `references/gsap-bez-sborshchika.md`.
+  `references/gsap-bez-sborshchika.md`; точный API — в навыке
+  `gsap-spravochnik`, он лежит рядом целиком.
 - **Lottie** — когда нужна нарисованная сцена: персонаж, сложная
   иллюстрация в движении. Это самый тяжёлый вариант, и почти всегда
   вместо него хватает SVG с CSS — `references/lottie-i-svg.md`.
@@ -145,3 +146,5 @@ node .claude/skills/animacii-veb/scripts/proverka-dvizheniya.mjs public
 | `references/priyomy-css.md` | делаете анимацию на чистом CSS — готовые рецепты |
 | `references/gsap-bez-sborshchika.md` | нужен таймлайн или ScrollTrigger |
 | `references/lottie-i-svg.md` | заказчик хочет «живую иллюстрацию» |
+| навык `gsap-spravochnik` рядом | пишете код на GSAP: точные сигнатуры, ScrollTrigger, плагины — от самих авторов |
+| навык `motion-design` рядом | сцена сложная: несколько элементов, характер движения, хореография — первоисточник LottieFiles |
