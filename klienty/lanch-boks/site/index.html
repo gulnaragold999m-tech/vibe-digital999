@@ -19,7 +19,7 @@
     </a>
     <nav class="menu-yakor" aria-label="Разделы страницы">
       <a href="#menu">Меню</a>
-      <a href="#konfigurator">Собрать стакан</a>
+      <a href="#pomoshchnik">Помощник</a>
       <a href="#pochemu">Почему мы</a>
       <a href="#kontakty">Адрес</a>
     </nav>
@@ -33,15 +33,15 @@
     <div class="obertka">
       <div>
         <h1>Кофе и шаурма <span>за пять минут</span></h1>
-        <p class="geroj-pod">Кофе заряжает, ланч насыщает. Готовим при вас, забираете по дороге — на Нагорной в Лермонтове.</p>
+        <p class="geroj-pod">Кофе заряжает, ланч насыщает. Соберите заказ на сайте — заберёте без очереди.</p>
         <div class="geroj-knopki">
-          <a class="knopka knopka-glav" href="#konfigurator">Собрать стакан</a>
+          <a class="knopka knopka-glav" href="#menu">Открыть меню</a>
           <a class="knopka knopka-tihaya" data-marshrut href="#" target="_blank" rel="noopener">Построить маршрут</a>
         </div>
         <div class="geroj-fakty">
           <span class="fakt">Каждый день <b data-chasy>09:00 — 21:00</b></span>
-          <span class="fakt">Растительное молоко без наценки</span>
-          <span class="fakt">Оплата картой и наличными</span>
+          <span class="fakt">Завтрак — 350 ₽</span>
+          <span class="fakt">Обед — от 350 ₽</span>
         </div>
       </div>
       <figure class="geroj-foto">
@@ -54,26 +54,33 @@
     <div class="obertka">
       <div class="sekciya-shapka">
         <h2>Меню</h2>
-        <p class="tiho">Цены на кассе и на сайте одинаковые</p>
+        <p class="tiho">Цены те же, что на доске у кассы</p>
       </div>
+      <div class="vkladki" id="menu-vkladki" role="group" aria-label="Разделы меню"></div>
       <div id="menu-spisok"></div>
+      <p class="tiho otstup">Нажмите на цену — позиция добавится в заказ.</p>
     </div>
   </section>
 
-  <section class="sekciya" id="konfigurator">
+  <section class="sekciya" id="pomoshchnik">
     <div class="obertka">
       <div class="konf">
         <div>
-          <h2>Соберите стакан под себя</h2>
-          <p class="tiho">Выберите напиток и добавки — цена посчитается сразу, заказ уйдёт готовым текстом.</p>
-          <div id="konf-polya"></div>
+          <h2>Помощник соберёт заказ</h2>
+          <p class="tiho">Отвечайте кнопками — он посчитает и отправит заказ нам в мессенджер.
+             Цены он берёт из этого же меню, свои не выдумывает.</p>
+          <div class="bot">
+            <div class="bot-lenta" id="bot-lenta" aria-live="polite" aria-label="Диалог с помощником"></div>
+            <div class="bot-knopki" id="bot-knopki"></div>
+          </div>
         </div>
-        <aside class="itog" aria-live="polite">
-          <div id="itog-stroki"></div>
-          <div class="summa" id="itog-summa">—</div>
+        <aside class="itog">
+          <h3 class="itog-zag">Ваш заказ</h3>
+          <ul class="zakaz" id="korzina-spisok"></ul>
+          <div class="summa" id="zakaz-summa">0 ₽</div>
           <a class="knopka knopka-glav knopka-shirokaya" id="zakaz-tg" href="#" target="_blank" rel="noopener">Заказать в Telegram</a>
           <a class="knopka knopka-tihaya knopka-shirokaya" id="zakaz-wa" href="#" target="_blank" rel="noopener">Заказать в WhatsApp</a>
-          <p class="tiho">Заказ придёт нам текстом. Мы подтвердим и скажем, когда забирать.</p>
+          <p class="tiho">Заказ уйдёт готовым текстом. Подтвердим и скажем, когда забирать.</p>
         </aside>
       </div>
     </div>
@@ -83,10 +90,10 @@
     <div class="obertka">
       <h2>Почему к нам возвращаются</h2>
       <div class="dovody otstup">
-        <div class="dovod"><b>Пять минут</b><p>Кофе готов, пока считаете сдачу. Шаурма — при вас, а не из-под лампы.</p></div>
-        <div class="dovod"><b>Без наценки</b><p>Растительное молоко стоит столько же, сколько обычное. Так решили сразу.</p></div>
-        <div class="dovod"><b>Заказ заранее</b><p>Соберите стакан на сайте, отправьте в Telegram — заберёте без очереди.</p></div>
-        <div class="dovod"><b>По дороге</b><p>Нагорная, 2/1 — рядом парковка. Удобно забрать, не выходя из ритма дня.</p></div>
+        <div class="dovod"><b>Готовим при вас</b><p>Шаурма и бургеры — на месте, а не из-под лампы.</p></div>
+        <div class="dovod"><b>Завтрак и обед</b><p>Готовые наборы: завтрак 350 ₽, обед 350 и 450 ₽. Не нужно выбирать долго.</p></div>
+        <div class="dovod"><b>Заказ заранее</b><p>Соберите на сайте, отправьте в Telegram — заберёте без очереди.</p></div>
+        <div class="dovod"><b>Фирменный бургер</b><p>Lunch Box — самый большой в меню, 700 ₽. Берут, когда голод серьёзный.</p></div>
       </div>
     </div>
   </section>
@@ -140,6 +147,18 @@
     </div>
   </div>
 </footer>
+
+<div class="korzina" id="korzina" hidden>
+  <button class="korzina-verh" id="korzina-otkryt" type="button" aria-expanded="false" aria-controls="zakaz-list">
+    <span id="korzina-schet">0 позиций</span>
+    <span id="korzina-summa">0 ₽</span>
+    <span class="korzina-strelka" aria-hidden="true">▾</span>
+  </button>
+  <div class="zakaz-list" id="zakaz-list" hidden>
+    <p class="tiho">Состав заказа виден в блоке «Ваш заказ» выше — там же кнопки отправки.</p>
+    <a class="knopka knopka-glav knopka-shirokaya" href="#pomoshchnik">Перейти к заказу</a>
+  </div>
+</div>
 
 <div class="polosa">
   <a class="knopka knopka-glav" data-tel href="tel:">Позвонить</a>

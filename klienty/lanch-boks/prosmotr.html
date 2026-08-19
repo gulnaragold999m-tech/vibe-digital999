@@ -181,6 +181,76 @@ a{color:inherit}
 body{padding-bottom:88px}
 @media (min-width:860px){body{padding-bottom:0}}
 
+
+/* ── вкладки меню ─────────────────────────────────────────── */
+.vkladki{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:calc(var(--shag)*3);
+  scrollbar-width:none}
+.vkladki::-webkit-scrollbar{display:none}
+.vkladka{flex:0 0 auto;background:var(--bumaga);border:1.5px solid var(--liniya);
+  border-radius:var(--r-krug);padding:10px 18px;font:inherit;font-size:15px;cursor:pointer;
+  color:var(--shokolad);transition:background-color var(--bystro) ease-out,border-color var(--bystro) ease-out}
+.vkladka[aria-pressed="true"]{background:var(--ugol);border-color:var(--ugol);color:var(--kraft);font-weight:600}
+
+/* ── карточки блюд ────────────────────────────────────────── */
+.karta .metka{background:var(--gorchica);color:var(--ugol);border-radius:var(--r-krug);
+  padding:3px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+.varianty{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:calc(var(--shag)*1.5)}
+.variant{display:inline-flex;align-items:baseline;gap:8px;background:var(--kraft);
+  border:1.5px solid var(--liniya);border-radius:var(--r-krug);padding:9px 16px;
+  font:inherit;cursor:pointer;color:var(--ugol);
+  transition:background-color var(--bystro) ease-out,border-color var(--bystro) ease-out,transform var(--bystro) ease-out}
+.variant:hover{border-color:var(--ogon)}
+.variant:active{transform:scale(.97)}
+.variant.dobavlen{background:var(--ogon);border-color:var(--ogon);color:var(--belyj)}
+.v-imya{font-size:14.5px;color:var(--dym)}
+.variant:hover .v-imya{color:var(--shokolad)}
+.variant.dobavlen .v-imya{color:var(--belyj)}
+.v-cena{font-family:var(--f-disp);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ── бот ──────────────────────────────────────────────────── */
+.bot{margin-top:calc(var(--shag)*2.5);display:grid;gap:calc(var(--shag)*2)}
+.bot-lenta{display:flex;flex-direction:column;gap:10px;max-height:340px;overflow-y:auto;
+  padding-right:4px}
+.soobshchenie{max-width:82%}
+.soobshchenie p{padding:11px 15px;border-radius:var(--r-sred);font-size:15.5px;line-height:1.45}
+.soobshchenie.bot p{background:rgba(243,234,220,.1);border:1px solid rgba(243,234,220,.18);
+  border-bottom-left-radius:4px}
+.soobshchenie.ya{align-self:flex-end}
+.soobshchenie.ya p{background:var(--gorchica);color:var(--ugol);font-weight:600;border-bottom-right-radius:4px}
+.bot-knopki{display:flex;flex-wrap:wrap;gap:8px}
+.bot-knopka{background:transparent;color:var(--kraft);border:1.5px solid rgba(243,234,220,.4);
+  border-radius:var(--r-krug);padding:10px 17px;font:inherit;font-size:15px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;
+  transition:background-color var(--bystro) ease-out,color var(--bystro) ease-out}
+.bot-knopka:hover{background:var(--kraft);color:var(--ugol)}
+.bot-knopka.glavnaya{background:var(--ogon);border-color:var(--ogon);color:var(--belyj);font-weight:600}
+.bot-knopka.glavnaya:hover{background:var(--ogon-tem);color:var(--belyj)}
+
+/* ── список заказа ────────────────────────────────────────── */
+.konf .knopka-tihaya{color:var(--kraft);border-color:rgba(243,234,220,.45)}
+.konf .knopka-tihaya:hover{background:var(--kraft);color:var(--ugol)}
+
+.itog-zag{font-size:17px;margin-bottom:calc(var(--shag)*1.5);color:var(--gorchica)}
+.zakaz{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:230px;overflow-y:auto}
+.zakaz:empty::after{content:"Пока пусто. Нажмите цену в меню или ответьте помощнику.";
+  color:rgba(243,234,220,.6);font-size:14.5px}
+.zakaz-stroka{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;font-size:15px}
+.zakaz-cena{font-variant-numeric:tabular-nums;color:var(--gorchica)}
+.ubrat{background:none;border:0;color:rgba(243,234,220,.6);font-size:20px;line-height:1;
+  cursor:pointer;padding:0 2px}
+.ubrat:hover{color:var(--kraft)}
+
+/* ── липкая корзина на телефоне ───────────────────────────── */
+.korzina{position:fixed;left:0;right:0;bottom:64px;z-index:29;background:var(--ugol);color:var(--kraft);
+  border-top:1px solid rgba(243,234,220,.15)}
+.korzina-verh{width:100%;display:flex;align-items:center;gap:12px;justify-content:space-between;
+  background:none;border:0;color:inherit;font:inherit;padding:13px calc(var(--shag)*2.5);cursor:pointer}
+.korzina-verh #korzina-summa{font-family:var(--f-disp);font-size:19px;font-weight:600;
+  font-variant-numeric:tabular-nums;margin-left:auto}
+.korzina-strelka{opacity:.7}
+.zakaz-list{padding:0 calc(var(--shag)*2.5) calc(var(--shag)*2);display:grid;gap:10px}
+@media (min-width:860px){.korzina{display:none}}
+
 /* ── уважение к настройке «уменьшить движение» ────────────── */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;
@@ -198,7 +268,7 @@ body{padding-bottom:88px}
     </a>
     <nav class="menu-yakor" aria-label="Разделы страницы">
       <a href="#menu">Меню</a>
-      <a href="#konfigurator">Собрать стакан</a>
+      <a href="#pomoshchnik">Помощник</a>
       <a href="#pochemu">Почему мы</a>
       <a href="#kontakty">Адрес</a>
     </nav>
@@ -212,15 +282,15 @@ body{padding-bottom:88px}
     <div class="obertka">
       <div>
         <h1>Кофе и шаурма <span>за пять минут</span></h1>
-        <p class="geroj-pod">Кофе заряжает, ланч насыщает. Готовим при вас, забираете по дороге — на Нагорной в Лермонтове.</p>
+        <p class="geroj-pod">Кофе заряжает, ланч насыщает. Соберите заказ на сайте — заберёте без очереди.</p>
         <div class="geroj-knopki">
-          <a class="knopka knopka-glav" href="#konfigurator">Собрать стакан</a>
+          <a class="knopka knopka-glav" href="#menu">Открыть меню</a>
           <a class="knopka knopka-tihaya" data-marshrut href="#" target="_blank" rel="noopener">Построить маршрут</a>
         </div>
         <div class="geroj-fakty">
           <span class="fakt">Каждый день <b data-chasy>09:00 — 21:00</b></span>
-          <span class="fakt">Растительное молоко без наценки</span>
-          <span class="fakt">Оплата картой и наличными</span>
+          <span class="fakt">Завтрак — 350 ₽</span>
+          <span class="fakt">Обед — от 350 ₽</span>
         </div>
       </div>
       <figure class="geroj-foto">
@@ -233,26 +303,33 @@ body{padding-bottom:88px}
     <div class="obertka">
       <div class="sekciya-shapka">
         <h2>Меню</h2>
-        <p class="tiho">Цены на кассе и на сайте одинаковые</p>
+        <p class="tiho">Цены те же, что на доске у кассы</p>
       </div>
+      <div class="vkladki" id="menu-vkladki" role="group" aria-label="Разделы меню"></div>
       <div id="menu-spisok"></div>
+      <p class="tiho otstup">Нажмите на цену — позиция добавится в заказ.</p>
     </div>
   </section>
 
-  <section class="sekciya" id="konfigurator">
+  <section class="sekciya" id="pomoshchnik">
     <div class="obertka">
       <div class="konf">
         <div>
-          <h2>Соберите стакан под себя</h2>
-          <p class="tiho">Выберите напиток и добавки — цена посчитается сразу, заказ уйдёт готовым текстом.</p>
-          <div id="konf-polya"></div>
+          <h2>Помощник соберёт заказ</h2>
+          <p class="tiho">Отвечайте кнопками — он посчитает и отправит заказ нам в мессенджер.
+             Цены он берёт из этого же меню, свои не выдумывает.</p>
+          <div class="bot">
+            <div class="bot-lenta" id="bot-lenta" aria-live="polite" aria-label="Диалог с помощником"></div>
+            <div class="bot-knopki" id="bot-knopki"></div>
+          </div>
         </div>
-        <aside class="itog" aria-live="polite">
-          <div id="itog-stroki"></div>
-          <div class="summa" id="itog-summa">—</div>
+        <aside class="itog">
+          <h3 class="itog-zag">Ваш заказ</h3>
+          <ul class="zakaz" id="korzina-spisok"></ul>
+          <div class="summa" id="zakaz-summa">0 ₽</div>
           <a class="knopka knopka-glav knopka-shirokaya" id="zakaz-tg" href="#" target="_blank" rel="noopener">Заказать в Telegram</a>
           <a class="knopka knopka-tihaya knopka-shirokaya" id="zakaz-wa" href="#" target="_blank" rel="noopener">Заказать в WhatsApp</a>
-          <p class="tiho">Заказ придёт нам текстом. Мы подтвердим и скажем, когда забирать.</p>
+          <p class="tiho">Заказ уйдёт готовым текстом. Подтвердим и скажем, когда забирать.</p>
         </aside>
       </div>
     </div>
@@ -262,10 +339,10 @@ body{padding-bottom:88px}
     <div class="obertka">
       <h2>Почему к нам возвращаются</h2>
       <div class="dovody otstup">
-        <div class="dovod"><b>Пять минут</b><p>Кофе готов, пока считаете сдачу. Шаурма — при вас, а не из-под лампы.</p></div>
-        <div class="dovod"><b>Без наценки</b><p>Растительное молоко стоит столько же, сколько обычное. Так решили сразу.</p></div>
-        <div class="dovod"><b>Заказ заранее</b><p>Соберите стакан на сайте, отправьте в Telegram — заберёте без очереди.</p></div>
-        <div class="dovod"><b>По дороге</b><p>Нагорная, 2/1 — рядом парковка. Удобно забрать, не выходя из ритма дня.</p></div>
+        <div class="dovod"><b>Готовим при вас</b><p>Шаурма и бургеры — на месте, а не из-под лампы.</p></div>
+        <div class="dovod"><b>Завтрак и обед</b><p>Готовые наборы: завтрак 350 ₽, обед 350 и 450 ₽. Не нужно выбирать долго.</p></div>
+        <div class="dovod"><b>Заказ заранее</b><p>Соберите на сайте, отправьте в Telegram — заберёте без очереди.</p></div>
+        <div class="dovod"><b>Фирменный бургер</b><p>Lunch Box — самый большой в меню, 700 ₽. Берут, когда голод серьёзный.</p></div>
       </div>
     </div>
   </section>
@@ -320,244 +397,411 @@ body{padding-bottom:88px}
   </div>
 </footer>
 
+<div class="korzina" id="korzina" hidden>
+  <button class="korzina-verh" id="korzina-otkryt" type="button" aria-expanded="false" aria-controls="zakaz-list">
+    <span id="korzina-schet">0 позиций</span>
+    <span id="korzina-summa">0 ₽</span>
+    <span class="korzina-strelka" aria-hidden="true">▾</span>
+  </button>
+  <div class="zakaz-list" id="zakaz-list" hidden>
+    <p class="tiho">Состав заказа виден в блоке «Ваш заказ» выше — там же кнопки отправки.</p>
+    <a class="knopka knopka-glav knopka-shirokaya" href="#pomoshchnik">Перейти к заказу</a>
+  </div>
+</div>
+
 <div class="polosa">
   <a class="knopka knopka-glav" data-tel href="tel:">Позвонить</a>
   <a class="knopka knopka-tihaya" data-marshrut href="#" target="_blank" rel="noopener">Маршрут</a>
 </div>
 
 <script>
-/* Данные кафе «Ланч Бокс». Всё, что меняется, живёт ЗДЕСЬ и только здесь.
-   Правило: ни одной цены и ни одного телефона в разметке — иначе они
-   разъедутся между страницей, кассой и рекламой.
+/* Ланч Бокс — данные. Всё, что меняется, живёт ЗДЕСЬ и только здесь.
+   В разметке нет ни одной цены намеренно: разъедутся — заметит клиент.
 
-   ЧЕРНОВИК: пока true — вверху страницы висит жёлтая полоса «черновик,
-   цены примерные». Заполнили настоящие данные — поставьте false, полоса
-   исчезнет. Так черновик физически нельзя выкатить незаметно. */
+   Цены сняты с меловых досок кафе 19.08.2026, фотографии от владелицы.
+   Ничего не добавлено «от себя»: чего нет на доске — нет и на сайте.
+
+   ЧЕРНОВИК: пока true — вверху висит полоса. Проверили данные, заполнили
+   контакты — поставьте false. */
 window.LANCH = {
   chernovik: true,
 
   // ── ЗАПОЛНИТЬ настоящими ────────────────────────────────────────
   kontakty: {
-    telefon:   '+7 999 244 9999',        // ЗАПОЛНИТЬ: телефон точки
-    telegram:  'https://t.me/',          // ЗАПОЛНИТЬ: ссылка на бота/аккаунт
-    whatsapp:  'https://wa.me/79992449999', // ЗАПОЛНИТЬ
-    vk:        '',                        // ЗАПОЛНИТЬ или оставить пустым — блок скроется
-    adres:     'Лермонтов, ул. Нагорная 2/1',  // ЗАПОЛНИТЬ: точный адрес точки
-    marshrut:  'https://yandex.ru/maps/?text=Лермонтов%20Нагорная%202/1', // ЗАПОЛНИТЬ
+    telefon:  '+7 999 244 9999',              // ЗАПОЛНИТЬ: телефон точки
+    telegram: 'https://t.me/',                // ЗАПОЛНИТЬ: аккаунт или бот для заказов
+    whatsapp: 'https://wa.me/79992449999',    // ЗАПОЛНИТЬ
+    vk:       '',                             // пусто — кнопка исчезнет
+    adres:    'Лермонтов, ул. Нагорная 2/1',  // ЗАПОЛНИТЬ: точный адрес
+    marshrut: 'https://yandex.ru/maps/?text=Лермонтов%20Нагорная%202/1',
   },
+  chasy: { budni: '09:00 — 21:00' },          // ЗАПОЛНИТЬ, если иначе
 
-  chasy: { budni: '09:00 — 21:00', vyhodnye: '09:00 — 21:00' },  // ЗАПОЛНИТЬ
-
-  // ── МЕНЮ. Цены примерные, заменить на настоящие ─────────────────
+  /* Меню с досок. Два числа через дробь на доске — два варианта одной
+     позиции. Как они называются у вас на кассе — УТОЧНИТЬ: сейчас стоят
+     «обычная / большая» и объёмы кофе по обычной практике. */
   menu: [
-    { kod: 'shaurma', imya: 'Шаурма', pozicii: [
-      { imya: 'Классическая с курицей', opisanie: 'Лаваш, курица с гриля, овощи, фирменный соус', cena: 260 },
-      { imya: 'Острая с курицей',        opisanie: 'То же, плюс халапеньо и острый соус',          cena: 280 },
-      { imya: 'Сырная',                  opisanie: 'Курица, два вида сыра, томаты',                 cena: 300 },
-      { imya: 'Овощная',                 opisanie: 'Без мяса: овощи, сыр, соус на выбор',           cena: 220 },
+    { kod: 'kofe', imya: 'Кофе', znak: '☕', pozicii: [
+      { imya: 'Эспрессо',        varianty: [{ imya: 'одинарный', cena: 80 }, { imya: 'двойной', cena: 100 }] },
+      { imya: 'Американо',       varianty: [{ imya: '0,3', cena: 100 }, { imya: '0,4', cena: 120 }] },
+      { imya: 'Капучино',        varianty: [{ imya: '0,3', cena: 120 }, { imya: '0,4', cena: 160 }] },
+      { imya: 'Латте',           varianty: [{ imya: '0,4', cena: 160 }] },
+      { imya: 'Раф',             varianty: [{ imya: '0,3', cena: 170 }, { imya: '0,4', cena: 210 }] },
+      { imya: 'Флэт уайт',       varianty: [{ imya: '0,3', cena: 180 }] },
+      { imya: 'Айс-латте',       varianty: [{ imya: '0,4', cena: 180 }, { imya: '0,5', cena: 200 }] },
+      { imya: 'Глясе',           varianty: [{ imya: '0,4', cena: 220 }] },
+      { imya: 'Горячий шоколад', varianty: [{ imya: '0,3', cena: 140 }, { imya: '0,4', cena: 160 }] },
+      { imya: 'Чай',             varianty: [{ imya: 'кружка', cena: 60 }] },
     ]},
-    { kod: 'fri', imya: 'Картофель фри', pozicii: [
-      { imya: 'Порция 100 г', opisanie: 'Соус в подарок: сырный, кетчуп или чесночный', cena: 90 },
-      { imya: 'Порция 150 г', opisanie: 'Большая, с двумя соусами',                      cena: 130 },
-      { imya: 'Соус отдельно', opisanie: 'Сырный, кетчуп, чесночный, барбекю',           cena: 30 },
+
+    { kod: 'goryachee', imya: 'Горячее', znak: '🥙', pozicii: [
+      { imya: 'Шаурма',            varianty: [{ imya: 'обычная', cena: 300 }, { imya: 'большая', cena: 350 }] },
+      { imya: 'Люля в лаваше',     varianty: [{ imya: 'порция', cena: 300 }] },
+      { imya: 'Бургер с курицей',  varianty: [{ imya: 'порция', cena: 400 }] },
+      { imya: 'Бургер с говядиной', varianty: [{ imya: 'порция', cena: 500 }] },
+      { imya: 'Бургер Lunch Box',  varianty: [{ imya: 'порция', cena: 700 }], hit: true,
+        opisanie: 'Фирменный, самый большой' },
+      { imya: 'Наггетсы',          varianty: [{ imya: 'порция', cena: 220 }] },
+      { imya: 'Картофель фри',     varianty: [{ imya: 'обычная', cena: 140 }, { imya: 'большая', cena: 170 }] },
+      { imya: 'Соус',              varianty: [{ imya: 'обычный', cena: 50 }, { imya: 'большой', cena: 70 }] },
     ]},
-    { kod: 'kofe', imya: 'Кофе', pozicii: [
-      { imya: 'Эспрессо',  opisanie: 'Двойной, свежая обжарка',        cena: 110 },
-      { imya: 'Американо', opisanie: 'Классический, 0,3',              cena: 130 },
-      { imya: 'Капучино',  opisanie: 'Плотная пенка, 0,3',             cena: 180 },
-      { imya: 'Латте',     opisanie: 'Мягкий, молока больше, 0,4',     cena: 200 },
-      { imya: 'Раф',       opisanie: 'Сливочный, с ванилью, 0,3',      cena: 220 },
+
+    { kod: 'holodnoe', imya: 'Сэндвичи и роллы', znak: '🥪', pozicii: [
+      { imya: 'Сэндвич с курицей',  varianty: [{ imya: 'порция', cena: 250 }] },
+      { imya: 'Сэндвич с ветчиной', varianty: [{ imya: 'порция', cena: 250 }] },
+      { imya: 'Цезарь ролл',        varianty: [{ imya: 'порция', cena: 300 }] },
     ]},
-    { kod: 'napitki', imya: 'Прохладительные', pozicii: [
-      { imya: 'Домашний лимонад', opisanie: 'Малина, цитрус или тархун, 0,4', cena: 150 },
-      { imya: 'Холодный кофе',    opisanie: 'Айс-латте на льду, 0,4',          cena: 210 },
-      { imya: 'Вода',             opisanie: 'Без газа и с газом, 0,5',         cena: 60 },
+
+    { kod: 'sety', imya: 'Завтрак и обед', znak: '🍱', pozicii: [
+      { imya: 'Завтрак', varianty: [{ imya: 'порция', cena: 350 }] },
+      { imya: 'Обед',    varianty: [{ imya: 'обычный', cena: 350 }, { imya: 'большой', cena: 450 }] },
     ]},
   ],
 
-  // ── Конфигуратор стакана ────────────────────────────────────────
-  // Каждая надбавка — отдельной строкой, чтобы её было видно и легко менять.
-  konfigurator: {
-    napitok: [
-      { imya: 'Капучино', cena: 180 },
-      { imya: 'Латте',    cena: 200 },
-      { imya: 'Раф',      cena: 220 },
-      { imya: 'Американо', cena: 130 },
-    ],
-    razmer: [
-      { imya: '0,3', nadbavka: 0 },
-      { imya: '0,4', nadbavka: 40 },
-    ],
-    moloko: [
-      { imya: 'Коровье',    nadbavka: 0 },
-      { imya: 'Растительное', nadbavka: 0 },   // намеренно без наценки — это довод, а не мелочь
-    ],
-    sirop: [
-      { imya: 'Без сиропа', nadbavka: 0 },
-      { imya: 'Карамель',   nadbavka: 30 },
-      { imya: 'Ваниль',     nadbavka: 30 },
-      { imya: 'Лесной орех', nadbavka: 30 },
-    ],
-    temperatura: [
-      { imya: 'Горячий', nadbavka: 0 },
-      { imya: 'На льду', nadbavka: 20 },
+  /* Бот собирает заказ из этих же позиций. Ни одной цены у него своей нет.
+     Пары «кофе + еда» он предлагает как удобство, а НЕ как скидку:
+     скидок никто не объявлял, придумывать их нельзя. */
+  bot: {
+    privet: 'Привет! Я помогу собрать заказ. Что берём?',
+    pary: [
+      { imya: 'Кофе и шаурма',   iz: [['kofe', 'Капучино'], ['goryachee', 'Шаурма']] },
+      { imya: 'Кофе и завтрак',  iz: [['kofe', 'Американо'], ['sety', 'Завтрак']] },
+      { imya: 'Бургер и фри',    iz: [['goryachee', 'Бургер с курицей'], ['goryachee', 'Картофель фри']] },
     ],
   },
 
-  // Отзывы НЕ выдумываем. Пусто — секция не показывается.
+  // Отзывы НЕ выдумываем. Пусто — секция скрыта.
   otzyvy: [],
 };
 
 </script>
 <script>
-/* Ланч Бокс — сборка страницы из данных.
-   Ничего не анимируем: движение добавляется отдельным шагом, на готовую статику.
-   Все тексты и цены берутся из dannye.js — в разметке их нет намеренно. */
+/* Ланч Бокс — меню-приложение, корзина и бот-помощник.
+   Всё на чистом JS: ни библиотек, ни сборки, ни ключей от нейросети.
+   Бот работает по сценарию и берёт позиции из dannye.js — своих цен
+   у него нет и быть не может. Скидок он не придумывает: их никто
+   не объявлял, а обещание на сайте потом отрабатывать кассе. */
 (() => {
   const D = window.LANCH;
-  if (!D) return;                       // данные не подключились — страница живёт дальше
+  if (!D) return;
   const $ = (s, k = document) => k.querySelector(s);
   const rub = n => `${n} ₽`;
+  const el = (tag, klass, tekst) => {
+    const e = document.createElement(tag);
+    if (klass) e.className = klass;
+    if (tekst !== undefined) e.textContent = tekst;
+    return e;
+  };
 
   // ── полоса черновика ───────────────────────────────────────────
   if (D.chernovik) {
-    const p = document.createElement('div');
-    p.className = 'chernovik';
-    p.textContent = 'Черновик: цены и контакты примерные. Заменить в assets/js/dannye.js и выключить chernovik.';
+    const p = el('div', 'chernovik',
+      'Черновик: контакты примерные. Цены — с досок кафе, объёмы уточняются.');
     document.body.prepend(p);
   }
 
-  // ── контакты подставляем везде разом ───────────────────────────
+  // ── контакты разом по всей странице ────────────────────────────
   const K = D.kontakty;
+  const telSsylka = 'tel:' + K.telefon.replace(/[^\d+]/g, '');
   document.querySelectorAll('[data-tel]').forEach(a => {
-    a.href = 'tel:' + K.telefon.replace(/[^\d+]/g, '');
+    a.href = telSsylka;
     if (a.dataset.tel === 'text') a.textContent = K.telefon;
   });
-  document.querySelectorAll('[data-tg]').forEach(a => a.href = K.telegram);
-  document.querySelectorAll('[data-wa]').forEach(a => a.href = K.whatsapp);
-  document.querySelectorAll('[data-marshrut]').forEach(a => a.href = K.marshrut);
-  document.querySelectorAll('[data-adres]').forEach(e => e.textContent = K.adres);
-  document.querySelectorAll('[data-chasy]').forEach(e => e.textContent = D.chasy.budni);
-  if (!K.vk) $('[data-vk-blok]')?.remove(); else $('[data-vk]')?.setAttribute('href', K.vk);
+  document.querySelectorAll('[data-tg]').forEach(a => (a.href = K.telegram));
+  document.querySelectorAll('[data-wa]').forEach(a => (a.href = K.whatsapp));
+  document.querySelectorAll('[data-marshrut]').forEach(a => (a.href = K.marshrut));
+  document.querySelectorAll('[data-adres]').forEach(e => (e.textContent = K.adres));
+  document.querySelectorAll('[data-chasy]').forEach(e => (e.textContent = D.chasy.budni));
+  if (!K.vk) $('[data-vk-blok]')?.remove();
+  else $('[data-vk-blok]')?.setAttribute('href', K.vk);
 
-  // ── меню ───────────────────────────────────────────────────────
-  const menuKorobka = $('#menu-spisok');
-  if (menuKorobka) {
-    for (const gruppa of D.menu) {
-      const g = document.createElement('div');
-      g.className = 'gruppa';
-      const h = document.createElement('h3');
-      h.textContent = gruppa.imya;
-      g.append(h);
-      const karty = document.createElement('div');
-      karty.className = 'karty';
-      for (const p of gruppa.pozicii) {
-        const k = document.createElement('article');
-        k.className = 'karta';
-        const verh = document.createElement('div');
-        verh.className = 'verh';
-        const b = document.createElement('b'); b.textContent = p.imya;
-        const c = document.createElement('span'); c.className = 'cena'; c.textContent = rub(p.cena);
-        verh.append(b, c);
-        const o = document.createElement('p'); o.textContent = p.opisanie;
-        k.append(verh, o);
-        karty.append(k);
-      }
-      g.append(karty);
-      menuKorobka.append(g);
-    }
+  // ── корзина ────────────────────────────────────────────────────
+  const korzina = [];                       // {imya, variant, cena}
+  const najti = (kod, imya) => D.menu.find(g => g.kod === kod)?.pozicii.find(p => p.imya === imya);
+
+  function dobavit(poziciya, variant) {
+    korzina.push({ imya: poziciya.imya, variant: variant.imya, cena: variant.cena });
+    obnovit();
+    return `${poziciya.imya} (${variant.imya}) — ${rub(variant.cena)}`;
+  }
+  const summa = () => korzina.reduce((s, p) => s + p.cena, 0);
+
+  function slovoPozicij(n) {
+    const sto = n % 100, des = n % 10;
+    if (sto > 10 && sto < 20) return 'позиций';
+    if (des === 1) return 'позиция';
+    if (des >= 2 && des <= 4) return 'позиции';
+    return 'позиций';
   }
 
-  // ── конфигуратор стакана ───────────────────────────────────────
-  const konf = D.konfigurator;
-  const polya = [
-    ['napitok', 'Напиток', konf.napitok, 'cena'],
-    ['razmer', 'Размер, л', konf.razmer, 'nadbavka'],
-    ['moloko', 'Молоко', konf.moloko, 'nadbavka'],
-    ['sirop', 'Сироп', konf.sirop, 'nadbavka'],
-    ['temperatura', 'Температура', konf.temperatura, 'nadbavka'],
-  ];
-  const konfKorobka = $('#konf-polya');
-  if (konfKorobka) {
-    polya.forEach(([kod, podpis, spisok], i) => {
-      const blok = document.createElement('div');
-      blok.className = 'konf-shag';
-      const s = document.createElement('span'); s.textContent = `${i + 1}. ${podpis}`;
-      const vybor = document.createElement('div'); vybor.className = 'vybor';
-      spisok.forEach((v, j) => {
-        const id = `${kod}-${j}`;
-        const l = document.createElement('label');
-        const inp = document.createElement('input');
-        inp.type = 'radio'; inp.name = kod; inp.id = id; inp.value = String(j);
-        if (j === 0) inp.checked = true;
-        const nadpis = document.createElement('span');
-        const dop = v.nadbavka ? ` +${v.nadbavka} ₽` : '';
-        nadpis.textContent = v.imya + dop;
-        l.append(inp, nadpis);
-        vybor.append(l);
-      });
-      blok.append(s, vybor);
-      konfKorobka.append(blok);
+  function obnovit() {
+    const polosa = $('#korzina');
+    if (!polosa) return;
+    polosa.hidden = korzina.length === 0;
+    $('#korzina-schet').textContent = `${korzina.length} ${slovoPozicij(korzina.length)}`;
+    $('#korzina-summa').textContent = rub(summa());
+
+    const spisok = $('#korzina-spisok');
+    spisok.textContent = '';
+    korzina.forEach((p, i) => {
+      const stroka = el('li', 'zakaz-stroka');
+      const imya = el('span', null, `${p.imya} · ${p.variant}`);
+      const cena = el('span', 'zakaz-cena', rub(p.cena));
+      const ubrat = el('button', 'ubrat', '×');
+      ubrat.type = 'button';
+      ubrat.setAttribute('aria-label', `Убрать ${p.imya}`);
+      ubrat.addEventListener('click', () => { korzina.splice(i, 1); obnovit(); });
+      stroka.append(imya, cena, ubrat);
+      spisok.append(stroka);
     });
-    konfKorobka.addEventListener('change', poschitat);
-    poschitat();
-  }
+    $('#zakaz-summa').textContent = rub(summa());
 
-  function vybrano(kod, spisok) {
-    const el = konfKorobka.querySelector(`input[name="${kod}"]:checked`);
-    return spisok[el ? Number(el.value) : 0];
-  }
-
-  function poschitat() {
-    const n = vybrano('napitok', konf.napitok);
-    const r = vybrano('razmer', konf.razmer);
-    const m = vybrano('moloko', konf.moloko);
-    const s = vybrano('sirop', konf.sirop);
-    const t = vybrano('temperatura', konf.temperatura);
-    const summa = n.cena + r.nadbavka + m.nadbavka + s.nadbavka + t.nadbavka;
-
-    const stroki = $('#itog-stroki');
-    stroki.textContent = '';
-    const dobavit = (levo, pravo) => {
-      const d = document.createElement('div'); d.className = 'stroka';
-      const a = document.createElement('span'); a.textContent = levo;
-      const b = document.createElement('span'); b.textContent = pravo;
-      d.append(a, b); stroki.append(d);
-    };
-    dobavit(n.imya, rub(n.cena));
-    dobavit(`${r.imya} л`, r.nadbavka ? `+${r.nadbavka} ₽` : 'без доплаты');
-    dobavit(m.imya, m.nadbavka ? `+${m.nadbavka} ₽` : 'без наценки');
-    if (s.nadbavka) dobavit(s.imya, `+${s.nadbavka} ₽`);
-    if (t.nadbavka) dobavit(t.imya, `+${t.nadbavka} ₽`);
-
-    $('#itog-summa').textContent = rub(summa);
-
-    // Заказ уходит готовым текстом — бариста не переспрашивает, клиент не диктует
-    const zakaz = `Здравствуйте! Хочу забрать:\n${n.imya} ${r.imya} л, молоко ${m.imya.toLowerCase()}`
-      + `${s.nadbavka ? ', сироп ' + s.imya.toLowerCase() : ''}`
-      + `${t.nadbavka ? ', ' + t.imya.toLowerCase() : ''}\nИтого ${summa} ₽`;
-    const tekst = encodeURIComponent(zakaz);
+    const tekst = encodeURIComponent(
+      'Здравствуйте! Хочу забрать:\n' +
+      korzina.map(p => `— ${p.imya} (${p.variant}) ${p.cena} ₽`).join('\n') +
+      `\nИтого ${summa()} ₽`);
     $('#zakaz-tg').href = K.telegram + (K.telegram.includes('?') ? '&' : '?') + 'text=' + tekst;
     $('#zakaz-wa').href = K.whatsapp + (K.whatsapp.includes('?') ? '&' : '?') + 'text=' + tekst;
   }
 
-  // ── отзывы: нет настоящих — секции нет ─────────────────────────
+  $('#korzina-otkryt')?.addEventListener('click', () => {
+    const list = $('#zakaz-list');
+    list.hidden = !list.hidden;
+    $('#korzina-otkryt').setAttribute('aria-expanded', String(!list.hidden));
+  });
+
+  // ── меню: вкладки и карточки ───────────────────────────────────
+  const vkladki = $('#menu-vkladki');
+  const spisokMenu = $('#menu-spisok');
+  if (vkladki && spisokMenu) {
+    D.menu.forEach((gruppa, i) => {
+      const b = el('button', 'vkladka', `${gruppa.znak} ${gruppa.imya}`);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(i === 0));
+      b.addEventListener('click', () => {
+        vkladki.querySelectorAll('.vkladka').forEach(x => x.setAttribute('aria-pressed', 'false'));
+        b.setAttribute('aria-pressed', 'true');
+        pokazat(gruppa.kod);
+      });
+      vkladki.append(b);
+    });
+    pokazat(D.menu[0].kod);
+  }
+
+  function pokazat(kod) {
+    const gruppa = D.menu.find(g => g.kod === kod);
+    spisokMenu.textContent = '';
+    const karty = el('div', 'karty');
+    for (const p of gruppa.pozicii) {
+      const k = el('article', 'karta');
+      const verh = el('div', 'verh');
+      const b = el('b', null, p.imya);
+      verh.append(b);
+      if (p.hit) verh.append(el('span', 'metka', 'фирменный'));
+      k.append(verh);
+      if (p.opisanie) k.append(el('p', null, p.opisanie));
+      const knopki = el('div', 'varianty');
+      for (const v of p.varianty) {
+        const kn = el('button', 'variant');
+        kn.type = 'button';
+        kn.append(el('span', 'v-imya', v.imya), el('span', 'v-cena', rub(v.cena)));
+        kn.addEventListener('click', () => {
+          dobavit(p, v);
+          kn.classList.add('dobavlen');
+          setTimeout(() => kn.classList.remove('dobavlen'), 900);
+        });
+        knopki.append(kn);
+      }
+      k.append(knopki);
+      karty.append(k);
+    }
+    spisokMenu.append(karty);
+  }
+
+  // ── бот-помощник ───────────────────────────────────────────────
+  const lenta = $('#bot-lenta');
+  const knopki = $('#bot-knopki');
+
+  function skazat(tekst, ot = 'bot') {
+    const s = el('div', `soobshchenie ${ot}`);
+    s.append(el('p', null, tekst));
+    lenta.append(s);
+    lenta.scrollTop = lenta.scrollHeight;
+  }
+
+  function predlozhit(varianty) {
+    knopki.textContent = '';
+    for (const v of varianty) {
+      const b = el('button', 'bot-knopka', v.imya);
+      b.type = 'button';
+      b.addEventListener('click', () => {
+        skazat(v.imya, 'ya');
+        v.dalshe();
+      });
+      knopki.append(b);
+    }
+  }
+
+  const shag = {
+    nachalo() {
+      predlozhit([
+        { imya: 'Кофе', dalshe: () => shag.gruppa('kofe') },
+        { imya: 'Поесть', dalshe: () => shag.chtoPoest() },
+        { imya: 'Готовая пара', dalshe: () => shag.pary() },
+        { imya: 'Что подешевле', dalshe: () => shag.deshevle() },
+      ]);
+    },
+
+    chtoPoest() {
+      skazat('Горячее, сэндвичи или готовый набор?');
+      predlozhit([
+        { imya: 'Горячее', dalshe: () => shag.gruppa('goryachee') },
+        { imya: 'Сэндвичи и роллы', dalshe: () => shag.gruppa('holodnoe') },
+        { imya: 'Завтрак и обед', dalshe: () => shag.gruppa('sety') },
+        { imya: 'Назад', dalshe: () => { skazat('Что берём?'); shag.nachalo(); } },
+      ]);
+    },
+
+    gruppa(kod) {
+      const g = D.menu.find(x => x.kod === kod);
+      skazat(`${g.imya}: что берём?`);
+      predlozhit([
+        ...g.pozicii.map(p => ({ imya: p.imya, dalshe: () => shag.variant(p) })),
+        { imya: 'Назад', dalshe: () => { skazat('Что берём?'); shag.nachalo(); } },
+      ]);
+    },
+
+    variant(p) {
+      if (p.varianty.length === 1) return shag.dobavleno(p, p.varianty[0]);
+      skazat(`${p.imya} — какой?`);
+      predlozhit(p.varianty.map(v => ({
+        imya: `${v.imya} — ${rub(v.cena)}`,
+        dalshe: () => shag.dobavleno(p, v),
+      })));
+    },
+
+    dobavleno(p, v) {
+      dobavit(p, v);
+      skazat(`Добавил: ${p.imya} (${v.imya}) — ${rub(v.cena)}. В заказе на ${rub(summa())}.`);
+      skazat('Ещё что-нибудь?');
+      predlozhit([
+        { imya: 'Добавить кофе', dalshe: () => shag.gruppa('kofe') },
+        { imya: 'Добавить еду', dalshe: () => shag.chtoPoest() },
+        { imya: 'Оформляем', dalshe: () => shag.oformit() },
+      ]);
+    },
+
+    pary() {
+      skazat('Частые пары. Это просто удобство, скидки на них нет:');
+      predlozhit([
+        ...D.bot.pary.map(para => {
+          const pozicii = para.iz.map(([kod, imya]) => najti(kod, imya)).filter(Boolean);
+          const cena = pozicii.reduce((s, p) => s + p.varianty[0].cena, 0);
+          return {
+            imya: `${para.imya} — ${rub(cena)}`,
+            dalshe: () => {
+              pozicii.forEach(p => dobavit(p, p.varianty[0]));
+              skazat(`Собрал: ${pozicii.map(p => p.imya).join(' и ')}. В заказе на ${rub(summa())}.`);
+              skazat('Оформляем или добавим что-то ещё?');
+              predlozhit([
+                { imya: 'Оформляем', dalshe: () => shag.oformit() },
+                { imya: 'Добавить ещё', dalshe: () => { skazat('Что берём?'); shag.nachalo(); } },
+              ]);
+            },
+          };
+        }),
+        { imya: 'Назад', dalshe: () => { skazat('Что берём?'); shag.nachalo(); } },
+      ]);
+    },
+
+    deshevle() {
+      // Считаем по прайсу, а не выдумываем «акции»: три самых доступных позиции
+      const vse = D.menu.flatMap(g => g.pozicii.map(p => ({ p, cena: p.varianty[0].cena })));
+      const tri = vse.sort((a, b) => a.cena - b.cena).slice(0, 4);
+      skazat('Самое доступное по нашему прайсу:');
+      predlozhit([
+        ...tri.map(({ p, cena }) => ({
+          imya: `${p.imya} — ${rub(cena)}`,
+          dalshe: () => shag.variant(p),
+        })),
+        { imya: 'Назад', dalshe: () => { skazat('Что берём?'); shag.nachalo(); } },
+      ]);
+    },
+
+    oformit() {
+      if (korzina.length === 0) {
+        skazat('В заказе пока пусто. Давайте выберем — что берём?');
+        return shag.nachalo();
+      }
+      skazat(`В заказе: ${korzina.map(p => `${p.imya} (${p.variant})`).join(', ')}. Итого ${rub(summa())}.`);
+      skazat('Отправьте заказ в мессенджер — подтвердим и скажем, когда забирать.');
+      knopki.textContent = '';
+      const tg = el('a', 'bot-knopka glavnaya', 'Отправить в Telegram');
+      tg.href = $('#zakaz-tg').href; tg.target = '_blank'; tg.rel = 'noopener';
+      const wa = el('a', 'bot-knopka', 'Отправить в WhatsApp');
+      wa.href = $('#zakaz-wa').href; wa.target = '_blank'; wa.rel = 'noopener';
+      const zanovo = el('button', 'bot-knopka', 'Добавить ещё');
+      zanovo.type = 'button';
+      zanovo.addEventListener('click', () => { skazat('Что берём?'); shag.nachalo(); });
+      knopki.append(tg, wa, zanovo);
+      $('#zakaz-list').hidden = false;
+    },
+  };
+
+  if (lenta && knopki) {
+    skazat(D.bot.privet);
+    shag.nachalo();
+  }
+  obnovit();
+
+  // ── отзывы: настоящих нет — секции нет ─────────────────────────
   if (!D.otzyvy || D.otzyvy.length === 0) $('#otzyvy')?.remove();
 
-  // ── разметка для поисковиков собирается из тех же данных ───────
+  // ── разметка для поисковиков из тех же данных ──────────────────
+  const vseCeny = D.menu.flatMap(g => g.pozicii.flatMap(p => p.varianty.map(v => v.cena)));
   const shema = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
     name: 'Ланч Бокс',
-    servesCuisine: ['Шаурма', 'Кофе', 'Фастфуд'],
+    servesCuisine: ['Шаурма', 'Бургеры', 'Кофе'],
     address: { '@type': 'PostalAddress', addressLocality: 'Лермонтов',
                addressRegion: 'Ставропольский край', streetAddress: K.adres, addressCountry: 'RU' },
     telephone: K.telefon,
     openingHours: 'Mo-Su ' + D.chasy.budni.replace(/\s*—\s*/, '-'),
-    priceRange: '₽',
+    priceRange: `${Math.min(...vseCeny)}-${Math.max(...vseCeny)} ₽`,
     takeaway: true,
+    hasMenu: {
+      '@type': 'Menu',
+      hasMenuSection: D.menu.map(g => ({
+        '@type': 'MenuSection', name: g.imya,
+        hasMenuItem: g.pozicii.map(p => ({
+          '@type': 'MenuItem', name: p.imya,
+          offers: p.varianty.map(v => ({ '@type': 'Offer', price: v.cena, priceCurrency: 'RUB' })),
+        })),
+      })),
+    },
   };
-  const sk = document.createElement('script');
+  const sk = el('script');
   sk.type = 'application/ld+json';
   sk.textContent = JSON.stringify(shema);
   document.head.append(sk);

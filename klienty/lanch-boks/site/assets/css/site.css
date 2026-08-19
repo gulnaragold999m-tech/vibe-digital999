@@ -176,6 +176,76 @@ a{color:inherit}
 body{padding-bottom:88px}
 @media (min-width:860px){body{padding-bottom:0}}
 
+
+/* ── вкладки меню ─────────────────────────────────────────── */
+.vkladki{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:calc(var(--shag)*3);
+  scrollbar-width:none}
+.vkladki::-webkit-scrollbar{display:none}
+.vkladka{flex:0 0 auto;background:var(--bumaga);border:1.5px solid var(--liniya);
+  border-radius:var(--r-krug);padding:10px 18px;font:inherit;font-size:15px;cursor:pointer;
+  color:var(--shokolad);transition:background-color var(--bystro) ease-out,border-color var(--bystro) ease-out}
+.vkladka[aria-pressed="true"]{background:var(--ugol);border-color:var(--ugol);color:var(--kraft);font-weight:600}
+
+/* ── карточки блюд ────────────────────────────────────────── */
+.karta .metka{background:var(--gorchica);color:var(--ugol);border-radius:var(--r-krug);
+  padding:3px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+.varianty{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:calc(var(--shag)*1.5)}
+.variant{display:inline-flex;align-items:baseline;gap:8px;background:var(--kraft);
+  border:1.5px solid var(--liniya);border-radius:var(--r-krug);padding:9px 16px;
+  font:inherit;cursor:pointer;color:var(--ugol);
+  transition:background-color var(--bystro) ease-out,border-color var(--bystro) ease-out,transform var(--bystro) ease-out}
+.variant:hover{border-color:var(--ogon)}
+.variant:active{transform:scale(.97)}
+.variant.dobavlen{background:var(--ogon);border-color:var(--ogon);color:var(--belyj)}
+.v-imya{font-size:14.5px;color:var(--dym)}
+.variant:hover .v-imya{color:var(--shokolad)}
+.variant.dobavlen .v-imya{color:var(--belyj)}
+.v-cena{font-family:var(--f-disp);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ── бот ──────────────────────────────────────────────────── */
+.bot{margin-top:calc(var(--shag)*2.5);display:grid;gap:calc(var(--shag)*2)}
+.bot-lenta{display:flex;flex-direction:column;gap:10px;max-height:340px;overflow-y:auto;
+  padding-right:4px}
+.soobshchenie{max-width:82%}
+.soobshchenie p{padding:11px 15px;border-radius:var(--r-sred);font-size:15.5px;line-height:1.45}
+.soobshchenie.bot p{background:rgba(243,234,220,.1);border:1px solid rgba(243,234,220,.18);
+  border-bottom-left-radius:4px}
+.soobshchenie.ya{align-self:flex-end}
+.soobshchenie.ya p{background:var(--gorchica);color:var(--ugol);font-weight:600;border-bottom-right-radius:4px}
+.bot-knopki{display:flex;flex-wrap:wrap;gap:8px}
+.bot-knopka{background:transparent;color:var(--kraft);border:1.5px solid rgba(243,234,220,.4);
+  border-radius:var(--r-krug);padding:10px 17px;font:inherit;font-size:15px;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;
+  transition:background-color var(--bystro) ease-out,color var(--bystro) ease-out}
+.bot-knopka:hover{background:var(--kraft);color:var(--ugol)}
+.bot-knopka.glavnaya{background:var(--ogon);border-color:var(--ogon);color:var(--belyj);font-weight:600}
+.bot-knopka.glavnaya:hover{background:var(--ogon-tem);color:var(--belyj)}
+
+/* ── список заказа ────────────────────────────────────────── */
+.konf .knopka-tihaya{color:var(--kraft);border-color:rgba(243,234,220,.45)}
+.konf .knopka-tihaya:hover{background:var(--kraft);color:var(--ugol)}
+
+.itog-zag{font-size:17px;margin-bottom:calc(var(--shag)*1.5);color:var(--gorchica)}
+.zakaz{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:230px;overflow-y:auto}
+.zakaz:empty::after{content:"Пока пусто. Нажмите цену в меню или ответьте помощнику.";
+  color:rgba(243,234,220,.6);font-size:14.5px}
+.zakaz-stroka{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:baseline;font-size:15px}
+.zakaz-cena{font-variant-numeric:tabular-nums;color:var(--gorchica)}
+.ubrat{background:none;border:0;color:rgba(243,234,220,.6);font-size:20px;line-height:1;
+  cursor:pointer;padding:0 2px}
+.ubrat:hover{color:var(--kraft)}
+
+/* ── липкая корзина на телефоне ───────────────────────────── */
+.korzina{position:fixed;left:0;right:0;bottom:64px;z-index:29;background:var(--ugol);color:var(--kraft);
+  border-top:1px solid rgba(243,234,220,.15)}
+.korzina-verh{width:100%;display:flex;align-items:center;gap:12px;justify-content:space-between;
+  background:none;border:0;color:inherit;font:inherit;padding:13px calc(var(--shag)*2.5);cursor:pointer}
+.korzina-verh #korzina-summa{font-family:var(--f-disp);font-size:19px;font-weight:600;
+  font-variant-numeric:tabular-nums;margin-left:auto}
+.korzina-strelka{opacity:.7}
+.zakaz-list{padding:0 calc(var(--shag)*2.5) calc(var(--shag)*2);display:grid;gap:10px}
+@media (min-width:860px){.korzina{display:none}}
+
 /* ── уважение к настройке «уменьшить движение» ────────────── */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;
