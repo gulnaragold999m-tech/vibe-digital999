@@ -1,0 +1,183 @@
+/* Ланч Бокс — стили. Все значения токенами в :root: цвет, шаг, радиус.
+   Правило: ни одного цвета числом мимо этого блока и ни одного style="..."
+   в разметке. Проверяется скриптом навыка dizajn-dnk. */
+:root{
+  /* цвет — снят с упаковки (чёрная печать) и дополнен аппетитным акцентом */
+  --ugol:#1B1719;        /* печать, заголовки, текст */
+  --shokolad:#4A3226;    /* второй тёмный: описания */
+  --dym:#6B5C50;         /* подписи, второстепенное */
+  --kraft:#F3EADC;       /* фон страницы — цвет упаковки */
+  --bumaga:#FAF5EE;      /* карточки */
+  --ogon:#C4451A;        /* акцент: кнопки и цены. Белый текст на нём — 4,98:1 */
+  --ogon-tem:#A6360F;    /* нажатие */
+  --gorchica:#E4A11B;    /* метки «хит», «новинка» — только с угольным текстом */
+  --liniya:#E0D2BE;
+  --belyj:#FFFFFF;       /* текст на акценте — только на нём */
+
+  --shag:8px;
+  --r-mal:8px; --r-sred:16px; --r-krug:999px;
+  --max:1120px;
+
+  --f-disp:'Oswald','Arial Narrow',Arial,sans-serif;
+  --f-body:'Golos Text','Segoe UI',Roboto,Arial,sans-serif;
+
+  --bystro:.15s; --sredne:.3s;
+  --krivaya:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--kraft);color:var(--ugol);
+  font-family:var(--f-body);font-size:17px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+h1,h2,h3{margin:0;text-wrap:balance;font-family:var(--f-disp);font-weight:600;
+  text-transform:uppercase;letter-spacing:.01em;line-height:1.05}
+h1{font-size:clamp(32px,8vw,60px)}
+h2{font-size:clamp(25px,5.5vw,38px)}
+h3{font-size:clamp(18px,3.6vw,22px)}
+p{margin:0}
+a{color:inherit}
+.obertka{max-width:var(--max);margin:0 auto;padding:0 calc(var(--shag)*2.5)}
+.tiho{color:var(--dym);font-size:15px}
+:where(a,button,select,input,summary):focus-visible{outline:3px solid var(--ogon);outline-offset:3px;border-radius:4px}
+
+/* ── полоса черновика ─────────────────────────────────────── */
+.chernovik{background:var(--gorchica);color:var(--ugol);font-size:14px;
+  padding:calc(var(--shag)*1.25) calc(var(--shag)*2);text-align:center;font-weight:600}
+
+/* ── шапка ────────────────────────────────────────────────── */
+.shapka{position:sticky;top:0;z-index:20;background:var(--kraft);
+  border-bottom:1px solid var(--liniya)}
+.shapka .obertka{display:flex;align-items:center;gap:calc(var(--shag)*2);
+  min-height:66px;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--f-disp);
+  text-transform:uppercase;font-weight:600;letter-spacing:.04em;font-size:18px}
+.logo .znak{width:38px;height:38px;border-radius:50%;border:1.5px solid currentColor;
+  display:grid;place-content:center;font-size:16px;line-height:1;position:relative;flex:0 0 auto}
+.logo .znak::after{content:"";position:absolute;inset:3px;border-radius:50%;
+  border:1px solid currentColor;opacity:.5}
+.menu-yakor{display:none;gap:calc(var(--shag)*3);font-size:15px}
+.menu-yakor a{text-decoration:none;color:var(--shokolad)}
+.menu-yakor a:hover{color:var(--ogon)}
+@media (min-width:860px){.menu-yakor{display:flex}}
+
+/* ── кнопки ───────────────────────────────────────────────── */
+.knopka{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--f-body);font-size:16px;font-weight:600;text-decoration:none;
+  padding:14px 24px;border-radius:var(--r-krug);border:1.5px solid transparent;cursor:pointer;
+  transition:transform var(--bystro) ease-out,background-color var(--bystro) ease-out,color var(--bystro) ease-out}
+.knopka:hover{transform:translateY(-1px)}
+.knopka:active{transform:translateY(0) scale(.985)}
+.knopka-glav{background:var(--ogon);color:var(--belyj)}
+.knopka-glav:hover{background:var(--ogon-tem)}
+.knopka-tihaya{background:transparent;color:var(--ugol);border-color:var(--ugol)}
+.knopka-tihaya:hover{background:var(--ugol);color:var(--kraft)}
+.knopka-shirokaya{width:100%}
+.knopka-malaya{padding:10px 18px;font-size:15px}
+
+/* ── первый экран ─────────────────────────────────────────── */
+.geroj{padding:calc(var(--shag)*5) 0 calc(var(--shag)*6)}
+.geroj .obertka{display:grid;gap:calc(var(--shag)*4)}
+@media (min-width:900px){
+  .geroj .obertka{grid-template-columns:1.05fr .95fr;align-items:center;gap:calc(var(--shag)*7)}
+  .geroj{padding:calc(var(--shag)*8) 0 calc(var(--shag)*9)}
+}
+.geroj h1 span{color:var(--ogon)}
+.geroj-pod{margin-top:calc(var(--shag)*2);max-width:34ch;color:var(--shokolad)}
+.geroj-knopki{display:flex;flex-wrap:wrap;gap:calc(var(--shag)*1.5);margin-top:calc(var(--shag)*3.5)}
+.geroj-fakty{display:flex;flex-wrap:wrap;gap:calc(var(--shag)*1);margin-top:calc(var(--shag)*3)}
+.fakt{background:var(--bumaga);border:1px solid var(--liniya);border-radius:var(--r-krug);
+  padding:7px 15px;font-size:14.5px;color:var(--shokolad)}
+.geroj-foto{border-radius:var(--r-sred);border:1px solid var(--liniya);overflow:hidden;background:var(--bumaga)}
+.geroj-foto img{width:100%;height:100%;object-fit:cover;aspect-ratio:3/4}
+
+.otstup{margin-top:calc(var(--shag)*3)}
+
+/* ── секции ───────────────────────────────────────────────── */
+.sekciya{padding:calc(var(--shag)*6) 0;border-top:1px solid var(--liniya)}
+.sekciya-shapka{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+  gap:var(--shag);margin-bottom:calc(var(--shag)*3)}
+
+/* ── меню ─────────────────────────────────────────────────── */
+.gruppa+.gruppa{margin-top:calc(var(--shag)*5)}
+.gruppa h3{color:var(--ogon);margin-bottom:calc(var(--shag)*2)}
+.karty{display:grid;gap:calc(var(--shag)*1.5);grid-template-columns:1fr}
+@media (min-width:640px){.karty{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.karty{grid-template-columns:repeat(3,1fr)}}
+.karta{background:var(--bumaga);border:1px solid var(--liniya);border-radius:var(--r-sred);
+  padding:calc(var(--shag)*2.25);display:flex;flex-direction:column;gap:6px}
+.karta .verh{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.karta b{font-size:17px;font-weight:600}
+.karta .cena{font-family:var(--f-disp);font-size:19px;font-weight:600;color:var(--ugol);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.karta p{font-size:14.5px;color:var(--dym)}
+
+/* ── конфигуратор ─────────────────────────────────────────── */
+.konf{background:var(--ugol);color:var(--kraft);border-radius:var(--r-sred);
+  padding:calc(var(--shag)*3);display:grid;gap:calc(var(--shag)*3)}
+@media (min-width:900px){.konf{grid-template-columns:1.25fr .75fr;align-items:start;
+  padding:calc(var(--shag)*5)}}
+.konf h2{color:var(--kraft)}
+.konf-shag{margin-top:calc(var(--shag)*2.5)}
+.konf-shag>span{display:block;font-family:var(--f-disp);text-transform:uppercase;
+  letter-spacing:.12em;font-size:13px;color:var(--gorchica);margin-bottom:10px}
+.vybor{display:flex;flex-wrap:wrap;gap:8px}
+.vybor label{position:relative}
+.vybor input{position:absolute;opacity:0;width:100%;height:100%;left:0;top:0;margin:0;cursor:pointer}
+.vybor span{display:inline-block;padding:10px 17px;border-radius:var(--r-krug);
+  border:1.5px solid rgba(243,234,220,.35);font-size:15px;cursor:pointer;
+  transition:background-color var(--bystro) ease-out,border-color var(--bystro) ease-out}
+.vybor input:checked+span{background:var(--gorchica);border-color:var(--gorchica);color:var(--ugol);font-weight:600}
+.vybor input:focus-visible+span{outline:3px solid var(--gorchica);outline-offset:3px}
+.itog{background:rgba(243,234,220,.07);border:1px solid rgba(243,234,220,.2);
+  border-radius:var(--r-sred);padding:calc(var(--shag)*2.5);position:sticky;top:82px}
+.itog .stroka{display:flex;justify-content:space-between;gap:12px;font-size:15px;padding:5px 0}
+.itog .stroka span:last-child{color:var(--gorchica)}
+.itog .summa{font-family:var(--f-disp);font-size:40px;font-weight:600;line-height:1;
+  margin:calc(var(--shag)*1.5) 0;font-variant-numeric:tabular-nums}
+.itog .knopka{margin-top:calc(var(--shag)*1)}
+.itog .tiho{color:rgba(243,234,220,.65);font-size:13.5px;margin-top:10px}
+
+/* ── почему мы ────────────────────────────────────────────── */
+.dovody{display:grid;gap:calc(var(--shag)*2);grid-template-columns:1fr}
+@media (min-width:700px){.dovody{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1000px){.dovody{grid-template-columns:repeat(4,1fr)}}
+.dovod{border-top:2px solid var(--ogon);padding-top:calc(var(--shag)*1.5)}
+.dovod b{display:block;font-family:var(--f-disp);text-transform:uppercase;font-size:17px;margin-bottom:5px}
+.dovod p{font-size:15px;color:var(--shokolad)}
+
+/* ── адрес ────────────────────────────────────────────────── */
+.adres{display:grid;gap:calc(var(--shag)*3);grid-template-columns:1fr}
+@media (min-width:860px){.adres{grid-template-columns:.9fr 1.1fr;align-items:start}}
+.adres dl{display:grid;grid-template-columns:auto 1fr;gap:10px 18px;margin:0 0 calc(var(--shag)*3)}
+.adres dt{color:var(--dym);font-size:15px}
+.adres dd{margin:0;font-weight:600}
+.karta-mesto{background:var(--bumaga);border:1px dashed var(--liniya);border-radius:var(--r-sred);
+  min-height:260px;display:grid;place-content:center;text-align:center;padding:calc(var(--shag)*3);gap:8px}
+
+/* ── подвал ───────────────────────────────────────────────── */
+.podval{background:var(--ugol);color:var(--kraft);padding:calc(var(--shag)*5) 0 calc(var(--shag)*4);margin-top:calc(var(--shag)*6)}
+.podval .obertka{display:grid;gap:calc(var(--shag)*3)}
+@media (min-width:800px){.podval .obertka{grid-template-columns:1fr 1fr;align-items:start}}
+.podval a{color:var(--kraft)}
+.podval .svyaz{display:flex;flex-wrap:wrap;gap:10px;margin-top:calc(var(--shag)*2)}
+.podval .knopka-tihaya{color:var(--kraft);border-color:rgba(243,234,220,.5)}
+.podval .knopka-tihaya:hover{background:var(--kraft);color:var(--ugol)}
+.podval .melko{font-size:13.5px;color:rgba(243,234,220,.6);margin-top:calc(var(--shag)*3)}
+
+/* ── липкая полоса действий на телефоне ───────────────────── */
+.polosa{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:8px;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:var(--kraft);border-top:1px solid var(--liniya)}
+.polosa .knopka{flex:1;padding:13px 10px;font-size:15px}
+@media (min-width:860px){.polosa{display:none}}
+body{padding-bottom:88px}
+@media (min-width:860px){body{padding-bottom:0}}
+
+/* ── уважение к настройке «уменьшить движение» ────────────── */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
