@@ -230,6 +230,10 @@ body{padding-bottom:88px}
 .konf .knopka-tihaya{color:var(--kraft);border-color:rgba(243,234,220,.45)}
 .konf .knopka-tihaya:hover{background:var(--kraft);color:var(--ugol)}
 
+.kanaly{display:grid;gap:10px}
+.zakaz-tekst{width:100%;font:inherit;font-size:14px;background:var(--kraft);color:var(--ugol);
+  border:1px solid var(--liniya);border-radius:var(--r-mal);padding:10px;resize:vertical}
+
 .itog-zag{font-size:17px;margin-bottom:calc(var(--shag)*1.5);color:var(--gorchica)}
 .zakaz{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:230px;overflow-y:auto}
 .zakaz:empty::after{content:"Пока пусто. Нажмите цену в меню или ответьте помощнику.";
@@ -327,8 +331,7 @@ body{padding-bottom:88px}
           <h3 class="itog-zag">Ваш заказ</h3>
           <ul class="zakaz" id="korzina-spisok"></ul>
           <div class="summa" id="zakaz-summa">0 ₽</div>
-          <a class="knopka knopka-glav knopka-shirokaya" id="zakaz-tg" href="#" target="_blank" rel="noopener">Заказать в Telegram</a>
-          <a class="knopka knopka-tihaya knopka-shirokaya" id="zakaz-wa" href="#" target="_blank" rel="noopener">Заказать в WhatsApp</a>
+          <div class="kanaly" data-kanaly></div>
           <p class="tiho">Заказ уйдёт готовым текстом. Подтвердим и скажем, когда забирать.</p>
         </aside>
       </div>
@@ -366,7 +369,7 @@ body{padding-bottom:88px}
           </dl>
           <div class="geroj-knopki">
             <a class="knopka knopka-glav" data-marshrut href="#" target="_blank" rel="noopener">Построить маршрут</a>
-            <a class="knopka knopka-tihaya" data-tg href="#" target="_blank" rel="noopener">Написать в Telegram</a>
+            <a class="knopka knopka-tihaya" data-vk-blok href="#" target="_blank" rel="noopener">Написать во ВКонтакте</a>
           </div>
         </div>
         <div class="karta-mesto">
@@ -388,9 +391,7 @@ body{padding-bottom:88px}
     <div>
       <div class="svyaz">
         <a class="knopka knopka-tihaya knopka-malaya" data-tel href="tel:">Позвонить</a>
-        <a class="knopka knopka-tihaya knopka-malaya" data-tg href="#" target="_blank" rel="noopener">Telegram</a>
-        <a class="knopka knopka-tihaya knopka-malaya" data-wa href="#" target="_blank" rel="noopener">WhatsApp</a>
-        <a class="knopka knopka-tihaya knopka-malaya" data-vk-blok data-vk href="#" target="_blank" rel="noopener">ВКонтакте</a>
+        <a class="knopka knopka-tihaya knopka-malaya" data-vk-blok href="#" target="_blank" rel="noopener">Сообщество ВКонтакте</a>
       </div>
       <p class="melko">Сайт сделала студия Vibe Digital 999</p>
     </div>
@@ -429,12 +430,25 @@ window.LANCH = {
   // ── ЗАПОЛНИТЬ настоящими ────────────────────────────────────────
   kontakty: {
     telefon:  '+7 999 244 9999',              // ЗАПОЛНИТЬ: телефон точки
-    telegram: 'https://t.me/',                // ЗАПОЛНИТЬ: аккаунт или бот для заказов
-    whatsapp: 'https://wa.me/79992449999',    // ЗАПОЛНИТЬ
-    vk:       '',                             // пусто — кнопка исчезнет
     adres:    'Лермонтов, ул. Нагорная 2/1',  // ЗАПОЛНИТЬ: точный адрес
     marshrut: 'https://yandex.ru/maps/?text=Лермонтов%20Нагорная%202/1',
+    vkGruppa: '',                             // ЗАПОЛНИТЬ: https://vk.com/club… — ссылка на сообщество
   },
+
+  /* Куда уходит заказ. Главный канал — ВКонтакте, так решила владелица
+     19.08.2026. Пустая ссылка — кнопка не показывается вовсе, чтобы
+     клиент не тыкал в мёртвое.
+
+     ВАЖНО ПРО ВК: в ссылку «написать сообществу» НЕЛЬЗЯ подставить текст —
+     у ВК нет такого параметра, в отличие от Telegram и WhatsApp. Поэтому
+     заказ копируется в буфер обмена, а чат открывается следом: человек
+     вставляет одним движением. Проверено — иначе кнопка открывала бы
+     пустой чат, и клиент диктовал бы заказ заново. */
+  kanaly: [
+    { tip: 'vk',       imya: 'Заказать во ВКонтакте', ssylka: '' },  // ЗАПОЛНИТЬ: https://vk.me/club…
+    { tip: 'whatsapp', imya: 'Заказать в WhatsApp',   ssylka: '' },  // пусто — кнопки не будет
+    { tip: 'telegram', imya: 'Заказать в Telegram',   ssylka: '' },  // пусто — кнопки не будет
+  ],
   chasy: { budni: '09:00 — 21:00' },          // ЗАПОЛНИТЬ, если иначе
 
   /* Меню с досок. Два числа через дробь — обычная и большая порция.
@@ -529,13 +543,11 @@ window.LANCH = {
     a.href = telSsylka;
     if (a.dataset.tel === 'text') a.textContent = K.telefon;
   });
-  document.querySelectorAll('[data-tg]').forEach(a => (a.href = K.telegram));
-  document.querySelectorAll('[data-wa]').forEach(a => (a.href = K.whatsapp));
   document.querySelectorAll('[data-marshrut]').forEach(a => (a.href = K.marshrut));
   document.querySelectorAll('[data-adres]').forEach(e => (e.textContent = K.adres));
   document.querySelectorAll('[data-chasy]').forEach(e => (e.textContent = D.chasy.budni));
-  if (!K.vk) $('[data-vk-blok]')?.remove();
-  else $('[data-vk-blok]')?.setAttribute('href', K.vk);
+  if (!K.vkGruppa) $('[data-vk-blok]')?.remove();
+  else $('[data-vk-blok]')?.setAttribute('href', K.vkGruppa);
 
   // ── корзина ────────────────────────────────────────────────────
   const korzina = [];                       // {imya, variant, cena}
@@ -578,12 +590,73 @@ window.LANCH = {
     });
     $('#zakaz-summa').textContent = rub(summa());
 
-    const tekst = encodeURIComponent(
-      'Здравствуйте! Хочу забрать:\n' +
+    sobratKnopki();
+  }
+
+  function tekstZakaza() {
+    return 'Здравствуйте! Хочу забрать:\n' +
       korzina.map(p => `— ${p.imya} (${p.variant}) ${p.cena} ₽`).join('\n') +
-      `\nИтого ${summa()} ₽`);
-    $('#zakaz-tg').href = K.telegram + (K.telegram.includes('?') ? '&' : '?') + 'text=' + tekst;
-    $('#zakaz-wa').href = K.whatsapp + (K.whatsapp.includes('?') ? '&' : '?') + 'text=' + tekst;
+      `\nИтого ${summa()} ₽`;
+  }
+
+  /* Кнопки заказа. У Telegram и WhatsApp текст подставляется в ссылку,
+     у ВКонтакте — нет: такого параметра у них не существует. Поэтому для
+     ВК заказ кладётся в буфер обмена, а чат открывается следом. Если
+     браузер копировать не дал (старый или запретил доступ) — показываем
+     текст прямо на странице, чтобы человек скопировал сам. */
+  function sobratKnopki() {
+    const korobki = document.querySelectorAll('[data-kanaly]');
+    if (!korobki.length) return;
+    const zhivye = (D.kanaly || []).filter(k => k.ssylka);
+
+    korobki.forEach(korobka => {
+      korobka.textContent = '';
+      if (!zhivye.length) {
+        const net = el('p', 'tiho', 'Канал для заказов пока не подключён. Позвоните — примем заказ голосом.');
+        korobka.append(net);
+        return;
+      }
+      zhivye.forEach((kanal, i) => {
+        const glavnaya = i === 0;
+        const klass = 'knopka knopka-shirokaya ' + (glavnaya ? 'knopka-glav' : 'knopka-tihaya');
+        if (kanal.tip === 'vk') {
+          const b = el('button', klass, kanal.imya);
+          b.type = 'button';
+          b.addEventListener('click', () => otpravitVk(kanal.ssylka, korobka));
+          korobka.append(b);
+        } else {
+          const a = el('a', klass, kanal.imya);
+          a.target = '_blank'; a.rel = 'noopener';
+          a.href = kanal.ssylka + (kanal.ssylka.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(tekstZakaza());
+          korobka.append(a);
+        }
+      });
+    });
+  }
+
+  async function otpravitVk(ssylka, korobka) {
+    const tekst = tekstZakaza();
+    let skopirovano = false;
+    try {
+      await navigator.clipboard.writeText(tekst);
+      skopirovano = true;
+    } catch { /* браузер не дал — покажем текст ниже */ }
+
+    const podskazka = el('p', 'tiho');
+    podskazka.textContent = skopirovano
+      ? 'Заказ скопирован. Вставьте его в чат сообщества — и всё.'
+      : 'Скопируйте заказ и вставьте в чат сообщества:';
+    korobka.append(podskazka);
+
+    if (!skopirovano) {
+      const pole = el('textarea', 'zakaz-tekst');
+      pole.value = tekst;
+      pole.readOnly = true;
+      pole.rows = 4;
+      korobka.append(pole);
+      pole.select();
+    }
+    window.open(ssylka, '_blank', 'noopener');
   }
 
   $('#korzina-otkryt')?.addEventListener('click', () => {
@@ -758,15 +831,26 @@ window.LANCH = {
       skazat(`В заказе: ${korzina.map(p => `${p.imya} (${p.variant})`).join(', ')}. Итого ${rub(summa())}.`);
       skazat('Отправьте заказ в мессенджер — подтвердим и скажем, когда забирать.');
       knopki.textContent = '';
-      const tg = el('a', 'bot-knopka glavnaya', 'Отправить в Telegram');
-      tg.href = $('#zakaz-tg').href; tg.target = '_blank'; tg.rel = 'noopener';
-      const wa = el('a', 'bot-knopka', 'Отправить в WhatsApp');
-      wa.href = $('#zakaz-wa').href; wa.target = '_blank'; wa.rel = 'noopener';
+      const zhivye = (D.kanaly || []).filter(k => k.ssylka);
+      zhivye.forEach((kanal, i) => {
+        const klass = 'bot-knopka' + (i === 0 ? ' glavnaya' : '');
+        if (kanal.tip === 'vk') {
+          const b = el('button', klass, kanal.imya);
+          b.type = 'button';
+          b.addEventListener('click', () => otpravitVk(kanal.ssylka, $('[data-kanaly]')));
+          knopki.append(b);
+        } else {
+          const a = el('a', klass, kanal.imya);
+          a.target = '_blank'; a.rel = 'noopener';
+          a.href = kanal.ssylka + (kanal.ssylka.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(tekstZakaza());
+          knopki.append(a);
+        }
+      });
+      if (!zhivye.length) skazat('Канал для заказов пока не подключён — позвоните нам, примем голосом.');
       const zanovo = el('button', 'bot-knopka', 'Добавить ещё');
       zanovo.type = 'button';
       zanovo.addEventListener('click', () => { skazat('Что берём?'); shag.nachalo(); });
-      knopki.append(tg, wa, zanovo);
-      $('#zakaz-list').hidden = false;
+      knopki.append(zanovo);
     },
   };
 

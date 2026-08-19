@@ -29,13 +29,11 @@
     a.href = telSsylka;
     if (a.dataset.tel === 'text') a.textContent = K.telefon;
   });
-  document.querySelectorAll('[data-tg]').forEach(a => (a.href = K.telegram));
-  document.querySelectorAll('[data-wa]').forEach(a => (a.href = K.whatsapp));
   document.querySelectorAll('[data-marshrut]').forEach(a => (a.href = K.marshrut));
   document.querySelectorAll('[data-adres]').forEach(e => (e.textContent = K.adres));
   document.querySelectorAll('[data-chasy]').forEach(e => (e.textContent = D.chasy.budni));
-  if (!K.vk) $('[data-vk-blok]')?.remove();
-  else $('[data-vk-blok]')?.setAttribute('href', K.vk);
+  if (!K.vkGruppa) $('[data-vk-blok]')?.remove();
+  else $('[data-vk-blok]')?.setAttribute('href', K.vkGruppa);
 
   // ── корзина ────────────────────────────────────────────────────
   const korzina = [];                       // {imya, variant, cena}
@@ -78,12 +76,73 @@
     });
     $('#zakaz-summa').textContent = rub(summa());
 
-    const tekst = encodeURIComponent(
-      'Здравствуйте! Хочу забрать:\n' +
+    sobratKnopki();
+  }
+
+  function tekstZakaza() {
+    return 'Здравствуйте! Хочу забрать:\n' +
       korzina.map(p => `— ${p.imya} (${p.variant}) ${p.cena} ₽`).join('\n') +
-      `\nИтого ${summa()} ₽`);
-    $('#zakaz-tg').href = K.telegram + (K.telegram.includes('?') ? '&' : '?') + 'text=' + tekst;
-    $('#zakaz-wa').href = K.whatsapp + (K.whatsapp.includes('?') ? '&' : '?') + 'text=' + tekst;
+      `\nИтого ${summa()} ₽`;
+  }
+
+  /* Кнопки заказа. У Telegram и WhatsApp текст подставляется в ссылку,
+     у ВКонтакте — нет: такого параметра у них не существует. Поэтому для
+     ВК заказ кладётся в буфер обмена, а чат открывается следом. Если
+     браузер копировать не дал (старый или запретил доступ) — показываем
+     текст прямо на странице, чтобы человек скопировал сам. */
+  function sobratKnopki() {
+    const korobki = document.querySelectorAll('[data-kanaly]');
+    if (!korobki.length) return;
+    const zhivye = (D.kanaly || []).filter(k => k.ssylka);
+
+    korobki.forEach(korobka => {
+      korobka.textContent = '';
+      if (!zhivye.length) {
+        const net = el('p', 'tiho', 'Канал для заказов пока не подключён. Позвоните — примем заказ голосом.');
+        korobka.append(net);
+        return;
+      }
+      zhivye.forEach((kanal, i) => {
+        const glavnaya = i === 0;
+        const klass = 'knopka knopka-shirokaya ' + (glavnaya ? 'knopka-glav' : 'knopka-tihaya');
+        if (kanal.tip === 'vk') {
+          const b = el('button', klass, kanal.imya);
+          b.type = 'button';
+          b.addEventListener('click', () => otpravitVk(kanal.ssylka, korobka));
+          korobka.append(b);
+        } else {
+          const a = el('a', klass, kanal.imya);
+          a.target = '_blank'; a.rel = 'noopener';
+          a.href = kanal.ssylka + (kanal.ssylka.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(tekstZakaza());
+          korobka.append(a);
+        }
+      });
+    });
+  }
+
+  async function otpravitVk(ssylka, korobka) {
+    const tekst = tekstZakaza();
+    let skopirovano = false;
+    try {
+      await navigator.clipboard.writeText(tekst);
+      skopirovano = true;
+    } catch { /* браузер не дал — покажем текст ниже */ }
+
+    const podskazka = el('p', 'tiho');
+    podskazka.textContent = skopirovano
+      ? 'Заказ скопирован. Вставьте его в чат сообщества — и всё.'
+      : 'Скопируйте заказ и вставьте в чат сообщества:';
+    korobka.append(podskazka);
+
+    if (!skopirovano) {
+      const pole = el('textarea', 'zakaz-tekst');
+      pole.value = tekst;
+      pole.readOnly = true;
+      pole.rows = 4;
+      korobka.append(pole);
+      pole.select();
+    }
+    window.open(ssylka, '_blank', 'noopener');
   }
 
   $('#korzina-otkryt')?.addEventListener('click', () => {
@@ -258,15 +317,26 @@
       skazat(`В заказе: ${korzina.map(p => `${p.imya} (${p.variant})`).join(', ')}. Итого ${rub(summa())}.`);
       skazat('Отправьте заказ в мессенджер — подтвердим и скажем, когда забирать.');
       knopki.textContent = '';
-      const tg = el('a', 'bot-knopka glavnaya', 'Отправить в Telegram');
-      tg.href = $('#zakaz-tg').href; tg.target = '_blank'; tg.rel = 'noopener';
-      const wa = el('a', 'bot-knopka', 'Отправить в WhatsApp');
-      wa.href = $('#zakaz-wa').href; wa.target = '_blank'; wa.rel = 'noopener';
+      const zhivye = (D.kanaly || []).filter(k => k.ssylka);
+      zhivye.forEach((kanal, i) => {
+        const klass = 'bot-knopka' + (i === 0 ? ' glavnaya' : '');
+        if (kanal.tip === 'vk') {
+          const b = el('button', klass, kanal.imya);
+          b.type = 'button';
+          b.addEventListener('click', () => otpravitVk(kanal.ssylka, $('[data-kanaly]')));
+          knopki.append(b);
+        } else {
+          const a = el('a', klass, kanal.imya);
+          a.target = '_blank'; a.rel = 'noopener';
+          a.href = kanal.ssylka + (kanal.ssylka.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(tekstZakaza());
+          knopki.append(a);
+        }
+      });
+      if (!zhivye.length) skazat('Канал для заказов пока не подключён — позвоните нам, примем голосом.');
       const zanovo = el('button', 'bot-knopka', 'Добавить ещё');
       zanovo.type = 'button';
       zanovo.addEventListener('click', () => { skazat('Что берём?'); shag.nachalo(); });
-      knopki.append(tg, wa, zanovo);
-      $('#zakaz-list').hidden = false;
+      knopki.append(zanovo);
     },
   };
 

@@ -225,6 +225,10 @@ body{padding-bottom:88px}
 .konf .knopka-tihaya{color:var(--kraft);border-color:rgba(243,234,220,.45)}
 .konf .knopka-tihaya:hover{background:var(--kraft);color:var(--ugol)}
 
+.kanaly{display:grid;gap:10px}
+.zakaz-tekst{width:100%;font:inherit;font-size:14px;background:var(--kraft);color:var(--ugol);
+  border:1px solid var(--liniya);border-radius:var(--r-mal);padding:10px;resize:vertical}
+
 .itog-zag{font-size:17px;margin-bottom:calc(var(--shag)*1.5);color:var(--gorchica)}
 .zakaz{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:230px;overflow-y:auto}
 .zakaz:empty::after{content:"Пока пусто. Нажмите цену в меню или ответьте помощнику.";
