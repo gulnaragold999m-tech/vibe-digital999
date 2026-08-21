@@ -1,0 +1,41 @@
+# Unity создаёт эти папки сама при первом открытии проекта.
+# В репозиторий они не идут: весят сотни мегабайт и пересобираются.
+/Library/
+/Temp/
+/Obj/
+/Build/
+/Builds/
+/Logs/
+/UserSettings/
+/[Mm]emoryCaptures/
+/Recordings/
+
+# Файлы проектов Visual Studio и Rider — тоже генерируются.
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+.vs/
+.idea/
+.vscode/
+
+# Мусор ОС
+.DS_Store
+Thumbs.db
+
+# Собранные сборки игры
+*.apk
+*.aab
+*.unitypackage
+*.app
+crashlytics-build.properties
+sysinfo.txt
