@@ -29,6 +29,7 @@ public static class Palitra
     public static readonly Color ZemlyaSvet = Iz("E09A55");
     public static readonly Color Zemlya = Iz("C4622D");
     public static readonly Color ZemlyaTemn = Iz("8A4020");
+    public static readonly Color ZemlyaShov = Iz("A85226");
     public static readonly Color Kirpich = Iz("C4622D");
     public static readonly Color KirpichShov = Iz("7A3316");
     public static readonly Color Zoloto = Iz("F4C542");

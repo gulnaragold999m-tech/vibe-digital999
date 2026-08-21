@@ -281,7 +281,10 @@ public static class Sprajty
             h.Tochka(11, y + 2, Palitra.ZemlyaTemn);
             h.Tochka(7, y + 1, Palitra.ZemlyaSvet);
         }
-        h.Ramka(0, 0, 16, 16, Palitra.ZemlyaTemn);
+        // Шов только слева и снизу: рамка по всем четырём сторонам
+        // складывала сотню плиток в клетчатую рябь.
+        for (int y = 0; y < 16; y++) h.Tochka(0, y, Palitra.ZemlyaShov);
+        h.Liniya(0, 15, 0, Palitra.ZemlyaShov);
         if (strava)
         {
             h.Pryamoug(0, 12, 16, 4, Palitra.Trava);
@@ -377,6 +380,11 @@ public static class Sprajty
         h.Pryamoug(x0 + 1, 14, Mathf.Max(1, shirina - 2), 1, Palitra.Zoloto);
         h.Pryamoug(x0, 3, 1, 10, Palitra.ZolotoSvet);
         h.Pryamoug(x0 + shirina - 1, 3, 1, 10, Palitra.ZolotoTemn);
+        if (shirina >= 6)
+        {
+            // Ободок внутри: без него монета читается как жёлтый прямоугольник.
+            h.Ramka(x0 + 2, 4, shirina - 4, 8, Palitra.ZolotoTemn);
+        }
         return h.Sprajt();
     }
 
@@ -409,17 +417,20 @@ public static class Sprajty
     static Sprite HolmKadr()
     {
         Holst h = new Holst(80, 48);
-        for (int y = 0; y < 44; y++)
+        // Купол, а не треугольник: по прямой линии холм выглядит пирамидой.
+        for (int y = 0; y < 46; y++)
         {
-            int polovina = Mathf.RoundToInt((44 - y) * 0.85f) + 4;
+            float dolya = y / 46f;
+            int polovina = Mathf.RoundToInt(Mathf.Sqrt(Mathf.Max(0f, 1f - dolya * dolya)) * 38f);
+            if (polovina <= 0) continue;
             h.Pryamoug(40 - polovina, y, polovina * 2, 1, Palitra.Trava);
+            h.Tochka(40 - polovina, y, Palitra.TravaTemn);
+            h.Tochka(40 + polovina - 1, y, Palitra.TravaTemn);
         }
-        // тень справа — иначе холм читается плоским пятном
-        for (int y = 0; y < 40; y++)
-        {
-            int polovina = Mathf.RoundToInt((44 - y) * 0.85f) + 4;
-            h.Pryamoug(40 + polovina - 6, y, 6, 1, Palitra.TravaTemn);
-        }
+        h.Liniya(2, 77, 0, Palitra.TravaTemn);
+        // пара тёмных пятен: холм перестаёт быть плоской заливкой
+        h.Krug(28, 12, 3, Palitra.TravaTemn);
+        h.Krug(50, 18, 2, Palitra.TravaTemn);
         return h.Sprajt(0f, 0f);
     }
 
