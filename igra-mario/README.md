@@ -24,6 +24,27 @@
 
 Игру нужно открыть в программе Unity. Она бесплатная для нашего случая.
 
+**Сначала папка с игрой должна появиться на компьютере.** Она лежит
+в ветке `claude/unity-mario-game-14j3gi`, и пока вы на другой ветке,
+папки `igra-mario` в `C:\vibe-digital999` просто нет. Три команды
+в чёрном окне, по одной:
+
+```
+cd C:\vibe-digital999
+```
+
+```
+git fetch origin claude/unity-mario-game-14j3gi
+```
+
+```
+git checkout claude/unity-mario-game-14j3gi
+```
+
+**Что увидим:** после третьей команды — строка
+`Switched to branch 'claude/unity-mario-game-14j3gi'`, а в папке
+`C:\vibe-digital999` появится папка `igra-mario`.
+
 **Шаг 1.** В браузере откройте `https://unity.com/download` и скачайте
 **Unity Hub**. Это маленькая программа-запускалка, через неё ставится
 всё остальное.
