@@ -80,63 +80,138 @@ const CHEGO_NET = [
   'гарантия результата и позиций в поиске',
 ];
 
-/** Один участник совещания. Возвращает текст замечаний. */
-async function uchastnik(imya, tekst, tz, dopolnitelno) {
+/** Один участник совещания. Возвращает текст его выступления. */
+async function uchastnik(imya, vopros) {
   const opisanie = rol(imya);
   if (!opisanie) return '';
 
   const system = [
     opisanie,
     '',
-    'Отвечай коротко и по делу. Список замечаний или прямая фраза,',
-    'что замечаний нет. Не переписывай текст — это работа копирайтера.',
-  ].join('\n');
-
-  const vopros = [
-    'ЗАДАНИЕ, ПО КОТОРОМУ ПИСАЛСЯ ПОСТ:',
-    tz && tz.zadacha ? tz.zadacha : '(задание не передано)',
-    '',
-    ...(dopolnitelno || []),
-    '',
-    'ТЕКСТ ПОСТА:',
-    String(tekst),
+    'Отвечай коротко и по делу. Не переписывай текст — это работа',
+    'копирайтера. Молчать нельзя: нечего сказать по существу —',
+    'скажи это прямо и назови самое слабое или самое сильное место.',
   ].join('\n');
 
   try {
     return String(await model()([{ role: 'user', content: vopros }], system)).trim();
   } catch (e) {
-    // Роль упала — совещание продолжается без неё. Пост важнее совещания.
-    return `(${imya}: не ответил — ${String(e.message).slice(0, 80)})`;
+    /* Роль упала — совещание продолжается без неё, но факт падения
+       НЕ прячется: главный должен знать, что решение принято неполным
+       составом. Молчание роли и её падение — разные вещи. */
+    return `[РОЛЬ НЕ ОТВЕТИЛА: ${String(e.message).slice(0, 80)}]`;
   }
 }
 
-/** Замечание считается пустым, если роль прямо сказала, что их нет. */
-function pusto(otvet) {
-  return !otvet || /^\(|расхожден(ий|ия) нет|замечан(ий|ия) нет|возражени(й|я) нет|нет замечаний|нет расхождений/i
-    .test(otvet.trim().slice(0, 120));
+function upala(otvet) {
+  return !otvet || otvet.startsWith('[РОЛЬ НЕ ОТВЕТИЛА');
 }
 
 /**
- * Провести совещание над готовым текстом.
- * Возвращает { zamechaniya: [...], chisto: true|false }.
+ * Совещание из четырёх ролей.
+ *
+ * Схема задана владелицей 21.08.2026: «один бот должен сомневаться,
+ * другой доказывать, третий анализировать, а главный делать вывод
+ * и извлекать пользу, принимая решение».
+ *
+ * ПОЧЕМУ ИМЕННО ТАК, А НЕ ДВА ПРОВЕРЯЮЩИХ. Первая версия совещания
+ * состояла из фактчекера и критика — оба искали плохое. Когда все роли
+ * ищут недостатки, недостатки находятся всегда, и хороший текст
+ * снимается наравне со слабым. Редакция начинает работать вхолостую:
+ * слоты пустые, причина у каждого «нашли замечание».
+ *
+ * ПОРЯДОК ВЫСТУПЛЕНИЙ НЕ СЛУЧАЕН. Аналитик и скептик говорят первыми
+ * и независимо друг от друга — иначе аналитик подстроит факты под уже
+ * прозвучавшее возражение. Защитник выступает ПОСЛЕ и видит их обоих:
+ * его работа не только хвалить, но и отвечать на возражения. Главный
+ * читает всех троих.
+ *
+ * Возвращает { reshenie, pochemu, urok, vystupleniya }.
  */
 async function soveshchanie(tekst, tz) {
-  const [fakt, krit] = await Promise.all([
-    uchastnik('faktchek', tekst, tz, [
-      'ЧТО СТУДИЯ УМЕЕТ И ПОЧЁМ (другого обещать нельзя):',
-      ...chtoUmeem().map((s) => '  ' + s),
-      '',
-      'ЧЕГО У СТУДИИ НЕТ — упоминание как своей услуги это брак:',
-      ...CHEGO_NET.map((s) => '  ' + s),
-    ]),
-    uchastnik('kritik', tekst, tz, []),
+  const obshchee = [
+    'ЗАДАНИЕ, ПО КОТОРОМУ ПИСАЛСЯ ПОСТ:',
+    tz && tz.zadacha ? tz.zadacha : '(задание не передано)',
+    '',
+    'ТЕКСТ ПОСТА:',
+    String(tekst),
+  ].join('\n');
+
+  const dlyaAnalitika = [
+    obshchee, '',
+    'ЧТО СТУДИЯ УМЕЕТ И ПОЧЁМ:',
+    ...chtoUmeem().map((x) => '  ' + x),
+    '',
+    'ЧЕГО У СТУДИИ НЕТ — упоминание как своей услуги это ошибка:',
+    ...CHEGO_NET.map((x) => '  ' + x),
+  ].join('\n');
+
+  // Первый круг: факты и сомнение, независимо друг от друга.
+  const [analitik, skeptik] = await Promise.all([
+    uchastnik('analitik', dlyaAnalitika),
+    uchastnik('skeptik', obshchee),
   ]);
 
-  const zamechaniya = [];
-  if (!pusto(fakt)) zamechaniya.push({ rol: 'фактчекер', tekst: fakt });
-  if (!pusto(krit)) zamechaniya.push({ rol: 'критик', tekst: krit });
+  // Второй: защитник видит обоих и отвечает на возражения.
+  const zashchitnik = await uchastnik('zashchitnik', [
+    obshchee, '',
+    'ЧТО ПРИНЁС АНАЛИТИК:', analitik, '',
+    'ЧТО ВОЗРАЖАЕТ СКЕПТИК:', skeptik, '',
+    'Назови сильные стороны текста с цитатами и отдельно ответь',
+    'на возражения скептика: с чем согласен, а что снимается и чем.',
+  ].join('\n'));
 
-  return { zamechaniya, chisto: zamechaniya.length === 0 };
+  // Решение.
+  const nepolnyj = [analitik, skeptik, zashchitnik].filter(upala).length;
+  const otvetGlavnogo = await uchastnik('glavnyj', [
+    obshchee, '',
+    'ДАННЫЕ ОТ АНАЛИТИКА:', analitik, '',
+    'ВОЗРАЖЕНИЯ СКЕПТИКА:', skeptik, '',
+    'ДОВОДЫ ЗАЩИТНИКА:', zashchitnik, '',
+    nepolnyj ? `ВНИМАНИЕ: ролей не ответило — ${nepolnyj}. Решение принимается неполным составом.` : '',
+    '',
+    'Ответь строго тремя строками, каждая с новой строки:',
+    'РЕШЕНИЕ: публиковать|править|снять',
+    'ПОЧЕМУ: одна фраза, со ссылкой на роль, чей довод перевесил',
+    'УРОК: одна строка для roli/uroki.md — или «урока нет»',
+  ].filter(Boolean).join('\n'));
+
+  const najti = (klyuch, po_umolchaniyu) => {
+    const m = new RegExp(klyuch + '\\s*:?\\s*(.+)', 'i').exec(otvetGlavnogo);
+    return m ? m[1].trim() : po_umolchaniyu;
+  };
+
+  let reshenie = najti('РЕШЕНИЕ', '').toLowerCase();
+  if (!/публиков|прав|снят/.test(reshenie)) {
+    /* Главный не ответил в формате. Не публикуем: непонятый вердикт
+       трактуется в сторону осторожности, а не в сторону эфира. */
+    reshenie = upala(otvetGlavnogo) ? 'править' : 'править';
+  }
+
+  return {
+    reshenie: /публиков/.test(reshenie) ? 'публиковать'
+      : /снят/.test(reshenie) ? 'снять' : 'править',
+    pochemu: najti('ПОЧЕМУ', 'причина не названа'),
+    urok: najti('УРОК', 'урока нет'),
+    nepolnyj,
+    vystupleniya: { analitik, skeptik, zashchitnik },
+  };
 }
 
-module.exports = { soveshchanie, chtoUmeem, CHEGO_NET };
+/** Записать урок в roli/uroki.md. Пишется только настоящий урок. */
+function zapisatUrok(urok, reshenie) {
+  if (!urok || /^урока нет|^нет урока|^—$/i.test(urok.trim())) return false;
+  const put = path.join(ROLI, 'uroki.md');
+  const den = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+  try {
+    const bylo = fs.readFileSync(put, 'utf8');
+    const zagolovok = `\n## ${den}\n`;
+    const stroka = `\n- **${reshenie}** — ${urok.trim()}\n`;
+    fs.writeFileSync(put, bylo.includes(zagolovok) ? bylo + stroka : bylo + zagolovok + stroka, 'utf8');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+module.exports = { soveshchanie, zapisatUrok, chtoUmeem, CHEGO_NET };
