@@ -571,6 +571,42 @@ function validatePrices() {
   console.log('   вручную, поэтому её правят руками — но по тем же числам.\n');
 }
 
+/* ── Проверка цен в прайсе для карт ──────────────────────────────
+   docs/15-KARTY-PRICE.md — это 60 позиций, которые владелица руками
+   заводит в карточку Яндекс Бизнеса. Файл собран не сборкой, а руками,
+   поэтому разъезжается молча: 21.08.2026 у ботов и агентов там стояло
+   «от 40 000 ₽» при настоящих 15 000, 35 000 и 60 000.
+
+   Проверка простая и намеренно тупая: каждое число вида «от N ₽»
+   в файле обязано встречаться в прайсе. Незнакомое число — значит,
+   кто-то написал цену руками. Правило то же, что и для главной:
+   проверка ловит только то, что ей велели смотреть. */
+function proverkaPrajsaKart() {
+  const fs = require('fs');
+  const put = path.join(__dirname, 'docs', '15-KARTY-PRICE.md');
+  if (!fs.existsSync(put)) return;
+
+  const znaemye = new Set();
+  for (const u of PRICES.USLUGI) znaemye.add(u.cena);
+  for (const p of PRICES.PAKETY) znaemye.add(PRICES.cenaPaketa(p));
+  znaemye.add(20000); // старая цена аудита до акции, она в файле указана честно
+
+  const tekst = fs.readFileSync(put, 'utf8');
+  const chuzhie = new Set();
+  for (const m of tekst.matchAll(/от ([0-9][0-9  ]{2,9}) ₽/g)) {
+    const n = Number(m[1].replace(/[^0-9]/g, ''));
+    if (n && !znaemye.has(n)) chuzhie.add(n);
+  }
+
+  if (!chuzhie.size) {
+    console.log('Проверка цен в прайсе для карт: docs/15 совпадает с прайсом.');
+    return;
+  }
+  console.log(`\n⚠ Прайс для карт разошёлся с src/prices.js — чужих цен: ${chuzhie.size}`);
+  [...chuzhie].sort((a, b) => a - b).forEach((n) => console.log('   •', n, '₽ — такой цены в прайсе нет'));
+  console.log('   Правится docs/15-KARTY-PRICE.md по числам из src/prices.js.\n');
+}
+
 /* ── Запуск ──────────────────────────────────────────────────── */
 function main() {
   let built = 0;
@@ -604,6 +640,7 @@ function main() {
   console.log(`\nСобрано страниц: ${built}. Карта сайта и llms.txt обновлены.`);
   validate();
   validatePrices();
+  proverkaPrajsaKart();
 }
 
 main();
