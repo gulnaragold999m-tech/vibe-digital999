@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Разработка сайтов и Telegram-ботов на заказ — от 15 000 ₽</title>
+  <title>Сайты от 35 000 ₽ и Telegram-боты от 15 000 ₽ на заказ</title>
   <!-- Метка сборки. Нужна, чтобы за секунду понять, какой файл сейчас на сервере,
        и не гадать, залился новый или остался старый. -->
   <meta name="build" content="2026-08-06-v7-metrika" />
@@ -1028,6 +1028,7 @@
       backdrop-filter: blur(8px);
       justify-content: center;
       align-items: center;
+      overflow-y: auto;
       padding: 1rem;
       animation: fade-in 0.25s ease;
     }
@@ -1046,6 +1047,7 @@
       backdrop-filter: blur(24px);
       border: 2px solid rgba(0,240,255,0.3);
       border-radius: 16px;
+      margin: auto;
       padding: 2.6rem;
       max-width: 440px;
       width: 100%;
@@ -2707,7 +2709,7 @@
   "@type": "WebPage",
   "@id": "https://vibe-digital999.ru/#webpage",
   "url": "https://vibe-digital999.ru/",
-  "name": "Разработка сайтов и Telegram-ботов на заказ — от 15 000 ₽",
+  "name": "Сайты от 35 000 ₽ и Telegram-боты от 15 000 ₽ на заказ",
   "inLanguage": "ru-RU",
   "isPartOf": { "@id": "https://vibe-digital999.ru/#website" },
   "about": { "@id": "https://vibe-digital999.ru/#organization" },
@@ -5430,6 +5432,7 @@ async function submitForm({ name, contact, service, comment = '', city = '', cit
     if (!res.ok || !data.ok) throw new Error(data.error || 'Ошибка сервера');
 
     formEl.style.display = 'none';
+    successEl.style.display = '';   // снимаем инлайновый none, иначе класс .visible не сработает
     successEl.classList.add('visible');
     reachGoal('lead_sent');
   } catch {
@@ -6340,6 +6343,12 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
        до первого нажатия. */
     .cookie-bar{gap:.7rem;padding:.85rem 1rem;top:auto;bottom:.8rem;
       animation-name:cookieInUp}
+    /* Пока открыто окно заявки или квиза — плашку прячем. На телефоне
+       она садится ровно на кнопку «Отправить», и человек, заполнивший
+       имя и телефон, не может её нажать. 21.08.2026: 27 целевых
+       клиентов за 16 дней и ни одной отправленной заявки. */
+    body:has(.modal-overlay.open) .cookie-bar,
+    body:has(.quiz-overlay.open) .cookie-bar{display:none}
     .cookie-text{font-size:.7rem;line-height:1.55}
     .cookie-actions{width:100%}
     /* Кнопки в одну строку, а не столбиком: столбиком плашка вырастает

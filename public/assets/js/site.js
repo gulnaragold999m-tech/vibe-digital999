@@ -276,7 +276,10 @@
         if (!res.ok || !data.ok) throw new Error(data.error || 'Ошибка сервера');
 
         formEl.style.display = 'none';
-        if (successEl) successEl.classList.add('visible');
+        if (successEl) {
+          successEl.style.display = '';   // см. комментарий в index.html: инлайновый none сильнее класса
+          successEl.classList.add('visible');
+        }
         reachGoal('lead_sent');
       } catch (err) {
         /* Сбой сети или сервера показываем там же, где ошибки полей.
