@@ -54,6 +54,7 @@ const path = require('path');
 
 const PRICES = require('../src/prices');
 const { askOnce } = require('./brief');
+const { soveshchanie } = require('./sovet');
 const { vkConfigured, sendVkToOwner } = require('./vk');
 const { sendMailToOwner, mailConfigured } = require('./mail');
 const { autopostConfigured, slotTime, PLAN_PATH } = require('./autopost');
@@ -558,6 +559,39 @@ async function run(now = Date.now()) {
         break;
       }
       prichina = otk(napisannoe.text, tz, teksty);
+
+      /* СОВЕЩАНИЕ РЕДАКЦИИ. Заведено 21.08.2026.
+       *
+       * Идёт ПОСЛЕ приёмки и только если приёмка пропустила: обсуждать
+       * текст, который уже формально забракован, незачем — он всё равно
+       * переписывается.
+       *
+       * Приёмка скриптовая и ловит формальное: цены не из прайса, штампы,
+       * гарантии, повторы, markdown. Совещание ловит два класса, которые
+       * ей не по зубам и которые стоили нам дороже всего: обещание услуги,
+       * которой у студии нет, и то, что формально верно, но бьёт
+       * по репутации.
+       *
+       * Замечания уходят копирайтеру как причина брака — то есть работают
+       * ровно так же, как замечания приёмки, и второй попыткой он пишет
+       * заново. Не сошлось и во второй раз — слот остаётся пустым.
+       * Пустой слот дешевле плохого поста.
+       *
+       * Совещание НЕ должно ронять публикацию: любая его поломка гасится
+       * внутри и превращается в «замечаний нет». */
+      if (!prichina) {
+        try {
+          const sovet = await soveshchanie(napisannoe.text, tz);
+          if (!sovet.chisto) {
+            prichina = sovet.zamechaniya
+              .map((z) => `${z.rol}: ${z.tekst.replace(/\s+/g, ' ').slice(0, 400)}`)
+              .join(' | ');
+          }
+        } catch (err) {
+          console.error('совещание не состоялось:', err.message);
+        }
+      }
+
       if (!prichina) break;
     }
 
