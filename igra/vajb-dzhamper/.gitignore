@@ -1,0 +1,36 @@
+# Unity создаёт эти папки сам при первом открытии проекта.
+# Они весят сотни мегабайт и восстанавливаются из исходников — в репозитории им делать нечего.
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# Файлы проектов Visual Studio и Rider — тоже создаются заново.
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+.vs/
+.idea/
+.vscode/
+
+# Сборки игры
+*.apk
+*.aab
+*.unitypackage
+*.app
+crashlytics-build.properties
