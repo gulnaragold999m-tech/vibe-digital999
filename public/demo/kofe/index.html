@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>«Зерно» — кофе на вынос в Пятигорске | Демо-пример Vibe Digital 999</title>
+<meta name="description" content="Демонстрационный пример сайта кофейни на вынос: меню, цены, карта, заказ в один клик. Сделан студией Vibe Digital 999 как образец." />
+<meta name="robots" content="noindex, follow" />
+<style>
+  :root{--kofe:#3b2314;--krem:#f6efe6;--akcent:#c8722f;--tekst:#2a1c12}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font:16px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--tekst);background:var(--krem)}
+  .demo-bar{background:#0b1020;color:#cfe;padding:.7rem 1rem;font-size:.82rem;text-align:center;position:sticky;top:0;z-index:50}
+  .demo-bar a{color:#7ee;font-weight:600}
+  .wrap{max-width:920px;margin:0 auto;padding:0 1.1rem}
+  header{background:var(--kofe);color:var(--krem);padding:3.2rem 0 2.6rem}
+  h1{font-size:2.1rem;line-height:1.15;margin-bottom:.8rem}
+  .lead{opacity:.9;margin-bottom:1.6rem}
+  .btn{display:inline-block;background:var(--akcent);color:#fff;text-decoration:none;
+    padding:.95rem 1.6rem;border-radius:12px;font-weight:700;border:0;font-size:1rem;cursor:pointer}
+  .btn.light{background:#fff;color:var(--kofe);margin-left:.6rem}
+  section{padding:2.6rem 0}
+  h2{font-size:1.45rem;margin-bottom:1.2rem}
+  .menu{display:grid;gap:.7rem}
+  .poz{display:flex;justify-content:space-between;gap:1rem;background:#fff;
+    padding:.9rem 1.1rem;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .poz b{font-weight:700;white-space:nowrap}
+  .grid3{display:grid;gap:1rem;grid-template-columns:1fr}
+  .kart{background:#fff;padding:1.2rem;border-radius:14px}
+  .kart b{display:block;font-size:1.6rem;color:var(--akcent);margin-bottom:.3rem}
+  footer{background:var(--kofe);color:var(--krem);padding:2.2rem 0;font-size:.9rem}
+  footer a{color:var(--krem)}
+  .zayavka{background:#fff;padding:1.4rem;border-radius:14px}
+  input,select{width:100%;padding:.8rem;margin-bottom:.7rem;border:1px solid #ddd;border-radius:10px;font-size:1rem}
+  .otvet{margin-top:.8rem;padding:.9rem;border-radius:10px;background:#eef7ee;display:none}
+  @media(min-width:700px){.grid3{grid-template-columns:repeat(3,1fr)}h1{font-size:2.8rem}}
+</style>
+</head>
+<body>
+
+<div class="demo-bar">
+  Это <b>демонстрационный пример</b>, а не работающая кофейня. Такой сайт делает
+  <a href="https://vibe-digital999.ru/">Vibe Digital 999</a> — от 35 000 ₽, за 7 дней.
+</div>
+
+<header>
+  <div class="wrap">
+    <h1>«Зерно» — кофе на вынос<br />у вокзала в Пятигорске</h1>
+    <p class="lead">Свежая обжарка, стакан за 90 секунд. Работаем с 7 утра —
+      успеете до электрички.</p>
+    <a class="btn" href="#zakaz">Заказать к приходу</a>
+    <a class="btn light" href="#menu">Меню и цены</a>
+  </div>
+</header>
+
+<section id="menu">
+  <div class="wrap">
+    <h2>Меню</h2>
+    <div class="menu">
+      <div class="poz"><span>Эспрессо</span><b>90 ₽</b></div>
+      <div class="poz"><span>Американо</span><b>120 ₽</b></div>
+      <div class="poz"><span>Капучино 0,3</span><b>160 ₽</b></div>
+      <div class="poz"><span>Латте 0,4 · сироп на выбор</span><b>190 ₽</b></div>
+      <div class="poz"><span>Раф на кокосовом</span><b>210 ₽</b></div>
+      <div class="poz"><span>Круассан с миндалём</span><b>140 ₽</b></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Почему к нам возвращаются</h2>
+    <div class="grid3">
+      <div class="kart"><b>90 сек</b>Средняя выдача заказа в утренний час пик</div>
+      <div class="kart"><b>7:00</b>Открываемся раньше всех на площади</div>
+      <div class="kart"><b>−20 ₽</b>Со своим стаканом, каждый день</div>
+    </div>
+  </div>
+</section>
+
+<section id="zakaz">
+  <div class="wrap">
+    <h2>Заказать к приходу</h2>
+    <div class="zayavka">
+      <form onsubmit="return pokazatDemo(event)">
+        <select><option>Капучино 0,3 — 160 ₽</option><option>Латте 0,4 — 190 ₽</option>
+          <option>Американо — 120 ₽</option><option>Раф — 210 ₽</option></select>
+        <input placeholder="Ко скольки подойти? Например, 8:15" />
+        <input placeholder="Имя" />
+        <button class="btn" type="submit">Отправить заказ</button>
+      </form>
+      <div class="otvet" id="otvet">
+        В настоящем сайте заказ ушёл бы владельцу в Telegram за секунду, а гость
+        получил бы ответ «ждём вас в 8:15». Здесь это демонстрация — заказ никуда
+        не отправлен.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>Демонстрационный пример.</b> Кофейни «Зерно» не существует: адрес, цены
+      и отзывы придуманы, чтобы показать, как устроен сайт небольшого заведения.</p>
+    <p style="margin-top:.8rem">Хотите такой же для своего дела —
+      <a href="https://vibe-digital999.ru/#order-section">напишите нам</a>.
+      Сайт как этот: от 35 000 ₽, срок от 7 дней.</p>
+  </div>
+</footer>
+
+<script>
+  function pokazatDemo(e){
+    e.preventDefault();
+    document.getElementById('otvet').style.display='block';
+    return false;
+  }
+</script>
+</body>
+</html>
