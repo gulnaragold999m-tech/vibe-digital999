@@ -121,7 +121,7 @@ public class Igra : MonoBehaviour
                 if (NazhataKnopka())
                 {
                     Faza = Sostoyanie.Igra;
-                    if (Geroj != null) Geroj.Upravlyaem = true;
+                    if (Geroj != null) Geroj.VklyuchitUpravlenie();
                     Zvuki.MuzykuVklyuchit();
                 }
                 break;

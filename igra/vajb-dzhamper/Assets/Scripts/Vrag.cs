@@ -12,6 +12,7 @@ public class Vrag : Suschestvo
     bool razdavlen;
     float schetchik;
     float shagAnimacii;
+    float prezhnijNizGeroya = float.MinValue;
 
     void Start()
     {
@@ -58,12 +59,25 @@ public class Vrag : Suschestvo
     void VstrechaSGeroem()
     {
         Igrok geroj = Igra.Ya.Geroj;
-        if (geroj == null || geroj.Mertv) return;
+        if (geroj == null || geroj.Mertv)
+        {
+            prezhnijNizGeroya = float.MinValue;
+            return;
+        }
+
+        float nizSejchas = geroj.Korobka().yMin;
+        // Помним, где были ноги героя в прошлом кадре. Это спасает на слабом
+        // компьютере: при редких кадрах герой за один шаг успевает пролететь
+        // врага насквозь и встать на землю — скорость уже нулевая, ноги внизу,
+        // и честно заработанный прыжок засчитался бы как удар в бок.
+        bool bylVyshe = prezhnijNizGeroya >= Korobka().yMax - 0.05f;
+        prezhnijNizGeroya = nizSejchas;
+
         if (!Peresekaet(geroj)) return;
 
-        // Прыжок сверху засчитывается, если герой падает и его ноги выше
-        // середины врага. Иначе сбоку на бегу тоже считалось бы прыжком.
-        if (geroj.Skorost.y < 0f && geroj.Korobka().yMin > Korobka().center.y)
+        // Прыжок сверху засчитывается, если герой не летит вверх и либо его
+        // ноги выше середины врага, либо он был выше врага только что.
+        if (geroj.Skorost.y <= 0f && (nizSejchas > Korobka().center.y || bylVyshe))
         {
             Razdavit();
             geroj.Otskok();

@@ -33,6 +33,7 @@ public class Igrok : Suschestvo
     float neuyazvimost;
     float shagAnimacii;
     float schetchikSmerti;
+    bool zhdemOtpuskaniya;              // см. VklyuchitUpravlenie
 
     void Start()
     {
@@ -66,6 +67,12 @@ public class Igrok : Suschestvo
             derzhitPryzhok = Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
                 zapasPryzhka = 0.12f;
+
+            if (zhdemOtpuskaniya)
+            {
+                if (derzhitPryzhok) { zapasPryzhka = 0f; derzhitPryzhok = false; }
+                else zhdemOtpuskaniya = false;
+            }
         }
 
         float predel = beg ? SkorostBega : SkorostHodby;
@@ -197,6 +204,16 @@ public class Igrok : Suschestvo
         Zvuki.MuzykuVyklyuchit();
         Zvuki.Smert();
         if (Igra.Ya != null) Igra.Ya.GerojUmiraet();
+    }
+
+    // Игру начинают ПРОБЕЛОМ, и этот же пробел — кнопка прыжка. Без такой
+    // защиты герой подпрыгивает на первом же кадре, ещё до того, как игрок
+    // успел понять, что игра пошла.
+    public void VklyuchitUpravlenie()
+    {
+        Upravlyaem = true;
+        zapasPryzhka = 0f;
+        zhdemOtpuskaniya = true;
     }
 
     // Отскок после прыжка на врага — короткий, чтобы не улетать на пол-экрана.
