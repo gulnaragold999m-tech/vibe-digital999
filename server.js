@@ -18,7 +18,7 @@ require('node:dns').setDefaultResultOrder('ipv4first');
 const path = require('path');
 const express = require('express');
 const compression = require('compression');
-const { handleLead, handleLeadsExport, resetLeadsIfAsked } = require('./api/lead');
+const { handleLead, handleLeadsExport, handleLeadsClean, resetLeadsIfAsked } = require('./api/lead');
 const { handleBrief } = require('./api/brief');
 const { handleGeo } = require('./api/geo');
 const { startVkBot } = require('./api/vk-bot');
@@ -156,6 +156,10 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 /* Выгрузка сохранённых заявок. Закрыта ключом из переменной LEADS_KEY,
    без неё адрес отвечает 404 — внутри персональные данные посетителей. */
 app.get('/api/leads', handleLeadsExport);
+/* Убрать из журнала записи с названными контактами — свои проверки.
+   Закрыто тем же ключом LEADS_KEY. Прежний журнал сохраняется файлом
+   с датой, номера оставшихся заявок не меняются. */
+app.get('/api/leads/ochistit', handleLeadsClean);
 
 /* Короткие адреса для сторис.
 

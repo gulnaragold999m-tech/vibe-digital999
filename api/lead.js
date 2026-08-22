@@ -539,4 +539,101 @@ function resetLeadsIfAsked() {
   }
 }
 
-module.exports = { handleLead, handleLeadsExport, saveLead, nextLeadNumber, leadNotes, resetLeadsIfAsked };
+/* ══════════════════════════════════════════════════════════════════
+   ЧИСТКА ЖУРНАЛА ОТ СВОИХ ПРОВЕРОК
+
+   Заведено 22.08.2026. У Граната такую же сделали часом раньше и там
+   она вычистила 25 проверок из 28 записей. У студии проверок меньше,
+   но они есть: две заявки «ПРОВЕРКА АССИСТЕНТА» лежат в журнале и
+   попадут в счёт конверсии, если их не убрать.
+
+   Отличие от сброса RESET_LEADS выше: тот стирает журнал целиком,
+   этот убирает только записи с названными контактами. Настоящие
+   заявки остаются на месте вместе со своими номерами.
+
+   НИЧЕГО НЕ УДАЛЯЕТСЯ БЕЗВОЗВРАТНО: прежний журнал переносится
+   в файл с датой в имени и остаётся на диске.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Контакт в заявке — это либо телефон, либо ник в мессенджере.
+   Телефоны сравниваем по последним десяти цифрам: «+7», «8», скобки
+   и пробелы — это одна и та же линия. Ники сравниваем как текст,
+   без учёта регистра и ведущей собачки. */
+function sravnimyjKontakt(v) {
+  const s = String(v || '').trim();
+  const cifry = s.replace(/\D/g, '');
+  if (cifry.length >= 10) return cifry.slice(-10);
+  return s.toLowerCase().replace(/^@/, '');
+}
+
+function handleLeadsClean(req, res) {
+  const key = process.env.LEADS_KEY;
+  if (!key) return res.status(404).json({ ok: false, error: 'Не настроено' });
+  if (req.query?.key !== key) return res.status(404).json({ ok: false, error: 'Не найдено' });
+
+  const ubrat = new Set(
+    String(req.query.kontakty || '')
+      .split(',')
+      .map(sravnimyjKontakt)
+      .filter(Boolean)
+  );
+  if (!ubrat.size) {
+    return res.status(400).json({
+      ok: false,
+      error: 'не указан ни один контакт в параметре kontakty',
+    });
+  }
+
+  let lines = [];
+  try {
+    lines = fs.readFileSync(LEADS_FILE, 'utf8').split('\n').filter(Boolean);
+  } catch (err) {
+    if (err.code === 'ENOENT') return res.json({ ok: true, note: 'Журнал пуст, чистить нечего' });
+    return res.status(500).json({ ok: false, error: 'Ошибка чтения' });
+  }
+
+  const ostalos = [];
+  const ubrannye = [];
+  for (const line of lines) {
+    let item;
+    try { item = JSON.parse(line); } catch { continue; }  // битая строка не роняет чистку
+
+    /* Отметки о доставке лежат отдельными строками и номера не имеют.
+       Их убираем вместе с контактом, иначе останутся сиротами. */
+    const kontakt = item.delivered_mark_for ?? item.contact;
+    if (kontakt && ubrat.has(sravnimyjKontakt(kontakt))) {
+      if (item.num) ubrannye.push(item.num);
+      continue;
+    }
+    ostalos.push(line);
+  }
+
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const archive = path.join(DATA_DIR, `leads-do-${stamp}.jsonl`);
+  let schetchik = 0;
+  try {
+    fs.renameSync(LEADS_FILE, archive);
+    fs.writeFileSync(LEADS_FILE, ostalos.length ? ostalos.join('\n') + '\n' : '', 'utf8');
+
+    /* Счётчик — на наибольший ОСТАВШИЙСЯ номер, а не на ноль: номера
+       настоящих заявок уже названы клиентам, повторно выдавать нельзя. */
+    for (const line of ostalos) {
+      try { const it = JSON.parse(line); if (Number.isInteger(it.num)) schetchik = Math.max(schetchik, it.num); } catch {}
+    }
+    fs.writeFileSync(COUNTER_FILE, JSON.stringify({ last: schetchik }), 'utf8');
+  } catch (err) {
+    return res.status(500).json({ ok: false, error: `не удалось переписать журнал: ${err.message}` });
+  }
+
+  res.json({
+    ok: true,
+    ubrano_zapisej: lines.length - ostalos.length,
+    ubrany_nomera: ubrannye.sort((a, b) => a - b),
+    ostalos_zapisej: ostalos.length,
+    schetchik_teper: schetchik,
+    sleduyushchaya_zayavka: schetchik + 1,
+    arhiv: path.basename(archive),
+  });
+}
+
+module.exports = { handleLead, handleLeadsExport, handleLeadsClean, saveLead, nextLeadNumber, leadNotes, resetLeadsIfAsked };
