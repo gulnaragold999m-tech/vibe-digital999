@@ -30,6 +30,7 @@
 const fs = require('fs');
 const path = require('path');
 const { PAGES, SITE, BUILD, VERIFY, MAPS } = require('./src/pages');
+const OTZYVY = require('./src/otzyvy');
 const PRICES = require('./src/prices');
 const { cityDatalist } = require('./src/cities');
 
@@ -42,6 +43,7 @@ const PARTIALS = {
   head: read(SRC, 'partials', 'head.html'),
   header: read(SRC, 'partials', 'header.html'),
   order: read(SRC, 'partials', 'order.html'),
+  otzyvy: read(SRC, 'partials', 'otzyvy.html'),
   footer: read(SRC, 'partials', 'footer.html'),
 };
 
@@ -265,6 +267,33 @@ function podstavitCeny(html) {
   });
 }
 
+/* ── Блок отзывов ────────────────────────────────────────────────
+   В разметке блока лежат оба варианта показа — рамка отзывов и бейдж
+   рейтинга, — а здесь остаётся один. Так решение «что показывать»
+   живёт в одном месте (src/otzyvy.js), а вёрстка — в одном своём
+   (src/partials/otzyvy.html), и переключение не требует правки разметки.
+
+   Вырезаем, а не прячем стилями: спрятанный display:none iframe браузер
+   всё равно грузит, и посетитель платит запросом к Яндексу за то,
+   чего не увидит. */
+function ostavitVariant(html, metka, nuzhen) {
+  const blok = new RegExp(`\\s*<!-- ${metka}:начало -->[\\s\\S]*?<!-- ${metka}:конец -->`, 'g');
+  return nuzhen ? html : html.replace(blok, '');
+}
+
+function otzyvyBlok() {
+  const a = OTZYVY.ssylki();
+  /* Рамка и бейдж вместе не показываются: два измерителя одного и того же
+     рядом — это шум, а не доказательство. Рамка главнее, в ней сами отзывы. */
+  let html = ostavitVariant(PARTIALS.otzyvy, 'РАМКА', OTZYVY.RAMKA);
+  html = ostavitVariant(html, 'БЕЙДЖ', OTZYVY.BEJDZH && !OTZYVY.RAMKA);
+  return html
+    .replace('{{OTZYVY_RAMKA}}', a.ramka)
+    .replace('{{OTZYVY_BEJDZH}}', a.bejdzh)
+    .replace('{{OTZYVY_CHITAT}}', a.chitat)
+    .replace('{{OTZYVY_NAPISAT}}', a.napisat);
+}
+
 function buildPage(page) {
   const body = podstavitCeny(read(SRC, 'pages', page.file));
 
@@ -296,6 +325,12 @@ function buildPage(page) {
     .replace('{{CITY_OPTIONS}}', cityDatalist());
   const withOrder = body.replace('{{ORDER_FORM}}', order);
 
+  /* Отзывы — тоже по метке: блок нужен там, где человек выбирает, кому
+     доверить работу (контакты, «О нас»), и не нужен в статьях блога. */
+  /* Функцией, а не строкой: в строке замены знаки $& и $1 имеют особый
+     смысл, и кусок разметки молча превратился бы в мусор. */
+  const withOtzyvy = withOrder.replace('{{OTZYVY}}', otzyvyBlok);
+
   const header = PARTIALS.header
     .replace('{{NAV_LINKS}}', navLinks(page))
     .replace('{{CRUMBS}}', crumbsHtml(page))
@@ -312,7 +347,7 @@ function buildPage(page) {
     + `     Пересобрать:     npm run build\n`
     + `     ═══════════════════════════════════════════════════════════ -->\n`;
 
-  return warning + head + header + withOrder + PARTIALS.footer;
+  return warning + head + header + withOtzyvy + PARTIALS.footer;
 }
 
 /* ── Карта сайта ─────────────────────────────────────────────────
